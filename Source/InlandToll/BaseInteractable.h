@@ -1,0 +1,50 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "InteractionPrompt.h"
+#include "InteractionPromptData.h"
+#include "BaseInteractable.generated.h"
+
+class UWidgetComponent;
+
+UCLASS()
+class INLANDTOLL_API ABaseInteractable : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	// Sets default values for this actor's properties
+	ABaseInteractable();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(EditAnywhere, Category = "Prompt Data")
+	FInteractionPromptData InteractionPromptData;
+	
+	UPROPERTY(EditAnywhere, Category = "Prompt Data")
+	TSubclassOf<UInteractionPrompt> InteractionPromptClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Prompt Data")
+	UWidgetComponent* InteractionWidgetComp;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnHighlight();
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnUnhighlight();
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnInteract();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
+	void CallOnInteraction();
+};

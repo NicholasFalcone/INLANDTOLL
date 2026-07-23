@@ -1,0 +1,30 @@
+# Handle line endings automatically for files detected as text 
+# and perform LF normalize
+* text=auto
+
+# C++ files
+*.cpp text
+*.h text
+*.cs text
+*.sln text
+
+# Unreal Engine Files - LFS
+*.uasset filter=lfs diff=lfs merge=lfs -text
+*.umap filter=lfs diff=lfs merge=lfs -text
+*.upackage filter=lfs diff=lfs merge=lfs -text
+
+# Binary data
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
+*.hdr filter=lfs diff=lfs merge=lfs -text
+
+# Document files
+*.pdf filter=lfs diff=lfs merge=lfs -text

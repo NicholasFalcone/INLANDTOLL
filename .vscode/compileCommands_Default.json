@@ -1,0 +1,482 @@
+[
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioBlueprintDebuggerHelper\\Private\\VisualStudioBlueprintDebuggerHelperModule.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioBlueprintDebuggerHelper.63.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioBlueprintDebuggerHelper\\Private\\VisualStudioBlueprintDebuggerHelperModule.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioBlueprintDebuggerHelper.63.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioBlueprintDebuggerHelper\\VisualStudioBlueprintDebuggerHelper.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioBlueprintDebuggerHelper.63.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\BlueprintAssetHelper.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\BlueprintAssetHelpers.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\BlueprintReferencesCommandlet.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\BlueprintReferencesCommandlet.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\FSmartBSTR.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VSServerCommandlet.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VSServerCommandlet.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VSTestAdapterCommandlet.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VSTestAdapterCommandlet.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioTools.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioToolsBlueprintBreakpointExtension.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioToolsBlueprintBreakpointExtension.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioToolsCommandlet.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioToolsCommandlet.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioToolsCommandletBase.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Private\\VisualStudioToolsCommandletBase.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\Public\\VisualStudioTools.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Plugins\\VisualStudioTools\\Source\\VisualStudioTools\\VisualStudioTools.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\VisualStudioTools.62.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\ATool.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\ATool.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\BPC_Inventory.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\BPC_Inventory.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\BaseInteractable.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\BaseInteractable.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandToll.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandToll.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandToll.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollCameraManager.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollCameraManager.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollCharacter.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollCharacter.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollGameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollGameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollPlayerController.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InlandTollPlayerController.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionCar.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionCar.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionCarDataAsset.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionCarDataAsset.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionCarManager.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionCarManager.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionData.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InspectionData.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InteractionComponent.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InteractionComponent.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InteractionPrompt.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InteractionPrompt.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InteractionPromptData.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\InteractionPromptData.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\HorrorCharacter.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\HorrorCharacter.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\HorrorGameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\HorrorGameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\HorrorPlayerController.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\HorrorPlayerController.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\UI\\HorrorUI.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\Source\\InlandToll\\Variant_Horror\\UI\\HorrorUI.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\.vscode\\compileCommands_Default\\InlandToll.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Source"
+	}
+]

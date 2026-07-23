@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "InlandTollEditor Win64 Development Build",
+            "group": "build",
+            "command": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.exe",
+            "args": [
+                "InlandTollEditor",
+                "Win64",
+                "Development",
+                "-project=c:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\InlandToll.uproject",
+                "-waitmutex"
+            ],
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        }
+    ]
+}

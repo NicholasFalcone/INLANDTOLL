@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "InlandTollEditor (Development)",
+            "request": "launch",
+            "program": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+            "args": [
+                "c:\\Users\\nicho\\Documents\\Unreal Projects\\InlandToll\\InlandToll.uproject"
+            ],
+            "cwd": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Binaries\\Win64",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "type": "cppvsdbg",
+            "visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.7\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis"
+        }
+    ]
+}
