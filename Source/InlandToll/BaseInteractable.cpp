@@ -78,5 +78,9 @@ void ABaseInteractable::OnUnhighlight()
 
 void ABaseInteractable::OnInteract()
 {
+	if (OnInteractDelegate.IsBound())
+	{
+		OnInteractDelegate.Broadcast();
+	}
 	CallOnInteraction();
 }

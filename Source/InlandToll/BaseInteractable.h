@@ -10,6 +10,8 @@
 
 class UWidgetComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractDelegate);
+
 UCLASS()
 class INLANDTOLL_API ABaseInteractable : public AActor
 {
@@ -18,6 +20,9 @@ class INLANDTOLL_API ABaseInteractable : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABaseInteractable();
+
+	UPROPERTY(BlueprintAssignable, Category = "Interaction")
+	FOnInteractDelegate OnInteractDelegate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* MeshComp;

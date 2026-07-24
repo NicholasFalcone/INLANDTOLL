@@ -7,6 +7,8 @@
 #include "InspectionCar.h"
 #include "InspectionData.h"
 #include "Components/SceneComponent.h"
+#include "Components/SplineComponent.h"
+#include "Engine/SkeletalMesh.h"
 #include "InspectionCarDataAsset.h"
 #include "InspectionCarManager.generated.h"
 
@@ -19,17 +21,14 @@ public:
 	// Sets default values for this actor's properties
 	AInspectionCarManager();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	AInspectionCar* InspectionCars;
+	TArray<USkeletalMesh*> CarMeshes;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<UInspectionCarDataAsset*> InspectionDataArray;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	int32 CurrentInspectionIndex = 0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
-	USceneComponent* StartingPoint;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
-	USceneComponent* EndingPoint;
+	USplineComponent* SplinePath;
 
 protected:
 	// Called when the game starts or when spawned

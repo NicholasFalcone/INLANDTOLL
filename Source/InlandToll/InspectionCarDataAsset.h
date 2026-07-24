@@ -18,7 +18,5 @@ class INLANDTOLL_API UInspectionCarDataAsset : public UPrimaryDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Data")
-	USkeletalMesh* CarMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Data")
 	FInspectionData InspectionData;
 };
