@@ -11,6 +11,8 @@
 #include "Engine/StaticMesh.h"
 #include "InspectionCar.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCarReachedEnd, AInspectionCar*, ReachedCar);
+
 UCLASS()
 class INLANDTOLL_API AInspectionCar : public APawn
 {
@@ -41,6 +43,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	int32 StopAtSplineIndex = -1;
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCarReachedEnd OnCarReachedEnd;
+
 	float DistanceAlongSpline = 0.0f;
 
 protected:
@@ -65,10 +70,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
 	bool bIsMoving = false;
 
+	bool bHasReachedEnd = false;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void MoveCar(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void ResumeMovementToEnd();
 
 	void InitializeCarData(USkeletalMesh* Mesh, FString SocketName, UStaticMesh* InspectionMesh)
 	{
@@ -92,5 +102,4 @@ public:
 	}
 
 	void SetInspectionMesh(UStaticMesh* InspectionMesh, FString SocketName);
-
 };

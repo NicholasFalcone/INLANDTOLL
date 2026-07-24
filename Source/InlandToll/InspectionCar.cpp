@@ -63,20 +63,17 @@ void AInspectionCar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (TargetSpline && DistanceAlongSpline < TargetSpline->GetSplineLength())
-	{
-		MoveCar(DeltaTime);
-		bIsMoving = true;
-	}
-	else
-	{
-		bIsMoving = false;
-	}
+	// Muovi la macchina (la logica interna gestirà bIsMoving)
+	MoveCar(DeltaTime);
 }
 
 void AInspectionCar::MoveCar(float DeltaTime)
 {
-	if (!TargetSpline) return;
+	if (!TargetSpline) 
+	{
+		bIsMoving = false;
+		return;
+	}
 
 	float SplineLength = TargetSpline->GetSplineLength();
 	float MaxDistance = SplineLength;
@@ -89,14 +86,36 @@ void AInspectionCar::MoveCar(float DeltaTime)
 	
 	if (DistanceAlongSpline < MaxDistance)
 	{
+		bIsMoving = true;
 		DistanceAlongSpline += movementSpeed * DeltaTime;
-		if (DistanceAlongSpline > MaxDistance) DistanceAlongSpline = MaxDistance;
+		
+		if (DistanceAlongSpline > MaxDistance) 
+		{
+			DistanceAlongSpline = MaxDistance;
+		}
 
 		FVector NewLocation = TargetSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 		FRotator NewRotation = TargetSpline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 		
 		SetActorLocationAndRotation(NewLocation, NewRotation);
 	}
+	else
+	{
+		// Siamo fermi (o allo stop intermedio o alla fine)
+		bIsMoving = false;
+
+		// Se siamo fermi alla fine assoluta, lancia l'evento una sola volta
+		if (DistanceAlongSpline >= SplineLength && !bHasReachedEnd)
+		{
+			bHasReachedEnd = true;
+			OnCarReachedEnd.Broadcast(this);
+		}
+	}
+}
+
+void AInspectionCar::ResumeMovementToEnd()
+{
+	StopAtSplineIndex = -1;
 }
 
 void AInspectionCar::HandleDoorInteracted()
@@ -107,7 +126,17 @@ void AInspectionCar::HandleDoorInteracted()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Delegate: Ricevuta interazione PORTA via ChildActor!"));
-	bDoorOpen = !bDoorOpen;
+
+	if(bDoorOpen)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Porta aperta. Chiudendo la porta."));
+	}
+	else
+	{
+		bDoorOpen = true;
+		DoorInteraction->GetChildActor()->SetActorEnableCollision(false); // Nascondi il ChildActor della porta
+		UE_LOG(LogTemp, Warning, TEXT("Porta chiusa. Aprendo la porta."));
+	}
 }
 
 void AInspectionCar::HandleCargoInteracted()
@@ -118,7 +147,16 @@ void AInspectionCar::HandleCargoInteracted()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Delegate: Ricevuta interazione CARICO via ChildActor!"));
-	bCargoOpen = !bCargoOpen;
+	if(bCargoOpen)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Carico aperto. Chiudendo il carico."));
+	}
+	else
+	{
+		bCargoOpen = true;
+		CargoInteraction->GetChildActor()->SetActorEnableCollision(false); // Nascondi il ChildActor del carico
+		UE_LOG(LogTemp, Warning, TEXT("Carico chiuso. Aprendo il carico."));
+	}
 }
 
 void AInspectionCar::HandleInspectionInteracted()

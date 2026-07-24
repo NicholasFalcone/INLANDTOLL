@@ -67,7 +67,6 @@ ABaseInteractable* UInteractionComponent::CheckForInteractables()
 		ABaseInteractable* Interactable = Cast<ABaseInteractable>(HitActor);
         if (Interactable)
         {
-            UE_LOG(LogTemp, Log, TEXT("Sphere Cast ha colpito: %s"), *HitActor->GetName());
             return Interactable;
         }
 

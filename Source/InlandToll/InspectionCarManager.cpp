@@ -29,6 +29,13 @@ void AInspectionCarManager::Tick(float DeltaTime)
 
 void AInspectionCarManager::SpawnNextInspectionCar()
 {
+
+	if(CurrentInspectionCar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("An inspection car is already active. Cannot spawn a new one."));
+		return;
+	}
+
 	CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
 
 	if (CurrentInspectionIndex < InspectionDataArray.Num())
@@ -40,14 +47,44 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 		FVector SpawnLocation = SplinePath->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
 		FRotator SpawnRotation = SplinePath->GetRotationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
 
-		AInspectionCar* NewCar = GetWorld()->SpawnActor<AInspectionCar>(AInspectionCar::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
+		CurrentInspectionCar = GetWorld()->SpawnActor<AInspectionCar>(AInspectionCar::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
 
-		if (NewCar)
+		if (CurrentInspectionCar)
 		{
-			NewCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionMesh);
-			NewCar->InitializeCarMovement(SplinePath);
+			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionMesh);
+			CurrentInspectionCar->InitializeCarMovement(SplinePath);
 		}
 		CurrentInspectionIndex++;
+	}
+}
+
+void AInspectionCarManager::PassCurrentInspectionDataToCar()
+{
+	if (CurrentInspectionCar)
+	{
+		CurrentInspectionCar->ResumeMovementToEnd();		
+		CurrentInspectionCar->OnCarReachedEnd.AddDynamic(this, &AInspectionCarManager::HandleCarReachedEnd);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No current inspection car or invalid inspection data index."));
+	}
+}
+
+void AInspectionCarManager::HandleCarReachedEnd(AInspectionCar* Car)
+{
+	if (Car && IsValid(Car))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Car %s reached the end of the spline!"), *Car->GetName());
+		Car->OnCarReachedEnd.RemoveAll(this);
+		Car->Destroy();
+		
+		if (Car == CurrentInspectionCar)
+		{
+			CurrentInspectionCar = nullptr;
+		}
+
+		SpawnNextInspectionCar(); 
 	}
 }
 

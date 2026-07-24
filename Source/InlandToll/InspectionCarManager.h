@@ -29,6 +29,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	USplineComponent* SplinePath;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
+	AInspectionCar* CurrentInspectionCar;
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,5 +43,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
 	void SpawnNextInspectionCar();
+	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
+	void PassCurrentInspectionDataToCar();
+protected:
+	UFUNCTION()
+	void HandleCarReachedEnd(AInspectionCar* Car);
+
 
 };
