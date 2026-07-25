@@ -51,7 +51,7 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 
 		if (CurrentInspectionCar)
 		{
-			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionMesh);
+			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
 			CurrentInspectionCar->InitializeCarMovement(SplinePath);
 		}
 		CurrentInspectionIndex++;

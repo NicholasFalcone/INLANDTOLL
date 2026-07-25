@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InspectionProp.h"
 #include "InspectionData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -20,7 +21,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
 	FString AttachedSocketName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
-	UStaticMesh* InspectionMesh;
+	TSubclassOf<AInspectionProp> InspectionPropClass;
 
 public:
 	FInspectionData();

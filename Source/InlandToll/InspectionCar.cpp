@@ -3,6 +3,7 @@
 
 #include "InspectionCar.h"
 #include "BaseInteractable.h"
+#include "InspectionProp.h"
 #include "Components/SplineComponent.h"
 
 // Sets default values
@@ -115,6 +116,9 @@ void AInspectionCar::MoveCar(float DeltaTime)
 
 void AInspectionCar::ResumeMovementToEnd()
 {
+	bIsMoving = true;
+	bCargoOpen = false;
+	bDoorOpen = false;	
 	StopAtSplineIndex = -1;
 }
 
@@ -169,15 +173,11 @@ void AInspectionCar::HandleInspectionInteracted()
 	UE_LOG(LogTemp, Warning, TEXT("Delegate: Ricevuta interazione ISPEZIONE via ChildActor!"));
 }
 
-void AInspectionCar::SetInspectionMesh(UStaticMesh* InspectionMesh, FString SocketName)
+void AInspectionCar::SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName)
 {
-	if (InspectionMesh)
+	if (PropClass && InspectionInteraction)
 	{
+		InspectionInteraction->SetChildActorClass(PropClass);
 		InspectionInteraction->AttachToComponent(CarMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, *SocketName);
-		ABaseInteractable* InspectionActor = Cast<ABaseInteractable>(InspectionInteraction->GetChildActor());
-		if(InspectionActor)
-		{
-			InspectionActor->MeshComp->SetStaticMesh(InspectionMesh);
-		}
 	}
 }

@@ -7,6 +7,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/ChildActorComponent.h"
 #include "Components/SplineComponent.h"
+#include "InspectionProp.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
 #include "InspectionCar.generated.h"
@@ -80,12 +81,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void ResumeMovementToEnd();
 
-	void InitializeCarData(USkeletalMesh* Mesh, FString SocketName, UStaticMesh* InspectionMesh)
+	void InitializeCarData(USkeletalMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
 	{
 		if (CarMesh && Mesh)
 		{
 			CarMesh->SetSkeletalMesh(Mesh);
-			SetInspectionMesh(InspectionMesh, SocketName);
+			SetInspectionProp(PropClass, SocketName);
 		}
 	}
 
@@ -101,5 +102,5 @@ public:
 		StopAtSplineIndex = 2; // Set the index of the spline point where the car should stop
 	}
 
-	void SetInspectionMesh(UStaticMesh* InspectionMesh, FString SocketName);
+	void SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName);
 };

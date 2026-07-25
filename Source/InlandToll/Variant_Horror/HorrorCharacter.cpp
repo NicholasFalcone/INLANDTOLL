@@ -11,6 +11,7 @@
 #include "InteractionComponent.h"
 #include "InputAction.h"
 #include "HorrorCharacter.h"
+#include "InspectionProp.h"
 
 AHorrorCharacter::AHorrorCharacter()
 {
@@ -107,6 +108,12 @@ void AHorrorCharacter::DoEndSprint()
 
 void AHorrorCharacter::DoStartToggleLight()
 {
+	if (bIsInspecting)
+	{
+		ExitInspectionMode();
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("DoStartUseItem called"));
 
 	if(SpotLight->bHiddenInGame)
@@ -123,8 +130,103 @@ void AHorrorCharacter::DoEndToggleLight()
 	//..
 }
 
+void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect)
+{
+	if (!PropToInspect) return;
+
+	bIsInspecting = true;
+	CurrentInspectedProp = PropToInspect;
+
+	// Salva lo stato di attachment originale prima di cambiare parent
+	CurrentInspectedProp->OriginalParentComponent = CurrentInspectedProp->GetRootComponent()->GetAttachParent();
+	CurrentInspectedProp->OriginalSocketName = CurrentInspectedProp->GetRootComponent()->GetAttachSocketName();
+
+	// Salva la posizione/rotazione (relativa se attaccato, world se libero)
+	CurrentInspectedProp->OriginalLocation = CurrentInspectedProp->GetRootComponent()->GetRelativeLocation();
+	CurrentInspectedProp->OriginalRotation = CurrentInspectedProp->GetRootComponent()->GetRelativeRotation();
+
+	// Prepara l'oggetto per l'ispezione
+	CurrentInspectedProp->SetIsInspecting(true);
+
+	// Attacca l'oggetto alla camera
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+	CurrentInspectedProp->AttachToComponent(GetFirstPersonCameraComponent(), AttachmentRules);
+
+	// Posizionalo davanti alla camera (usa RootComponent per relative transform su Actor)
+	if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
+	{
+		RootComp->SetRelativeLocation(FVector(InspectionOffset, 0.f, 0.f));
+		RootComp->SetRelativeRotation(FRotator::ZeroRotator);
+	}
+
+	// Mostra il mouse se necessario o blocca il movimento
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		PC->SetIgnoreMoveInput(true);
+	}
+}
+
+void AHorrorCharacter::ExitInspectionMode()
+{
+	if (!CurrentInspectedProp) return;
+
+	bIsInspecting = false;
+
+	// Se l'oggetto era originariamente attaccato a qualcosa, ripristina l'attachment
+	if (CurrentInspectedProp->OriginalParentComponent)
+	{
+		FAttachmentTransformRules ReattachRules(EAttachmentRule::KeepRelative, false);
+		CurrentInspectedProp->AttachToComponent(CurrentInspectedProp->OriginalParentComponent, ReattachRules, CurrentInspectedProp->OriginalSocketName);
+		
+		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
+		{
+			RootComp->SetRelativeLocation(CurrentInspectedProp->OriginalLocation);
+			RootComp->SetRelativeRotation(CurrentInspectedProp->OriginalRotation);
+		}
+	}
+	else
+	{
+		// Se era libero nel mondo
+		CurrentInspectedProp->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		CurrentInspectedProp->SetActorLocation(CurrentInspectedProp->OriginalLocation);
+		CurrentInspectedProp->SetActorRotation(CurrentInspectedProp->OriginalRotation);
+	}
+
+	CurrentInspectedProp->SetIsInspecting(false);
+	CurrentInspectedProp = nullptr;
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		PC->SetIgnoreMoveInput(false);
+	}
+}
+
+void AHorrorCharacter::DoAim(float Yaw, float Pitch)
+{
+	if (bIsInspecting && CurrentInspectedProp)
+	{
+		// Invece di ruotare la camera, ruotiamo l'oggetto
+		FRotator NewRotation = FRotator(Pitch, Yaw, 0.f);
+		CurrentInspectedProp->AddActorLocalRotation(NewRotation);
+	}
+	else
+	{
+		Super::DoAim(Yaw, Pitch);
+	}
+}
+
+void AHorrorCharacter::DoMove(float Right, float Forward)
+{
+	if (!bIsInspecting)
+	{
+		Super::DoMove(Right, Forward);
+	}
+}
+
 void AHorrorCharacter::DoStartInteract()
 {
+	if (bIsInspecting) return; // Non interagire con altro mentre ispezioni
+
 	if(InteractionComponent->HasInteractableInRange())
 	{
 		InteractionComponent->CurrentInteractable->OnInteract();
@@ -133,7 +235,7 @@ void AHorrorCharacter::DoStartInteract()
 
 void AHorrorCharacter::DoEndInteract()
 {
-
+	// Gestione tasto destro (potrebbe essere UseItem in questo progetto)
 }
 
 void AHorrorCharacter::SprintFixedTick()

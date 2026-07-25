@@ -127,4 +127,25 @@ protected:
 
 	/** Called while sprinting at a fixed time interval */
 	void SprintFixedTick();
+
+public:
+	// --- Inspection Mode ---
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
+	bool bIsInspecting = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
+	class AInspectionProp* CurrentInspectedProp;
+
+	UFUNCTION(BlueprintCallable, Category = "Inspection")
+	void EnterInspectionMode(class AInspectionProp* PropToInspect);
+
+	UFUNCTION(BlueprintCallable, Category = "Inspection")
+	void ExitInspectionMode();
+
+	virtual void DoAim(float Yaw, float Pitch) override;
+	virtual void DoMove(float Right, float Forward) override;
+
+	// Distanza dall'occhio della camera per l'oggetto in ispezione
+	UPROPERTY(EditAnywhere, Category = "Inspection")
+	float InspectionOffset = 50.0f;
 };
