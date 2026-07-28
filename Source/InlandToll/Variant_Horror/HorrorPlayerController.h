@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Blueprint/UserWidget.h"
 #include "HorrorPlayerController.generated.h"
 
 class UInputMappingContext;
 class UHorrorUI;
+class UDialogueBox;
 
 /**
  *  Player Controller for a first person horror game
@@ -28,6 +30,13 @@ protected:
 	/** Pointer to the UI widget */
 	UPROPERTY()
 	TObjectPtr<UHorrorUI> HorrorUI;
+
+	
+	/** Type of UI widget to spawn */
+	UPROPERTY(EditAnywhere, Category="Horror|UI")
+	TSubclassOf<UDialogueBox> DialogueBoxWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UDialogueBox> DialogueBoxWidget;
 
 public:
 

@@ -8,6 +8,7 @@
 #include "InlandTollCameraManager.h"
 #include "HorrorCharacter.h"
 #include "HorrorUI.h"
+#include "DialogueBox.h"
 #include "InlandToll.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
@@ -58,7 +59,20 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 				HorrorUI->AddToViewport(0);
 			}
 
-			HorrorUI->SetupCharacter(HorrorCharacter);
+			// create dialogue UI
+			if (!DialogueBoxWidget && DialogueBoxWidgetClass)
+			{
+				DialogueBoxWidget = CreateWidget<UDialogueBox>(this, DialogueBoxWidgetClass);
+				if (DialogueBoxWidget)
+				{
+					DialogueBoxWidget->AddToViewport(0);
+				}
+			}
+
+			if (HorrorUI)
+			{
+				HorrorUI->SetupCharacter(HorrorCharacter);
+			}
 		}
 	}
 	

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "InteractionPrompt.h"
 #include "InteractionPromptData.h"
+#include "ST_DialogueLine.h"
 #include "BaseInteractable.generated.h"
 
 class UWidgetComponent;
@@ -35,6 +36,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Prompt Data")
 	UWidgetComponent* InteractionWidgetComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	TArray<FST_DialogueLine> InteractionDialogueLines;
 
 protected:
 	// Called when the game starts or when spawned

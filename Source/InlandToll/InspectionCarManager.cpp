@@ -3,6 +3,7 @@
 
 #include "InspectionCarManager.h"
 #include "Components/SplineComponent.h"
+#include "DialogueManagerSubsystem.h"
 
 // Sets default values
 AInspectionCarManager::AInspectionCarManager()
@@ -53,6 +54,12 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 		{
 			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
 			CurrentInspectionCar->InitializeCarMovement(SplinePath);
+
+			// Trigger dialogue associated with this car/inspection
+			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+			{
+				DialogueSubsystem->PlayDialogueSequence(CurrentInspectionData->InspectionData.InspectionDialogueLines);
+			}
 		}
 		CurrentInspectionIndex++;
 	}

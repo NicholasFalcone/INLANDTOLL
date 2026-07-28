@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InspectionProp.h"
+#include "ST_DialogueLine.h"
 #include "InspectionData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -24,6 +25,9 @@ public:
 	TSubclassOf<AInspectionProp> InspectionPropClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
 	int32 CarWeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue Lines")
+	TArray<FST_DialogueLine> InspectionDialogueLines;
 
 public:
 	FInspectionData();

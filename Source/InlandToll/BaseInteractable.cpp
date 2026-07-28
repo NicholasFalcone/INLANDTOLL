@@ -3,7 +3,8 @@
 
 #include "BaseInteractable.h"
 #include "Components/WidgetComponent.h"
-#include "InteractionPrompt.h" // Replace with the actual header for UInteractionPrompt if different
+#include "InteractionPrompt.h"
+#include "DialogueManagerSubsystem.h"
 
 // Sets default values
 ABaseInteractable::ABaseInteractable()
@@ -82,5 +83,15 @@ void ABaseInteractable::OnInteract()
 	{
 		OnInteractDelegate.Broadcast();
 	}
+
+	// Play dialogue lines if any
+	if (InteractionDialogueLines.Num() > 0)
+	{
+		if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+		{
+			DialogueSubsystem->PlayDialogueSequence(InteractionDialogueLines);
+		}
+	}
+
 	CallOnInteraction();
 }
