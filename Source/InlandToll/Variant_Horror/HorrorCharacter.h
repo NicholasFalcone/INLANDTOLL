@@ -45,6 +45,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* InteractAction;
 
+	/** Interact input action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* CrouchAction;
+
 	/** If true, we're sprinting */
 	bool bSprinting = false;
 
@@ -124,6 +128,9 @@ protected:
 
 	void DoStartInteract();
 	void DoEndInteract();
+
+	void DoStartCrouch();
+	void DoEndCrouch();
 
 	/** Called while sprinting at a fixed time interval */
 	void SprintFixedTick();

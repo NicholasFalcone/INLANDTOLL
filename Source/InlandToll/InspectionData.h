@@ -22,6 +22,8 @@ public:
 	FString AttachedSocketName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
 	TSubclassOf<AInspectionProp> InspectionPropClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
+	int32 CarWeight;
 
 public:
 	FInspectionData();

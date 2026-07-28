@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "EPlayerState.h"
 #include "InlandTollCharacter.generated.h"
 
 class UInputComponent;
@@ -51,6 +52,9 @@ protected:
 	
 public:
 	AInlandTollCharacter();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="State")
+	EPlayerState CurrentPlayerState;
 
 protected:
 

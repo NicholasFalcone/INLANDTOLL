@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseInteractable.h"
+#include "InspectionPropDetails.h"
 #include "InspectionProp.generated.h"
 
 /**
@@ -13,9 +14,12 @@ UCLASS()
 class INLANDTOLL_API AInspectionProp : public ABaseInteractable
 {
 	GENERATED_BODY()
-	
+
 public:
 	virtual void OnInteract() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Prop Details")
+	FInspectionPropDetails PropDetails;
 
 	// Salva la posizione e rotazione originale prima dell'ispezione
 	FVector OriginalLocation;

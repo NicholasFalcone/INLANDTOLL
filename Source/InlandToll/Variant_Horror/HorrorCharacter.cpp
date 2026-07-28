@@ -69,6 +69,9 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			// Interact with item
 			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartInteract);
 			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndInteract);
+
+			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartCrouch);
+			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndCrouch);
 		}
 	}
 }
@@ -128,6 +131,16 @@ void AHorrorCharacter::DoStartToggleLight()
 void AHorrorCharacter::DoEndToggleLight()
 {
 	//..
+}
+
+void AHorrorCharacter::DoStartCrouch()
+{
+	//.. add crouch logic here
+	Crouch();
+}
+
+void AHorrorCharacter::DoEndCrouch()
+{
 }
 
 void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect)
