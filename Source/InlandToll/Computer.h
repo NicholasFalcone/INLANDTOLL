@@ -37,4 +37,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Computer")
 	void RefreshBannedListUI();
+
+	UFUNCTION(BlueprintCallable, Category = "Computer")
+	void BlackoutComputerScreen();
+
+	UFUNCTION(BlueprintCallable, Category = "Computer")
+	void PowerOnComputerScreen();
+
 };

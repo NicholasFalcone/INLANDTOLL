@@ -47,7 +47,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnCarReachedEnd OnCarReachedEnd;
 
-
 	float DistanceAlongSpline = 0.0f;
 
 protected:

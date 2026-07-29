@@ -18,4 +18,10 @@ class INLANDTOLL_API UComputerWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Computer")
 	void UpdateBannedList(const TArray<FInspectionPropDetails>& BannedProps);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Computer")
+	void BlackoutScreen();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Computer")
+	void PowerOnScreen();
 };

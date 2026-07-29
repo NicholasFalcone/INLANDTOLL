@@ -21,7 +21,7 @@ void AComputer::BeginPlay()
         if (ComputerScreenWidgetInstance)
         {
             UE_LOG(LogTemp, Warning, TEXT("ComputerScreenWidgetInstance found!"));
-            RefreshBannedListUI();
+            PowerOnComputerScreen(); // Power on the screen when the game starts
         }
         else{
             UE_LOG(LogTemp, Warning, TEXT("ComputerScreenWidgetInstance is not set!"));
@@ -32,9 +32,26 @@ void AComputer::BeginPlay()
     }
 }
 
+void AComputer::BlackoutComputerScreen()
+{
+    if (ComputerScreenWidgetInstance)
+    {
+        ComputerScreenWidgetInstance->BlackoutScreen();
+    }
+}
+
 void AComputer::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
+
+void AComputer::PowerOnComputerScreen()
+{
+    if (ComputerScreenWidgetInstance)
+    {
+        ComputerScreenWidgetInstance->PowerOnScreen();
+        RefreshBannedListUI();
+    }
 }
 
 void AComputer::RefreshBannedListUI()
