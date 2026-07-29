@@ -17,21 +17,33 @@ AInspectionCar::AInspectionCar()
 
 	DoorInteraction = CreateDefaultSubobject<UChildActorComponent>(TEXT("DoorInteraction"));
 	DoorInteraction->SetupAttachment(CarMesh, TEXT("Door_LeftSocket"));
-	DoorInteraction->SetChildActorClass(ABaseInteractable::StaticClass());
 
 	CargoInteraction = CreateDefaultSubobject<UChildActorComponent>(TEXT("CargoInteraction"));
 	CargoInteraction->SetupAttachment(CarMesh, TEXT("CargoSocket"));
-	CargoInteraction->SetChildActorClass(ABaseInteractable::StaticClass());
 
 	InspectionInteraction = CreateDefaultSubobject<UChildActorComponent>(TEXT("InspectionInteraction"));
 	InspectionInteraction->SetupAttachment(CarMesh, TEXT("InspectionSocket"));
-	InspectionInteraction->SetChildActorClass(ABaseInteractable::StaticClass());
 }
 
 // Called when the game starts or when spawned
 void AInspectionCar::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Initialize child actor classes if not already set (e.g. from Blueprint defaults)
+	// Setting these here is safer than in the constructor.
+	if (DoorInteraction && !DoorInteraction->GetChildActorClass())
+	{
+		DoorInteraction->SetChildActorClass(ABaseInteractable::StaticClass());
+	}
+	if (CargoInteraction && !CargoInteraction->GetChildActorClass())
+	{
+		CargoInteraction->SetChildActorClass(ABaseInteractable::StaticClass());
+	}
+	if (InspectionInteraction && !InspectionInteraction->GetChildActorClass())
+	{
+		InspectionInteraction->SetChildActorClass(ABaseInteractable::StaticClass());
+	}
 
 	if (DoorInteraction && DoorInteraction->GetChildActor())
 	{
@@ -180,4 +192,23 @@ void AInspectionCar::SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, F
 		InspectionInteraction->SetChildActorClass(PropClass);
 		InspectionInteraction->AttachToComponent(CarMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, *SocketName);
 	}
+}
+
+void AInspectionCar::InitializeCarData(USkeletalMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
+{
+	if (!CarMesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERRORE: CarMesh component è NULL su %s! Il Blueprint potrebbe essere corrotto."), *GetName());
+		return;
+	}
+
+	if (!Mesh)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ATTENZIONE: Mesh passata a InitializeCarData è NULL su %s"), *GetName());
+		return;
+	}
+
+	CarMesh->SetSkeletalMesh(Mesh);
+	SetInspectionProp(PropClass, SocketName);
+	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
 }

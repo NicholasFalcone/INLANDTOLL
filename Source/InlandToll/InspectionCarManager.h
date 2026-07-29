@@ -30,9 +30,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	USplineComponent* SplinePath;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	TSubclassOf<AInspectionCar> CarTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	AInspectionCar* CurrentInspectionCar;
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,6 +47,9 @@ public:
 	void SpawnNextInspectionCar();
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
 	void PassCurrentInspectionDataToCar();
+	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
+	void RejectCurrentInspectionCar();
+	
 protected:
 	UFUNCTION()
 	void HandleCarReachedEnd(AInspectionCar* Car);

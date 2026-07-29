@@ -4,6 +4,12 @@
 #include "InspectionData.h"
 
 FInspectionData::FInspectionData()
+	: InspectionName(TEXT(""))
+	, InspectionDescription(TEXT(""))
+	, InspectionID(0)
+	, AttachedSocketName(TEXT(""))
+	, InspectionPropClass(nullptr)
+	, CarWeight(0)
 {
 }
 

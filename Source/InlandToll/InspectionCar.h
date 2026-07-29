@@ -36,7 +36,7 @@ public:
 	UChildActorComponent* InspectionInteraction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float movementSpeed = 100.0f; // Adjust this value to control the speed of the car
+	float movementSpeed = 500.0f; // Adjust this value to control the speed of the car
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	class USplineComponent* TargetSpline;
@@ -46,6 +46,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnCarReachedEnd OnCarReachedEnd;
+
 
 	float DistanceAlongSpline = 0.0f;
 
@@ -81,14 +82,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void ResumeMovementToEnd();
 
-	void InitializeCarData(USkeletalMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
-	{
-		if (CarMesh && Mesh)
-		{
-			CarMesh->SetSkeletalMesh(Mesh);
-			SetInspectionProp(PropClass, SocketName);
-		}
-	}
+	UFUNCTION(BlueprintCallable, Category = "Car")
+	void InitializeCarData(USkeletalMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass);
 
 	void InitializeCarMovement(USplineComponent* InSpline)
 	{

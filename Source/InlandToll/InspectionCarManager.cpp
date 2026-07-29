@@ -48,7 +48,13 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 		FVector SpawnLocation = SplinePath->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
 		FRotator SpawnRotation = SplinePath->GetRotationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
 
-		CurrentInspectionCar = GetWorld()->SpawnActor<AInspectionCar>(AInspectionCar::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
+		if(!CarTemplate)
+		{
+			UE_LOG(LogTemp, Error, TEXT("CarTemplate is not set! Cannot spawn inspection car."));
+			return;
+		}
+
+		CurrentInspectionCar = GetWorld()->SpawnActor<AInspectionCar>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
 
 		if (CurrentInspectionCar)
 		{
@@ -62,6 +68,19 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 			}
 		}
 		CurrentInspectionIndex++;
+	}
+}
+
+void AInspectionCarManager::RejectCurrentInspectionCar()
+{
+	if (CurrentInspectionCar)
+	{
+		CurrentInspectionCar->Destroy();
+		CurrentInspectionCar = nullptr;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No current inspection car to reject."));
 	}
 }
 
