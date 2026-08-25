@@ -95,3 +95,10 @@ void ABaseInteractable::OnInteract()
 
 	CallOnInteraction();
 }
+
+void ABaseInteractable::OnEndInteract()
+{
+	// This function can be overridden in derived classes to handle end of interaction logic
+	CallOnEndInteraction();
+}
+

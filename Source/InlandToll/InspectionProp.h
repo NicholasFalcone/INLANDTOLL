@@ -17,6 +17,7 @@ class INLANDTOLL_API AInspectionProp : public ABaseInteractable
 
 public:
 	virtual void OnInteract() override;
+	virtual void OnEndInteract() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Prop Details")
 	FInspectionPropDetails PropDetails;

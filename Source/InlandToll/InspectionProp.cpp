@@ -32,3 +32,11 @@ void AInspectionProp::SetIsInspecting(bool bNewInspecting)
         }
     }
 }
+
+
+void AInspectionProp::OnEndInteract()
+{
+    Super::OnEndInteract();
+    
+    SetIsInspecting(false); // Ensure the prop is no longer in inspecting state when interaction ends
+}

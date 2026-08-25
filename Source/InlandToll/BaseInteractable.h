@@ -56,4 +56,8 @@ public:
 	virtual void OnInteract();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
 	void CallOnInteraction();
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnEndInteract();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
+	void CallOnEndInteraction();
 };

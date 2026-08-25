@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InspectionProp.h"
+#include "AnomalyCheckRow.h"
 #include "BaseAnomaly.generated.h"
 
 /**
@@ -20,7 +21,16 @@ public:
 	float MaxInspectionTime = -1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	float CurrentInspectionTime = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
+	TArray<FAnomalyCheckRow> AnomalyCheckRows;
+
+	bool bIsBeingInspected = false;
+
+	
+	virtual void Tick(float DeltaTime) override;
 
 	virtual void OnInteract() override;
+	virtual void OnEndInteract() override;
+
 
 };

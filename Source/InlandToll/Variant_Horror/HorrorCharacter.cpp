@@ -205,7 +205,8 @@ void AHorrorCharacter::ExitInspectionMode()
 		CurrentInspectedProp->SetActorRotation(CurrentInspectedProp->OriginalRotation);
 	}
 
-	CurrentInspectedProp->SetIsInspecting(false);
+	CurrentInspectedProp->OnEndInteract(); // Call the end interaction logic for the prop
+
 	CurrentInspectedProp = nullptr;
 
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
