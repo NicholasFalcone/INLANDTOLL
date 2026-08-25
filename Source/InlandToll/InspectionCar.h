@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/ChildActorComponent.h"
 #include "Components/SplineComponent.h"
 #include "InspectionProp.h"
-#include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
 #include "InspectionCar.generated.h"
 
@@ -24,7 +23,7 @@ public:
 	AInspectionCar();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
-	USkeletalMeshComponent* CarMesh;
+	UStaticMeshComponent* CarMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	UChildActorComponent* DoorInteraction;
@@ -82,7 +81,7 @@ public:
 	void ResumeMovementToEnd();
 
 	UFUNCTION(BlueprintCallable, Category = "Car")
-	void InitializeCarData(USkeletalMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass);
+	void InitializeCarData(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass);
 
 	void InitializeCarMovement(USplineComponent* InSpline)
 	{

@@ -42,7 +42,7 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 	if (CurrentInspectionIndex < InspectionDataArray.Num())
 	{
 		UInspectionCarDataAsset* CurrentInspectionData = InspectionDataArray[CurrentInspectionIndex];
-		USkeletalMesh* CurrentCarMesh = CarMeshes[FMath::RandRange(0, CarMeshes.Num() - 1)]; // Randomly select a car mesh from the array
+		UStaticMesh* CurrentCarMesh = CarMeshes[FMath::RandRange(0, CarMeshes.Num() - 1)]; // Randomly select a car mesh from the array
 		// Spawn the inspection car
 		FActorSpawnParameters SpawnParams;
 		FVector SpawnLocation = SplinePath->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);

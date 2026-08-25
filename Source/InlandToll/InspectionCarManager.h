@@ -8,7 +8,7 @@
 #include "InspectionData.h"
 #include "Components/SceneComponent.h"
 #include "Components/SplineComponent.h"
-#include "Engine/SkeletalMesh.h"
+#include "Engine/StaticMesh.h"
 #include "InspectionCarDataAsset.h"
 #include "InspectionCarManager.generated.h"
 
@@ -21,7 +21,7 @@ public:
 	// Sets default values for this actor's properties
 	AInspectionCarManager();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	TArray<USkeletalMesh*> CarMeshes;
+	TArray<UStaticMesh*> CarMeshes;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<UInspectionCarDataAsset*> InspectionDataArray;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")

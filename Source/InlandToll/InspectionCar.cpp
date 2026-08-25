@@ -12,7 +12,7 @@ AInspectionCar::AInspectionCar()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CarMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CarMesh"));
+	CarMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CarMesh"));
 	RootComponent = CarMesh;
 
 	DoorInteraction = CreateDefaultSubobject<UChildActorComponent>(TEXT("DoorInteraction"));
@@ -58,6 +58,9 @@ void AInspectionCar::BeginPlay()
 		if (ABaseInteractable* CargoActor = Cast<ABaseInteractable>(CargoInteraction->GetChildActor()))
 		{
 			CargoActor->OnInteractDelegate.AddDynamic(this, &AInspectionCar::HandleCargoInteracted);
+		}
+		else{
+			bCargoOpen = true; // Se non c'è un attore di carico, consideralo aperto
 		}
 	}
 
@@ -194,7 +197,7 @@ void AInspectionCar::SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, F
 	}
 }
 
-void AInspectionCar::InitializeCarData(USkeletalMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
+void AInspectionCar::InitializeCarData(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
 {
 	if (!CarMesh)
 	{
@@ -208,7 +211,7 @@ void AInspectionCar::InitializeCarData(USkeletalMesh* Mesh, FString SocketName, 
 		return;
 	}
 
-	CarMesh->SetSkeletalMesh(Mesh);
+	CarMesh->SetStaticMesh(Mesh);
 	SetInspectionProp(PropClass, SocketName);
 	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
 }
