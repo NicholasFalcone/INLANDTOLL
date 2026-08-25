@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "InspectionProp.h"
 #include "ST_DialogueLine.h"
+#include "AnomalyCheckRow.h"
 #include "InspectionData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -29,6 +30,9 @@ public:
 	FString CarLicensePlate;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue Lines")
 	TArray<FST_DialogueLine> InspectionDialogueLines;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
+	TArray<FAnomalyCheckRow> AnomalyCheckRows;
+
 
 public:
 	FInspectionData();

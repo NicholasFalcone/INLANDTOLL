@@ -2,6 +2,7 @@
 
 
 #include "InspectionCarManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "DialogueManagerSubsystem.h"
 
@@ -20,6 +21,29 @@ void AInspectionCarManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	TArray<ATablet*> FoundTablets;
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATablet::StaticClass(), FoundActors);
+
+	// 2. Svuota o inizializza il tuo array originale
+	FoundTablets.Empty();
+
+	// 3. Converti i risultati nel tipo ATablet*
+	for (AActor* Actor : FoundActors)
+	{
+		if (ATablet* Tablet = Cast<ATablet>(Actor))
+		{
+			FoundTablets.Add(Tablet);
+		}
+	}
+	if (FoundTablets.Num() > 0)
+	{
+		TabletInstance = FoundTablets[0]; // Prendi il primo tablet trovato
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Tablet instance found in the world."));
+	}
 }
 
 // Called every frame
@@ -68,6 +92,13 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 			}
 		}
 		CurrentInspectionIndex++;
+		if(!TabletInstance)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Tablet instance not found in the world. Cannot update anomaly."));
+			return;
+		}
+
+		TabletInstance->UpdateAnomaly(CurrentInspectionData->InspectionData);
 	}
 }
 

@@ -21,8 +21,6 @@ public:
 	float MaxInspectionTime = -1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	float CurrentInspectionTime = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
-	TArray<FAnomalyCheckRow> AnomalyCheckRows;
 
 	bool bIsBeingInspected = false;
 

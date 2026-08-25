@@ -9,6 +9,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/StaticMesh.h"
+#include "Tablet.h"
 #include "InspectionCarDataAsset.h"
 #include "InspectionCarManager.generated.h"
 
@@ -17,6 +18,9 @@ class INLANDTOLL_API AInspectionCarManager : public AActor
 {
 	GENERATED_BODY()
 	
+private:
+	ATablet* TabletInstance;
+
 public:	
 	// Sets default values for this actor's properties
 	AInspectionCarManager();
