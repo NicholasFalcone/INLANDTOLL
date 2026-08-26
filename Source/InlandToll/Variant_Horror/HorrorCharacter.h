@@ -176,5 +176,4 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
 	void CallOnTabletUnequipped();
-
 };

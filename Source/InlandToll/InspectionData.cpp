@@ -9,7 +9,6 @@ FInspectionData::FInspectionData()
 	, InspectionID(0)
 	, AttachedSocketName(TEXT(""))
 	, InspectionPropClass(nullptr)
-	, CarWeight(0)
 {
 }
 

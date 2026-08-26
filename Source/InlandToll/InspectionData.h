@@ -24,15 +24,12 @@ public:
 	FString AttachedSocketName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
 	TSubclassOf<AInspectionProp> InspectionPropClass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
-	int32 CarWeight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
-	FString CarLicensePlate;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue Lines")
 	TArray<FST_DialogueLine> InspectionDialogueLines;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	TArray<FAnomalyCheckRow> AnomalyCheckRows;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
+	bool bIsDangerous = false;
 
 public:
 	FInspectionData();

@@ -38,7 +38,11 @@ public:
 	TSubclassOf<AInspectionCar> CarTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	AInspectionCar* CurrentInspectionCar;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	int32 MaxErrorsAllowed = 3;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
+	int32 CurrentErrors = 0;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

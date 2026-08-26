@@ -30,7 +30,6 @@ void AInspectionCarManager::Tick(float DeltaTime)
 
 void AInspectionCarManager::SpawnNextInspectionCar()
 {
-
 	if(CurrentInspectionCar)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("An inspection car is already active. Cannot spawn a new one."));
@@ -120,9 +119,21 @@ void AInspectionCarManager::HandleCarReachedEnd(AInspectionCar* Car)
 		
 		if (Car == CurrentInspectionCar)
 		{
+			if (InspectionDataArray[CurrentInspectionIndex]->InspectionData.bIsDangerous)
+			{
+				if(CurrentErrors < MaxErrorsAllowed)
+				{
+					CurrentErrors++;
+					UE_LOG(LogTemp, Warning, TEXT("Dangerous car reached the end! Current errors: %d"), CurrentErrors);
+				}
+				else
+				{
+					// Handle game over or penalty logic here
+					UE_LOG(LogTemp, Warning, TEXT("Maximum errors reached! Triggering game over or penalty logic."));
+				}
+			}
 			CurrentInspectionCar = nullptr;
 		}
-
 		SpawnNextInspectionCar(); 
 	}
 }
