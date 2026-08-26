@@ -161,6 +161,10 @@ void AHorrorCharacter::DoEndCrouch()
 
 void AHorrorCharacter::DoStartUseTable()
 {
+	if(bIsInspecting)
+	{
+		return;
+	}
 	if (EquippedTablet)
 	{
 		if(!EquippedTablet->bIsEquipped)
@@ -183,6 +187,12 @@ void AHorrorCharacter::DoEndUseTable()
 void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect)
 {
 	if (!PropToInspect) return;
+
+	if(EquippedTablet && EquippedTablet->bIsEquipped)
+	{
+		EquippedTablet->OnUnequipped();
+		CallOnTabletUnequipped();
+	}
 
 	bIsInspecting = true;
 	CurrentInspectedProp = PropToInspect;
