@@ -42,6 +42,18 @@ void AHorrorCharacter::BeginPlay()
 
 	// start the sprint tick timer
 	GetWorld()->GetTimerManager().SetTimer(SprintTimer, this, &AHorrorCharacter::SprintFixedTick, SprintFixedTickTime, true);
+
+	EquippedTablet = GetWorld()->SpawnActor<ATablet>(TabletClass);
+	
+	// 6. Collega il tablet alla socket della mano del personaggio
+    if (EquippedTablet)
+    {
+        // Se usi la mesh del Character per l'attach:
+        FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+        EquippedTablet->AttachToComponent(GetFirstPersonMesh(), AttachRules, TEXT("HandGrip_R"));
+		EquippedTablet->OnUnequipped();
+        UE_LOG(LogTemp, Log, TEXT("Tablet spawnato ed equipaggiato con successo: %s"), *EquippedTablet->GetName());
+    }
 }
 
 void AHorrorCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
@@ -72,6 +84,10 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartCrouch);
 			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndCrouch);
+		
+			EnhancedInputComponent->BindAction(OpenTabletAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartUseTable);
+			EnhancedInputComponent->BindAction(OpenTabletAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndUseTable);
+
 		}
 	}
 }
@@ -117,7 +133,7 @@ void AHorrorCharacter::DoStartToggleLight()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("DoStartUseItem called"));
+	UE_LOG(LogTemp, Warning, TEXT("DoStartToggleLight called"));
 
 	if(SpotLight->bHiddenInGame)
 	{
@@ -141,6 +157,27 @@ void AHorrorCharacter::DoStartCrouch()
 
 void AHorrorCharacter::DoEndCrouch()
 {
+}
+
+void AHorrorCharacter::DoStartUseTable()
+{
+	if (EquippedTablet)
+	{
+		if(!EquippedTablet->bIsEquipped)
+		{			
+			EquippedTablet->OnEquipped();
+			CallOnTabletEquipped();
+		}
+		else{
+			EquippedTablet->OnUnequipped();
+			CallOnTabletUnequipped();
+		}
+	}
+}
+
+void AHorrorCharacter::DoEndUseTable()
+{
+	///..
 }
 
 void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect)

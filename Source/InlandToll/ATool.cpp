@@ -8,6 +8,9 @@ AATool::AATool()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	ToolMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	ToolMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RootComponent = ToolMesh;
 }
 
 // Called when the game starts or when spawned
@@ -26,12 +29,22 @@ void AATool::Tick(float DeltaTime)
 
 void AATool::OnEquipped()
 {
+	bIsEquipped = true;
 	// Implement logic for when the tool is equipped
+	if (ToolMesh)
+	{
+		ToolMesh->SetVisibility(true, true);
+	}
 }
 
 void AATool::OnUnequipped()
 {
+	bIsEquipped = false;
 	// Implement logic for when the tool is unequipped
+	if (ToolMesh)
+	{
+		ToolMesh->SetVisibility(false, true);
+	}
 }
 
 void AATool::OnUsed()

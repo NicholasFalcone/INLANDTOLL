@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tablet.h"
+#include "Variant_Horror/HorrorCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 ATablet::ATablet()
 {
@@ -25,4 +27,29 @@ void ATablet::UpdateAnomaly(const FInspectionData& currentInspectionData)
     {
         UE_LOG(LogTemp, Warning, TEXT("TabletWidgetComponent does not have a valid UTableUI instance."));
     }
+}
+
+
+void ATablet::OnEquipped()
+{
+    Super::OnEquipped();
+    // Logic for when the tablet is equipped
+    UE_LOG(LogTemp, Log, TEXT("Tablet equipped."));
+    // You might want to show the tablet UI or enable interaction here
+}
+
+void ATablet::OnUnequipped()
+{
+    Super::OnUnequipped();
+    // Logic for when the tablet is unequipped
+    UE_LOG(LogTemp, Log, TEXT("Tablet unequipped."));
+    // You might want to hide the tablet UI or disable interaction here
+}
+
+void ATablet::OnUsed()
+{
+    Super::OnUsed();
+    // Logic for when the tablet is used
+    UE_LOG(LogTemp, Log, TEXT("Tablet used."));
+    // You might want to trigger some action or interaction here
 }

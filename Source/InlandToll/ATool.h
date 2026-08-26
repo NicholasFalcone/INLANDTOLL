@@ -19,13 +19,19 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tool", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* ToolMesh;
+
 public:	
+
+	bool bIsEquipped;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void OnEquipped();
+	virtual void OnEquipped();
 	
-	void OnUnequipped();
+	virtual void OnUnequipped();
 
-	void OnUsed();
+	virtual void OnUsed();
 };

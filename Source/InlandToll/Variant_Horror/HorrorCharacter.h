@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "InlandTollCharacter.h"
 #include "BPC_Inventory.h"
+#include "Tablet.h"
 #include "InteractionComponent.h"
 #include "HorrorCharacter.generated.h"
 
@@ -48,6 +49,11 @@ protected:
 	/** Interact input action */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* CrouchAction;
+
+	
+	/** Interact input action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* OpenTabletAction;
 
 	/** If true, we're sprinting */
 	bool bSprinting = false;
@@ -132,8 +138,13 @@ protected:
 	void DoStartCrouch();
 	void DoEndCrouch();
 
+	void DoStartUseTable();
+	void DoEndUseTable();
+
 	/** Called while sprinting at a fixed time interval */
 	void SprintFixedTick();
+
+
 
 public:
 	// --- Inspection Mode ---
@@ -155,4 +166,14 @@ public:
 	// Distanza dall'occhio della camera per l'oggetto in ispezione
 	UPROPERTY(EditAnywhere, Category = "Inspection")
 	float InspectionOffset = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Inspection")
+	TSubclassOf<ATablet> TabletClass;
+	ATablet* EquippedTablet = nullptr;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
+	void CallOnTabletEquipped();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
+	void CallOnTabletUnequipped();
+
 };

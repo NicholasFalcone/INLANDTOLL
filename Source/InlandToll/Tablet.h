@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseAnomaly.h"
-#include "BaseInteractable.h"
+#include "ATool.h"
 #include "InspectionCarDataAsset.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
@@ -15,7 +15,7 @@
  * 
  */
 UCLASS()
-class INLANDTOLL_API ATablet : public ABaseInteractable
+class INLANDTOLL_API ATablet : public AATool
 {
 	GENERATED_BODY()
 	
@@ -27,4 +27,10 @@ public:
 	TSubclassOf<UTableUI> TabletWidgetClass;
 
 	void UpdateAnomaly(const FInspectionData& currentInspectionData);
+
+	virtual void OnEquipped() override;
+
+	virtual void OnUnequipped() override;
+
+	virtual void OnUsed() override;
 };
