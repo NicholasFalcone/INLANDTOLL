@@ -169,6 +169,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Inspection")
 	TSubclassOf<ATablet> TabletClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
 	ATablet* EquippedTablet = nullptr;
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
 	void CallOnTabletEquipped();
