@@ -8,7 +8,7 @@
 #include "HorrorPlayerController.generated.h"
 
 class UInputMappingContext;
-class UHorrorUI;
+class UUI_Master;
 class UDialogueBox;
 
 /**
@@ -25,12 +25,11 @@ protected:
 
 	/** Type of UI widget to spawn */
 	UPROPERTY(EditAnywhere, Category="Horror|UI")
-	TSubclassOf<UHorrorUI> HorrorUIClass;
+	TSubclassOf<UUI_Master> MainUIClass;
 
 	/** Pointer to the UI widget */
 	UPROPERTY()
-	TObjectPtr<UHorrorUI> HorrorUI;
-
+	TObjectPtr<UUI_Master> MainUI;
 	
 	/** Type of UI widget to spawn */
 	UPROPERTY(EditAnywhere, Category="Horror|UI")

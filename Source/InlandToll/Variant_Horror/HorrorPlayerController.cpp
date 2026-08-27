@@ -7,7 +7,7 @@
 #include "InputMappingContext.h"
 #include "InlandTollCameraManager.h"
 #include "HorrorCharacter.h"
-#include "HorrorUI.h"
+#include "UI_Master.h"
 #include "DialogueBox.h"
 #include "InlandToll.h"
 #include "Widgets/Input/SVirtualJoystick.h"
@@ -53,10 +53,10 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 		if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(aPawn))
 		{
 			// create the UI
-			if (!HorrorUI)
+			if (!MainUI)
 			{
-				HorrorUI = CreateWidget<UHorrorUI>(this, HorrorUIClass);
-				HorrorUI->AddToViewport(0);
+				MainUI = CreateWidget<UUI_Master>(this, MainUIClass);
+				MainUI->AddToViewport(0);
 			}
 
 			// create dialogue UI
@@ -69,9 +69,9 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 				}
 			}
 
-			if (HorrorUI)
+			if (MainUI)
 			{
-				HorrorUI->SetupCharacter(HorrorCharacter);
+				MainUI->SetupCharacter(HorrorCharacter);
 			}
 		}
 	}

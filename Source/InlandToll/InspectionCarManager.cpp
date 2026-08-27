@@ -125,6 +125,10 @@ void AInspectionCarManager::HandleCarReachedEnd(AInspectionCar* Car)
 				{
 					CurrentErrors++;
 					UE_LOG(LogTemp, Warning, TEXT("Dangerous car reached the end! Current errors: %d"), CurrentErrors);
+					if(OnErrorCountChanged.IsBound())
+					{
+						OnErrorCountChanged.Broadcast(CurrentErrors);
+					}
 				}
 				else
 				{

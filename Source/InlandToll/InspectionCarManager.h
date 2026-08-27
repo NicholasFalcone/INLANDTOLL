@@ -13,6 +13,8 @@
 #include "InspectionCarDataAsset.h"
 #include "InspectionCarManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErrorCount);
+
 UCLASS()
 class INLANDTOLL_API AInspectionCarManager : public AActor
 {
@@ -42,6 +44,9 @@ public:
 	int32 MaxErrorsAllowed = 3;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	int32 CurrentErrors = 0;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
+	FOnErrorCountChanged OnErrorCountChanged;
 
 protected:
 	// Called when the game starts or when spawned
