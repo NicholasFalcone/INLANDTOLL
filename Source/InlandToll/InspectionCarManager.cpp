@@ -36,7 +36,6 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 		return;
 	}
 
-	CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
 
 	if (CurrentInspectionIndex < InspectionDataArray.Num())
 	{
@@ -67,6 +66,8 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 			}
 		}
 		CurrentInspectionIndex++;
+		CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
+
 		if(!TabletInstance)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Tablet instance not found in the world. Cannot update anomaly."));
