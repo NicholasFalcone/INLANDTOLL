@@ -40,5 +40,4 @@ void ABaseAnomaly::OnEndInteract()
 {
     Super::OnEndInteract();
     bIsBeingInspected = false; // Reset the flag when interaction ends
-
 }

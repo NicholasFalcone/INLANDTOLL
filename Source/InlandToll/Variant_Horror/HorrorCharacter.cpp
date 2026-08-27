@@ -36,21 +36,6 @@ void AHorrorCharacter::BeginPlay()
 
 	// Initialize the walk speed
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-
-	// start the sprint tick timer
-	// GetWorld()->GetTimerManager().SetTimer(SprintTimer, this, &AHorrorCharacter::SprintFixedTick, SprintFixedTickTime, true);
-
-	EquippedTablet = GetWorld()->SpawnActor<ATablet>(TabletClass);
-	
-	// 6. Collega il tablet alla socket della mano del personaggio
-    if (EquippedTablet)
-    {
-        // Se usi la mesh del Character per l'attach:
-        FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
-        EquippedTablet->AttachToComponent(GetFirstPersonMesh(), AttachRules, TEXT("HandGrip_R"));
-		EquippedTablet->OnUnequipped();
-        UE_LOG(LogTemp, Log, TEXT("Tablet spawnato ed equipaggiato con successo: %s"), *EquippedTablet->GetName());
-    }
 }
 
 void AHorrorCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
@@ -76,10 +61,6 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartCrouch);
 			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndCrouch);
-		
-			EnhancedInputComponent->BindAction(OpenTabletAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartUseTable);
-			EnhancedInputComponent->BindAction(OpenTabletAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndUseTable);
-
 		}
 	}
 }
@@ -118,42 +99,14 @@ void AHorrorCharacter::DoEndCrouch()
 {
 }
 
-void AHorrorCharacter::DoStartUseTable()
+void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABaseInteractable* Interactable)
 {
-	if(bIsInspecting)
-	{
-		return;
-	}
-	if (EquippedTablet)
-	{
-		if(!EquippedTablet->bIsEquipped)
-		{			
-			EquippedTablet->OnEquipped();
-			CallOnTabletEquipped();
-		}
-		else{
-			EquippedTablet->OnUnequipped();
-			CallOnTabletUnequipped();
-		}
-	}
-}
-
-void AHorrorCharacter::DoEndUseTable()
-{
-	///..
-}
-
-void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect)
-{
-	if (!PropToInspect) return;
-
-	if(EquippedTablet && EquippedTablet->bIsEquipped)
-	{
-		EquippedTablet->OnUnequipped();
-		CallOnTabletUnequipped();
-	}
-
 	bIsInspecting = true;
+	if (!PropToInspect){
+		CurrentInteractable = Interactable;
+		return;
+	} 
+
 	CurrentInspectedProp = PropToInspect;
 
 	// Salva lo stato di attachment originale prima di cambiare parent
@@ -187,9 +140,17 @@ void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect)
 
 void AHorrorCharacter::ExitInspectionMode()
 {
-	if (!CurrentInspectedProp) return;
-
 	bIsInspecting = false;
+
+	if (!CurrentInspectedProp){
+		UE_LOG(LogTemp, Warning, TEXT("No inspected prop to exit from."));
+		if (CurrentInteractable)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("FALLBACK: Ending interaction with interactable."));
+			CurrentInteractable->OnEndInteract(); // Call the end interaction logic for the interactable
+		}
+		return;
+	}
 
 	// Se l'oggetto era originariamente attaccato a qualcosa, ripristina l'attachment
 	if (CurrentInspectedProp->OriginalParentComponent)

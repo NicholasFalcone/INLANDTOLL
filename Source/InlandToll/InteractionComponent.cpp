@@ -45,7 +45,6 @@ ABaseInteractable* UInteractionComponent::CheckForInteractables()
     // 3. Imposta i parametri di query (es. ignorare se stessi)
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(OwnerCharacter); // Ignora questo Actor
-    QueryParams.AddIgnoredActor(OwnerCharacter ? OwnerCharacter->EquippedTablet : nullptr); // Ignora il componente stesso
     QueryParams.bTraceComplex = false; // true se vuoi verificare contro la geometria complessa/mesh
 
     // 4. Esegui lo Sweep (Sphere Cast)

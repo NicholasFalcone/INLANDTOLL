@@ -10,8 +10,46 @@ ATablet::ATablet()
     TabletWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TabletWidgetComponent"));
     TabletWidgetComponent->SetWidgetClass(TabletWidgetClass);
     TabletWidgetComponent->SetupAttachment(RootComponent);
+
+    InteractionCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("InteractionCamera"));
+    InteractionCamera->SetupAttachment(RootComponent);
 }
 
+void ATablet::BeginPlay()
+{
+    Super::BeginPlay();
+
+    PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+}
+
+void ATablet::OnInteract()
+{
+    Super::OnInteract();
+    
+    if(!PlayerCharacter) return;
+
+    PlayerCharacter->EnterInspectionMode(nullptr, this); // Call the method to enter inspection mode
+    APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
+    if (PC)
+    {
+        PC->SetViewTargetWithBlend(this, 0.5f, EViewTargetBlendFunction::VTBlend_EaseInOut); // Blend to the tablet's camera
+    }
+}
+
+void ATablet::OnEndInteract()
+{
+    Super::OnEndInteract();
+
+    UE_LOG(LogTemp, Log, TEXT("Exiting inspection mode from tablet."));
+
+    if(!PlayerCharacter) return;
+
+    APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
+    if (PC)
+    {
+        PC->SetViewTargetWithBlend(PlayerCharacter, 0.5f, EViewTargetBlendFunction::VTBlend_EaseInOut); // Blend back to the player's camera
+    }
+}
 
 void ATablet::UpdateAnomaly(const FInspectionData& currentInspectionData)
 {
@@ -27,29 +65,4 @@ void ATablet::UpdateAnomaly(const FInspectionData& currentInspectionData)
     {
         UE_LOG(LogTemp, Warning, TEXT("TabletWidgetComponent does not have a valid UTableUI instance."));
     }
-}
-
-
-void ATablet::OnEquipped()
-{
-    Super::OnEquipped();
-    // Logic for when the tablet is equipped
-    UE_LOG(LogTemp, Log, TEXT("Tablet equipped."));
-    // You might want to show the tablet UI or enable interaction here
-}
-
-void ATablet::OnUnequipped()
-{
-    Super::OnUnequipped();
-    // Logic for when the tablet is unequipped
-    UE_LOG(LogTemp, Log, TEXT("Tablet unequipped."));
-    // You might want to hide the tablet UI or disable interaction here
-}
-
-void ATablet::OnUsed()
-{
-    Super::OnUsed();
-    // Logic for when the tablet is used
-    UE_LOG(LogTemp, Log, TEXT("Tablet used."));
-    // You might want to trigger some action or interaction here
 }

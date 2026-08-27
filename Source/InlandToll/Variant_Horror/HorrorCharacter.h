@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "InlandTollCharacter.h"
 #include "BPC_Inventory.h"
-#include "Tablet.h"
 #include "InteractionComponent.h"
 #include "HorrorCharacter.generated.h"
 
@@ -42,10 +41,6 @@ protected:
 	/** Interact input action */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* CrouchAction;
-	
-	/** Interact input action */
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* OpenTabletAction;
 
 	/** Default walk speed when not sprinting or recovering */
 	UPROPERTY(EditAnywhere, Category="Walk")
@@ -83,9 +78,6 @@ protected:
 	void DoStartCrouch();
 	void DoEndCrouch();
 
-	void DoStartUseTable();
-	void DoEndUseTable();
-
 public:
 	// --- Inspection Mode ---
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
@@ -94,8 +86,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
 	class AInspectionProp* CurrentInspectedProp;
 
+	class ABaseInteractable* CurrentInteractable;
+
 	UFUNCTION(BlueprintCallable, Category = "Inspection")
-	void EnterInspectionMode(class AInspectionProp* PropToInspect);
+	void EnterInspectionMode(class AInspectionProp* PropToInspect, class ABaseInteractable* Interactable = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Inspection")
 	void ExitInspectionMode();
@@ -106,16 +100,6 @@ public:
 	// Distanza dall'occhio della camera per l'oggetto in ispezione
 	UPROPERTY(EditAnywhere, Category = "Inspection")
 	float InspectionOffset = 50.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Inspection")
-	TSubclassOf<ATablet> TabletClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
-	ATablet* EquippedTablet = nullptr;
-	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
-	void CallOnTabletEquipped();
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
-	void CallOnTabletUnequipped();
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnPlayerDiedDelegate OnPlayerDied;

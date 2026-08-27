@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "BaseAnomaly.h"
-#include "ATool.h"
+#include "BaseInteractable.h"
 #include "InspectionCarDataAsset.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Camera/CameraComponent.h"
+#include "HorrorCharacter.h"
 #include "TableUI.h"
 #include "Tablet.generated.h"
 
@@ -15,10 +17,17 @@
  * 
  */
 UCLASS()
-class INLANDTOLL_API ATablet : public AATool
+class INLANDTOLL_API ATablet : public ABaseInteractable
 {
 	GENERATED_BODY()
 	
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* InteractionCamera;
+
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	ATablet();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
@@ -26,11 +35,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
 	TSubclassOf<UTableUI> TabletWidgetClass;
 
+	AHorrorCharacter* PlayerCharacter;
+
 	void UpdateAnomaly(const FInspectionData& currentInspectionData);
 
-	virtual void OnEquipped() override;
-
-	virtual void OnUnequipped() override;
-
-	virtual void OnUsed() override;
+	virtual void OnInteract() override;
+	virtual void OnEndInteract() override;
 };
