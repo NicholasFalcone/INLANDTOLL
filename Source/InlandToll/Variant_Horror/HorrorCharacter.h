@@ -117,7 +117,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
 	void CallOnTabletUnequipped();
 
-
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnPlayerDiedDelegate OnPlayerDied;
 };

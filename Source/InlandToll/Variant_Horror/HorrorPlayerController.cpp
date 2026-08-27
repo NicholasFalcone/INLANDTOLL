@@ -11,6 +11,8 @@
 #include "DialogueBox.h"
 #include "InlandToll.h"
 #include "Widgets/Input/SVirtualJoystick.h"
+#include "Kismet/GameplayStatics.h"
+#include "InspectionCarManager.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
@@ -38,7 +40,6 @@ void AHorrorPlayerController::BeginPlay()
 			UE_LOG(LogInlandToll, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
-
 	}
 }
 
@@ -72,6 +73,11 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 			if (MainUI)
 			{
 				MainUI->SetupCharacter(HorrorCharacter);
+
+				if (AInspectionCarManager* CarManager = Cast<AInspectionCarManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionCarManager::StaticClass())))
+				{
+					MainUI->SetupManager(CarManager);
+				}
 			}
 		}
 	}

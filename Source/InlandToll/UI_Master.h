@@ -20,7 +20,10 @@ public:
 	void SetupCharacter(AHorrorCharacter* HorrorCharacter);
 	void SetupManager(AInspectionCarManager* CarManager);
 
+	UFUNCTION()
 	void HandleErrorCountChanged(int32 NewErrorCount);
+
+	UFUNCTION()
 	void HandleGameOver();
 
 	/** Passes control to Blueprint to update the sprint meter status */
