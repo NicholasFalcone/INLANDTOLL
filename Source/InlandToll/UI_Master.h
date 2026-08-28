@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Variant_Horror/HorrorCharacter.h"
 #include "InspectionManager.h"
+#include "LoseReason.h"
 #include "UI_Master.generated.h"
 
 /**
@@ -24,6 +25,10 @@ public:
 	void HandleErrorCountChanged(int32 NewErrorCount);
 
 	UFUNCTION()
+	void HandleMaxErrorsReached();
+
+
+	UFUNCTION()
 	void HandleGameOver();
 
 	/** Passes control to Blueprint to update the sprint meter status */
@@ -31,5 +36,5 @@ public:
 	void BP_UserErrorCountChanged(int32 NewErrorCount);
 
 	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Game Over"))
-	void BP_OnGameOver();
+	void BP_OnGameOver(E_LOSE_REASON Reason);
 };

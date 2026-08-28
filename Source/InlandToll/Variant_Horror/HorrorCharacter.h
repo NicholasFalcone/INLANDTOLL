@@ -8,6 +8,7 @@
 #include "InteractionComponent.h"
 #include "HorrorCharacter.generated.h"
 
+
 class USpotLightComponent;
 class UInteractionComponent;
 class UInputAction;
@@ -115,4 +116,6 @@ public:
 
 	UFUNCTION()
 	void ShowPlayerMesh();
+
+	void Die();
 };

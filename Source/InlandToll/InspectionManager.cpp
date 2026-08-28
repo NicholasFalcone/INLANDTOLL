@@ -122,10 +122,9 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 		{
 			if (InspectionDataArray[CurrentInspectionIndex]->InspectionData.bIsDangerous)
 			{
+				CurrentErrors++;
 				if(CurrentErrors < MaxErrorsAllowed)
 				{
-					CurrentErrors++;
-					UE_LOG(LogTemp, Warning, TEXT("Dangerous car reached the end! Current errors: %d"), CurrentErrors);
 					if(OnErrorCountChanged.IsBound())
 					{
 						OnErrorCountChanged.Broadcast(CurrentErrors);
@@ -133,8 +132,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 				}
 				else
 				{
-					// Handle game over or penalty logic here
-					UE_LOG(LogTemp, Warning, TEXT("Maximum errors reached! Triggering game over or penalty logic."));
+					OnMaxErrorsReached.Broadcast();
 				}
 			}
 			CurrentInspectionCar = nullptr;

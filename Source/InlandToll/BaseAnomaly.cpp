@@ -2,6 +2,8 @@
 
 
 #include "BaseAnomaly.h"
+#include "HorrorCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void ABaseAnomaly::Tick(float DeltaTime)
@@ -18,7 +20,12 @@ void ABaseAnomaly::Tick(float DeltaTime)
         if (CurrentInspectionTime >= MaxInspectionTime)
         {
             if(GEngine)
-                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Max inspection time reached for anomaly!"));	
+                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Max inspection time reached for anomaly!"));
+                	
+            if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AHorrorCharacter::StaticClass())))
+            {
+                HorrorCharacter->Die();
+            }
         }
     }
 }

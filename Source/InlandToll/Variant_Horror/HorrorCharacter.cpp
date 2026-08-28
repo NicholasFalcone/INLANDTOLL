@@ -244,3 +244,13 @@ void AHorrorCharacter::ShowPlayerMesh()
 		MeshComp->SetVisibility(true, true); // Set bPropagateToChildren to true to hide all child components as well
 	}
 }
+
+void AHorrorCharacter::Die()
+{
+	// Disable movement
+	DisableMovement();
+
+	// Trigger the OnPlayerDied event
+	OnPlayerDied.Broadcast();
+}
+
