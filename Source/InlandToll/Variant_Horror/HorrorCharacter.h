@@ -103,4 +103,16 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnPlayerDiedDelegate OnPlayerDied;
+
+	UFUNCTION()
+	void DisableMovement();
+
+	UFUNCTION()
+	void EnableMovement();
+
+	UFUNCTION()
+	void HidePlayerMesh();
+
+	UFUNCTION()
+	void ShowPlayerMesh();
 };

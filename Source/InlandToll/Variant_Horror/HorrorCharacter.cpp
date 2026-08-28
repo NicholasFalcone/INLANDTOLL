@@ -218,3 +218,29 @@ void AHorrorCharacter::DoEndInteract()
 {
 	// Gestione tasto destro (potrebbe essere UseItem in questo progetto)
 }
+
+void AHorrorCharacter::DisableMovement()
+{
+	GetCharacterMovement()->DisableMovement();
+}
+
+void AHorrorCharacter::EnableMovement()
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void AHorrorCharacter::HidePlayerMesh()
+{
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		MeshComp->SetVisibility(false, true); // Set bPropagateToChildren to true to hide all child components as well
+	}
+}
+
+void AHorrorCharacter::ShowPlayerMesh()
+{
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		MeshComp->SetVisibility(true, true); // Set bPropagateToChildren to true to hide all child components as well
+	}
+}

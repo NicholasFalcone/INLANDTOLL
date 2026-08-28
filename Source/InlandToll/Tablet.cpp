@@ -29,10 +29,19 @@ void ATablet::OnInteract()
     if(!PlayerCharacter) return;
 
     PlayerCharacter->EnterInspectionMode(nullptr, this); // Call the method to enter inspection mode
+    PlayerCharacter->DisableMovement(); // Disable player movement
+    PlayerCharacter->HidePlayerMesh(); // Hide the player's mesh for better visibility of the tablet
     APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
     if (PC)
     {
         PC->SetViewTargetWithBlend(this, 0.5f, EViewTargetBlendFunction::VTBlend_EaseInOut); // Blend to the tablet's camera
+    
+        // 2. Imposta l'Input Mode focalizzando il Widget appena creato
+        FInputModeGameAndUI InputMode;
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        InputMode.SetWidgetToFocus(TabletWidgetComponent->GetWidget()->TakeWidget());
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = true;
     }
 }
 
@@ -44,10 +53,17 @@ void ATablet::OnEndInteract()
 
     if(!PlayerCharacter) return;
 
+    PlayerCharacter->EnableMovement(); // Re-enable player movement
+    PlayerCharacter->ShowPlayerMesh(); // Show the player's mesh again
     APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
     if (PC)
     {
         PC->SetViewTargetWithBlend(PlayerCharacter, 0.5f, EViewTargetBlendFunction::VTBlend_EaseInOut); // Blend back to the player's camera
+    
+        // Ripristina l'input solo per il gioco
+        FInputModeGameOnly InputMode;
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = false;
     }
 }
 
