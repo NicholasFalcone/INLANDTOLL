@@ -15,9 +15,9 @@ struct INLANDTOLL_API FInspectionData
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
-	FString InspectionName;
+	FText InspectionName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
-	FString InspectionDescription;
+	FText InspectionDescription;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
 	int32 InspectionID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")

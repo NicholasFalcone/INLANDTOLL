@@ -4,8 +4,8 @@
 #include "InspectionData.h"
 
 FInspectionData::FInspectionData()
-	: InspectionName(TEXT(""))
-	, InspectionDescription(TEXT(""))
+	: InspectionName(FText::GetEmpty())
+	, InspectionDescription(FText::GetEmpty())
 	, InspectionID(0)
 	, AttachedSocketName(TEXT(""))
 	, InspectionPropClass(nullptr)

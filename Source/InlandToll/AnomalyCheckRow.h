@@ -11,22 +11,22 @@ struct INLANDTOLL_API FAnomalyCheckRow
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Check Row")
-    FString rowSentence;
+    FText rowSentence;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Check Row")
-    FString Answer1;
+    FText Answer1;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Check Row")
-    FString Answer2;
+    FText Answer2;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Check Row")
-    FString Answer3;
+    FText Answer3;
 
     FAnomalyCheckRow()
-        : rowSentence(TEXT(""))
-        , Answer1(TEXT(""))
-        , Answer2(TEXT(""))
-        , Answer3(TEXT(""))
+        : rowSentence(FText::GetEmpty())
+        , Answer1(FText::GetEmpty())
+        , Answer2(FText::GetEmpty())
+        , Answer3(FText::GetEmpty())
     {}
 
 };
