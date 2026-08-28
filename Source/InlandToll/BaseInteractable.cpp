@@ -65,6 +65,20 @@ void ABaseInteractable::BeginPlay()
 void ABaseInteractable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(InteractionWidgetComp && InteractionWidgetComp->IsVisible())
+	{
+		// Mantieni il widget rivolto verso la camera del giocatore
+		APlayerController* PC = GetWorld()->GetFirstPlayerController();
+		if (PC && PC->PlayerCameraManager)
+		{
+			FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
+			FVector WidgetLocation = InteractionWidgetComp->GetComponentLocation();
+			FVector DirectionToCamera = (CameraLocation - WidgetLocation).GetSafeNormal();
+			FRotator NewRotation = DirectionToCamera.Rotation();
+			InteractionWidgetComp->SetWorldRotation(NewRotation);
+		}
+	}
 }
 
 void ABaseInteractable::OnHighlight()
