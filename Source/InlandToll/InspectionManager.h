@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InspectionCar.h"
+#include "InspectionPayload.h"
 #include "InspectionData.h"
 #include "Components/SceneComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Tablet.h"
 #include "InspectionCarDataAsset.h"
-#include "InspectionCarManager.generated.h"
+#include "InspectionManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErrorCount);
 
 UCLASS()
-class INLANDTOLL_API AInspectionCarManager : public AActor
+class INLANDTOLL_API AInspectionManager : public AActor
 {
 	GENERATED_BODY()
 	
@@ -25,7 +25,7 @@ private:
 
 public:	
 	// Sets default values for this actor's properties
-	AInspectionCarManager();
+	AInspectionManager();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<UStaticMesh*> CarMeshes;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
@@ -37,9 +37,9 @@ public:
 	USplineComponent* SplinePath;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	TSubclassOf<AInspectionCar> CarTemplate;
+	TSubclassOf<AInspectionPayload> CarTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
-	AInspectionCar* CurrentInspectionCar;
+	AInspectionPayload* CurrentInspectionCar;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	int32 MaxErrorsAllowed = 3;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
@@ -65,7 +65,7 @@ public:
 	
 protected:
 	UFUNCTION()
-	void HandleCarReachedEnd(AInspectionCar* Car);
+	void HandleCarReachedEnd(AInspectionPayload* Car);
 
 
 };

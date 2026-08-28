@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InspectionCarManager.h"
+#include "InspectionManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "DialogueManagerSubsystem.h"
 
 // Sets default values
-AInspectionCarManager::AInspectionCarManager()
+AInspectionManager::AInspectionManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -17,18 +17,18 @@ AInspectionCarManager::AInspectionCarManager()
 }
 
 // Called when the game starts or when spawned
-void AInspectionCarManager::BeginPlay()
+void AInspectionManager::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AInspectionCarManager::Tick(float DeltaTime)
+void AInspectionManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AInspectionCarManager::SpawnNextInspectionCar()
+void AInspectionManager::SpawnNextInspectionCar()
 {
 	if(CurrentInspectionCar)
 	{
@@ -52,7 +52,7 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 			return;
 		}
 
-		CurrentInspectionCar = GetWorld()->SpawnActor<AInspectionCar>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
+		CurrentInspectionCar = GetWorld()->SpawnActor<AInspectionPayload>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
 
 		if (CurrentInspectionCar)
 		{
@@ -84,7 +84,7 @@ void AInspectionCarManager::SpawnNextInspectionCar()
 	}
 }
 
-void AInspectionCarManager::RejectCurrentInspectionCar()
+void AInspectionManager::RejectCurrentInspectionCar()
 {
 	if (CurrentInspectionCar)
 	{
@@ -97,12 +97,12 @@ void AInspectionCarManager::RejectCurrentInspectionCar()
 	}
 }
 
-void AInspectionCarManager::PassCurrentInspectionDataToCar()
+void AInspectionManager::PassCurrentInspectionDataToCar()
 {
 	if (CurrentInspectionCar)
 	{
 		CurrentInspectionCar->ResumeMovementToEnd();		
-		CurrentInspectionCar->OnCarReachedEnd.AddDynamic(this, &AInspectionCarManager::HandleCarReachedEnd);
+		CurrentInspectionCar->OnCarReachedEnd.AddDynamic(this, &AInspectionManager::HandleCarReachedEnd);
 	}
 	else
 	{
@@ -110,7 +110,7 @@ void AInspectionCarManager::PassCurrentInspectionDataToCar()
 	}
 }
 
-void AInspectionCarManager::HandleCarReachedEnd(AInspectionCar* Car)
+void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 {
 	if (Car && IsValid(Car))
 	{

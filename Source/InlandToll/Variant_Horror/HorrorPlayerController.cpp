@@ -12,7 +12,7 @@
 #include "InlandToll.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 #include "Kismet/GameplayStatics.h"
-#include "InspectionCarManager.h"
+#include "InspectionManager.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
@@ -74,7 +74,7 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 			{
 				MainUI->SetupCharacter(HorrorCharacter);
 
-				if (AInspectionCarManager* CarManager = Cast<AInspectionCarManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionCarManager::StaticClass())))
+				if (AInspectionManager* CarManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass())))
 				{
 					MainUI->SetupManager(CarManager);
 				}

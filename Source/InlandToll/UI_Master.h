@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Variant_Horror/HorrorCharacter.h"
-#include "InspectionCarManager.h"
+#include "InspectionManager.h"
 #include "UI_Master.generated.h"
 
 /**
@@ -18,7 +18,7 @@ class INLANDTOLL_API UUI_Master : public UUserWidget
 	
 public:
 	void SetupCharacter(AHorrorCharacter* HorrorCharacter);
-	void SetupManager(AInspectionCarManager* CarManager);
+	void SetupManager(AInspectionManager* CarManager);
 
 	UFUNCTION()
 	void HandleErrorCountChanged(int32 NewErrorCount);

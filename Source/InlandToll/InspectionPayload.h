@@ -9,30 +9,21 @@
 #include "Components/SplineComponent.h"
 #include "InspectionProp.h"
 #include "Engine/StaticMesh.h"
-#include "InspectionCar.generated.h"
+#include "InspectionPayload.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCarReachedEnd, AInspectionCar*, ReachedCar);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCarReachedEnd, AInspectionPayload*, ReachedCar);
 
-UCLASS()
-class INLANDTOLL_API AInspectionCar : public APawn
+UCLASS(Blueprintable)
+class INLANDTOLL_API AInspectionPayload : public APawn
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AInspectionCar();
+	AInspectionPayload();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 	UStaticMeshComponent* CarMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	UChildActorComponent* DoorInteraction;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	UChildActorComponent* CargoInteraction;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	UChildActorComponent* InspectionInteraction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float movementSpeed = 500.0f; // Adjust this value to control the speed of the car
@@ -52,20 +43,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void HandleDoorInteracted();
-
-	UFUNCTION()
-	void HandleCargoInteracted();
-
-	UFUNCTION()
-	void HandleInspectionInteracted();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
-	bool bDoorOpen = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
-	bool bCargoOpen = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+	USceneComponent* InteractablePosition;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
 	bool bIsMoving = false;

@@ -14,7 +14,7 @@ void UUI_Master::HandleGameOver()
     BP_OnGameOver();
 }
 
-void UUI_Master::SetupManager(AInspectionCarManager* CarManager)
+void UUI_Master::SetupManager(AInspectionManager* CarManager)
 {
     // Implement logic to set up the inspection car manager in the UI
     CarManager->OnErrorCountChanged.AddDynamic(this, &UUI_Master::HandleErrorCountChanged);
