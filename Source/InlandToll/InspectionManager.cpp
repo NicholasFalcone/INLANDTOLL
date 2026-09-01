@@ -88,6 +88,17 @@ void AInspectionManager::RejectCurrentInspectionCar()
 {
 	if (CurrentInspectionCar)
 	{
+		// 1. Gather all attached child actors
+		TArray<AActor*> AttachedActors;
+		CurrentInspectionCar->GetAttachedActors(AttachedActors);
+		// 2. Loop through and destroy each child
+		for (AActor* ChildActor : AttachedActors)
+		{
+			if (IsValid(ChildActor))
+			{
+				ChildActor->Destroy();
+			}
+		}
 		CurrentInspectionCar->Destroy();
 		CurrentInspectionCar = nullptr;
 	}
