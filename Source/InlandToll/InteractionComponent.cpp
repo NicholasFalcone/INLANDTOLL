@@ -3,6 +3,8 @@
 
 #include "InteractionComponent.h"
 #include "HorrorCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values for this component's properties
 UInteractionComponent::UInteractionComponent()
@@ -31,49 +33,50 @@ void UInteractionComponent::BeginPlay()
 ABaseInteractable* UInteractionComponent::CheckForInteractables()
 {
     UWorld* World = GetWorld();
-    if (!World) return nullptr;
+    if (!World || !OwnerCharacter) return nullptr;
 
-    // 1. Definisci punto di partenza, arrivo e raggio della sfera (in cm)
-    FVector Start = OwnerCharacter ? OwnerCharacter->GetActorLocation() : FVector::ZeroVector;
-    FVector End = Start + (OwnerCharacter ? OwnerCharacter->GetActorForwardVector() * InteractionDistance : FVector::ForwardVector * InteractionDistance); // 5 metri in avanti
-    float Radius = 50.0f;
+    UCameraComponent* Camera = OwnerCharacter->GetFirstPersonCameraComponent();
+    if (!Camera) return nullptr;
 
-    // 2. Prepara il risultato dell'impatto e la forma sferica
+    // 1. Definisci punto di partenza e arrivo basati sulla Camera
+    FVector Start = Camera->GetComponentLocation();
+    FVector End = Start + (Camera->GetForwardVector() * InteractionDistance);
+
+    // 2. Prepara il risultato dell'impatto
     FHitResult HitResult;
-    FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
 
     // 3. Imposta i parametri di query (es. ignorare se stessi)
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(OwnerCharacter); // Ignora questo Actor
-    QueryParams.bTraceComplex = false; // true se vuoi verificare contro la geometria complessa/mesh
+    QueryParams.bTraceComplex = false; // per performance, usiamo collisioni semplici
 
-    // 4. Esegui lo Sweep (Sphere Cast)
-    bool bHit = World->SweepSingleByChannel(
+    // 4. Esegui il Raycast (Line Trace)
+    bool bHit = World->LineTraceSingleByChannel(
         HitResult,
         Start,
         End,
-        FQuat::Identity, // Nessuna rotazione (la sfera � simmetrica)
-        ECC_Visibility,  // Canale di collisione (es. ECC_Camera, ECC_Pawn, ECC_WorldDynamic)
-        SphereShape,
+        ECC_Visibility,  // Canale di collisione (es. ECC_Visibility)
         QueryParams
     );
 
-    // 5. Debug visivo nell'editor / gioco
-    FColor DebugColor = bHit ? FColor::Red : FColor::Green;
+    // 5. Debug visivo opzionale nell'editor per verificare la direzione di interazione
+    // DrawDebugLine(World, Start, End, bHit ? FColor::Green : FColor::Red, false, 0.1f, 0, 2.0f);
 
     if (bHit)
     {
         AActor* HitActor = HitResult.GetActor();
-		ABaseInteractable* Interactable = Cast<ABaseInteractable>(HitActor);
+        ABaseInteractable* Interactable = Cast<ABaseInteractable>(HitActor);
         if (Interactable)
         {
             return Interactable;
         }
-
     }
 
 	return nullptr;
 }
+
+
+
 
 
 

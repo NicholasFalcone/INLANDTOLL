@@ -97,13 +97,7 @@ void AATool::OnDropped(ACharacter* InDroppedByCharacter)
 	bIsEquipped = false;
 	SetOwner(nullptr);
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	if (MeshComp)
-	{
-		MeshComp->SetVisibility(true, true);
-		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		MeshComp->SetSimulatePhysics(true);
-	}
+	SetActorHiddenInGame(false);
 
 	if (InDroppedByCharacter)
 	{
@@ -111,6 +105,13 @@ void AATool::OnDropped(ACharacter* InDroppedByCharacter)
 		DropLocation.Z += 10.0f; // Un po' sollevato da terra
 		
 		SetActorLocationAndRotation(DropLocation, InDroppedByCharacter->GetActorRotation());
+	}
+
+	if (MeshComp)
+	{
+		MeshComp->SetVisibility(true, true);
+		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		MeshComp->SetSimulatePhysics(true);
 	}
 }
 

@@ -9,7 +9,6 @@
 #include "HorrorCharacter.generated.h"
 
 
-class USpotLightComponent;
 class UInteractionComponent;
 class UInputAction;
 
@@ -22,10 +21,6 @@ UCLASS(abstract)
 class INLANDTOLL_API AHorrorCharacter : public AInlandTollCharacter
 {
 	GENERATED_BODY()
-
-	/** Player light source */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
-	USpotLightComponent* SpotLight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;

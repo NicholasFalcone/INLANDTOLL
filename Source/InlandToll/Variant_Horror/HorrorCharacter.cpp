@@ -16,17 +16,6 @@
 
 AHorrorCharacter::AHorrorCharacter()
 {
-	// create the spotlight
-	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
-	SpotLight->SetupAttachment(GetFirstPersonCameraComponent());
-
-	SpotLight->SetRelativeLocationAndRotation(FVector(30.0f, 17.5f, -5.0f), FRotator(-18.6f, -1.3f, 5.26f));
-	SpotLight->Intensity = 0.5;
-	SpotLight->SetIntensityUnits(ELightUnits::Lumens);
-	SpotLight->AttenuationRadius = 1050.0f;
-	SpotLight->InnerConeAngle = 18.7f;
-	SpotLight->OuterConeAngle = 45.24f;
-
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->Init(this);
 
@@ -76,12 +65,6 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AHorrorCharacter::DoStartUsingTool()
 {
-	if (bIsInspecting)
-	{
-		ExitInspectionMode();
-		return;
-	}
-
 	UE_LOG(LogTemp, Warning, TEXT("DoStartUsingTool called"));
 
 	if (InventoryComponent && InventoryComponent->EquippedTool)
@@ -90,10 +73,7 @@ void AHorrorCharacter::DoStartUsingTool()
 	}
 	else
 	{
-		if (SpotLight)
-		{
-			SpotLight->SetHiddenInGame(!SpotLight->bHiddenInGame);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("No tool equipped to use."));
 	}
 }
 
@@ -286,6 +266,13 @@ void AHorrorCharacter::EquipToolFromGround(AATool* NewTool)
 
 void AHorrorCharacter::DoDropTool()
 {
+	/// Catch the case where the player is inspecting an object and wants to drop the tool
+	if (bIsInspecting)
+	{
+		ExitInspectionMode();
+		return;
+	}
+
 	if (!InventoryComponent) return;
 
 	AATool* ToolToDrop = InventoryComponent->EquippedTool;
