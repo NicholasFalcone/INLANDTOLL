@@ -2,6 +2,7 @@
 
 
 #include "BPC_Inventory.h"
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
 UBPC_Inventory::UBPC_Inventory()
@@ -41,6 +42,7 @@ void UBPC_Inventory::EquipTool(AATool* Tool)
 	EquippedTool = Tool;
 	if (EquippedTool)
 	{
-		EquippedTool->OnEquipped();
+		ACharacter* CharacterOwner = Cast<ACharacter>(GetOwner());
+		EquippedTool->OnEquipped(CharacterOwner);
 	}
 }

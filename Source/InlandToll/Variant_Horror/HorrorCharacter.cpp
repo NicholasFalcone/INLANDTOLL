@@ -11,6 +11,7 @@
 #include "InteractionComponent.h"
 #include "InputAction.h"
 #include "HorrorCharacter.h"
+#include "ATool.h"
 #include "InspectionProp.h"
 
 AHorrorCharacter::AHorrorCharacter()
@@ -28,6 +29,8 @@ AHorrorCharacter::AHorrorCharacter()
 
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->Init(this);
+
+	InventoryComponent = CreateDefaultSubobject<UBPC_Inventory>(TEXT("InventoryComponent"));
 }
 
 void AHorrorCharacter::BeginPlay()
@@ -53,19 +56,25 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 		{
 			// Using item
-			EnhancedInputComponent->BindAction(UseItem, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartToggleLight);
-			EnhancedInputComponent->BindAction(UseItem, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndToggleLight);
+			EnhancedInputComponent->BindAction(UseItem, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartUsingTool);
+			EnhancedInputComponent->BindAction(UseItem, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndUsingTool);
 			// Interact with item
 			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartInteract);
 			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndInteract);
 
 			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartCrouch);
 			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndCrouch);
+
+			// Drop Tool (Usually bound to Q key)
+			if (DropAction)
+			{
+				EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoDropTool);
+			}
 		}
 	}
 }
 
-void AHorrorCharacter::DoStartToggleLight()
+void AHorrorCharacter::DoStartUsingTool()
 {
 	if (bIsInspecting)
 	{
@@ -73,18 +82,22 @@ void AHorrorCharacter::DoStartToggleLight()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("DoStartToggleLight called"));
+	UE_LOG(LogTemp, Warning, TEXT("DoStartUsingTool called"));
 
-	if(SpotLight->bHiddenInGame)
+	if (InventoryComponent && InventoryComponent->EquippedTool)
 	{
-		SpotLight->SetHiddenInGame(false);
+		InventoryComponent->EquippedTool->OnUsed();
 	}
-	else{
-		SpotLight->SetHiddenInGame(true);
+	else
+	{
+		if (SpotLight)
+		{
+			SpotLight->SetHiddenInGame(!SpotLight->bHiddenInGame);
+		}
 	}
 }
 
-void AHorrorCharacter::DoEndToggleLight()
+void AHorrorCharacter::DoEndUsingTool()
 {
 	//..
 }
@@ -252,5 +265,35 @@ void AHorrorCharacter::Die()
 
 	// Trigger the OnPlayerDied event
 	OnPlayerDied.Broadcast();
+}
+
+void AHorrorCharacter::EquipToolFromGround(AATool* NewTool)
+{
+	if (!NewTool) return;
+
+	// Se abbiamo già un oggetto in mano, lo lasciamo cadere prima di raccogliere il nuovo
+	if (InventoryComponent && InventoryComponent->EquippedTool)
+	{
+		DoDropTool();
+	}
+
+	if (InventoryComponent)
+	{
+		InventoryComponent->EquipTool(NewTool);
+		UE_LOG(LogTemp, Warning, TEXT("Equipped Tool: %s"), *NewTool->GetName());
+	}
+}
+
+void AHorrorCharacter::DoDropTool()
+{
+	if (!InventoryComponent) return;
+
+	AATool* ToolToDrop = InventoryComponent->EquippedTool;
+	if (ToolToDrop)
+	{
+		InventoryComponent->EquipTool(nullptr);
+		ToolToDrop->OnDropped(this);
+		UE_LOG(LogTemp, Warning, TEXT("Dropped Tool: %s"), *ToolToDrop->GetName());
+	}
 }
 

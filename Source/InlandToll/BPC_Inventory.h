@@ -17,8 +17,10 @@ public:
 	// Sets default values for this component's properties
 	UBPC_Inventory();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	AATool* EquippedTool;
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void EquipTool(AATool* Tool);
 
 protected:

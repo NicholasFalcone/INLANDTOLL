@@ -47,7 +47,19 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Walk")
 	float WalkSpeed = 250.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UBPC_Inventory* InventoryComponent;
+
+	/** Drop input action (usually bound to Q) */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* DropAction;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Tools")
+	void EquipToolFromGround(class AATool* NewTool);
+
+	UFUNCTION(BlueprintCallable, Category = "Tools")
+	void DoDropTool();
 
 protected:
 
@@ -67,11 +79,11 @@ protected:
 
 	/** Starts sprinting behavior */
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	void DoStartToggleLight();
+	void DoStartUsingTool();
 
 	/** Stops sprinting behavior */
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	void DoEndToggleLight();
+	void DoEndUsingTool();
 
 	void DoStartInteract();
 	void DoEndInteract();

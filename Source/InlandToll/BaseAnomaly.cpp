@@ -48,3 +48,15 @@ void ABaseAnomaly::OnEndInteract()
     Super::OnEndInteract();
     bIsBeingInspected = false; // Reset the flag when interaction ends
 }
+
+void ABaseAnomaly::OnInspectionProgress(float DeltaTime)
+{
+    // Log the inspection progress for debugging
+    UE_LOG(LogTemp, Warning, TEXT("Inspection Progress: %f"), DeltaTime);
+}
+
+void ABaseAnomaly::OnRotate(float delta)
+{
+    // Log the rotation delta for debugging
+    UE_LOG(LogTemp, Warning, TEXT("Rotation Delta: %f"), delta);
+}

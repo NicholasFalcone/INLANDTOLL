@@ -24,11 +24,11 @@ public:
 
 	bool bIsBeingInspected = false;
 
-	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void OnInteract() override;
 	virtual void OnEndInteract() override;
-
+	virtual void OnInspectionProgress(float DeltaTime);
+	virtual void OnRotate(float delta);
 
 };
