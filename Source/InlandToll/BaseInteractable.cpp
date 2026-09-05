@@ -83,11 +83,13 @@ void ABaseInteractable::Tick(float DeltaTime)
 
 void ABaseInteractable::OnHighlight()
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnHighlight called for %s"), *GetName());
 	InteractionWidgetComp->SetVisibility(true);
 }
 
 void ABaseInteractable::OnUnhighlight()
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnUnhighlight called for %s"), *GetName());
 	InteractionWidgetComp->SetVisibility(false);
 }
 
