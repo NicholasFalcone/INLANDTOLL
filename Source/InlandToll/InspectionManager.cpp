@@ -5,6 +5,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "DialogueManagerSubsystem.h"
+#include "Incenerator.h"
+#include "InspectionPayload.h"
 
 // Sets default values
 AInspectionManager::AInspectionManager()
@@ -88,19 +90,25 @@ void AInspectionManager::RejectCurrentInspectionCar()
 {
 	if (CurrentInspectionCar)
 	{
-		// 1. Gather all attached child actors
-		TArray<AActor*> AttachedActors;
-		CurrentInspectionCar->GetAttachedActors(AttachedActors);
-		// 2. Loop through and destroy each child
-		for (AActor* ChildActor : AttachedActors)
+		if (AIncenerator* Incenerator = Cast<AIncenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), AIncenerator::StaticClass())))
 		{
-			if (IsValid(ChildActor))
-			{
-				ChildActor->Destroy();
-			}
+			Incenerator->StartInceneratorSequence();
 		}
-		CurrentInspectionCar->Destroy();
-		CurrentInspectionCar = nullptr;
+		else
+		{
+			// Fallback if no Incenerator in level
+			TArray<AActor*> AttachedActors;
+			CurrentInspectionCar->GetAttachedActors(AttachedActors);
+			for (AActor* ChildActor : AttachedActors)
+			{
+				if (IsValid(ChildActor))
+				{
+					ChildActor->Destroy();
+				}
+			}
+			CurrentInspectionCar->Destroy();
+			CurrentInspectionCar = nullptr;
+		}
 	}
 	else
 	{
@@ -131,7 +139,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 		
 		if (Car == CurrentInspectionCar)
 		{
-			if (InspectionDataArray[CurrentInspectionIndex]->InspectionData.bIsDangerous)
+			if (!Car->bIsRejected && InspectionDataArray[CurrentInspectionIndex]->InspectionData.bIsDangerous)
 			{
 				CurrentErrors++;
 				if(CurrentErrors < MaxErrorsAllowed)

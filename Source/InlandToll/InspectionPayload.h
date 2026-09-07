@@ -52,6 +52,8 @@ protected:
 	bool bHasReachedEnd = false;
 
 public:	
+	UPROPERTY(BlueprintReadWrite, Category = "State")
+	bool bIsRejected = false;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void MoveCar(float DeltaTime);

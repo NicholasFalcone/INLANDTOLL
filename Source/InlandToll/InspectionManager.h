@@ -66,10 +66,11 @@ public:
 	void PassCurrentInspectionDataToCar();
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
 	void RejectCurrentInspectionCar();
-	
-protected:
+
 	UFUNCTION()
 	void HandleCarReachedEnd(AInspectionPayload* Car);
+	
+protected:
 
 
 };
