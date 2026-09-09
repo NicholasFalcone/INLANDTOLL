@@ -124,5 +124,8 @@ public:
 	UFUNCTION()
 	void ShowPlayerMesh();
 
+	UFUNCTION()
+	AATool* GetEquippedTool();
+
 	void Die();
 };

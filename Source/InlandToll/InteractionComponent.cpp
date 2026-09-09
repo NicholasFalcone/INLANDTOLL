@@ -45,9 +45,12 @@ ABaseInteractable* UInteractionComponent::CheckForInteractables()
     // 2. Prepara il risultato dell'impatto
     FHitResult HitResult;
 
+	AATool* Tool = OwnerCharacter->GetEquippedTool();
+
     // 3. Imposta i parametri di query (es. ignorare se stessi)
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(OwnerCharacter); // Ignora questo Actor
+	QueryParams.AddIgnoredActor(Tool); // Ignora lo strumento equipaggiato
     QueryParams.bTraceComplex = false; // per performance, usiamo collisioni semplici
 
     // 4. Esegui il Raycast (Line Trace)

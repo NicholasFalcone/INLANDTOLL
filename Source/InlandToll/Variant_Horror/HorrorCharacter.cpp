@@ -238,6 +238,11 @@ void AHorrorCharacter::ShowPlayerMesh()
 	}
 }
 
+AATool* AHorrorCharacter::GetEquippedTool()
+{
+	return InventoryComponent ? InventoryComponent->EquippedTool : nullptr;
+}
+
 void AHorrorCharacter::Die()
 {
 	// Disable movement
