@@ -14,8 +14,17 @@ class INLANDTOLL_API AHorrorGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+private:
+	const FString DebugPlayerStartTag = "DebugPlayerStart";
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Horror|GameMode")
+	bool bDebugging = true;
+
 public:
 
 	/** Constructor */
 	AHorrorGameMode();
+
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 };
