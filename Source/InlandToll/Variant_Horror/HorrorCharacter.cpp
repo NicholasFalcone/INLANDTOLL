@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
 #include "InteractionComponent.h"
 #include "InputAction.h"
 #include "HorrorCharacter.h"
@@ -58,6 +59,12 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			if (DropAction)
 			{
 				EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoDropTool);
+			}
+
+			// Zoom Input (Mouse Scroll Wheel during inspection)
+			if (ZoomAction)
+			{
+				EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AHorrorCharacter::DoZoom);
 			}
 		}
 	}
@@ -113,6 +120,11 @@ void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABase
 	// Prepara l'oggetto per l'ispezione
 	CurrentInspectedProp->SetIsInspecting(true);
 
+	// Inizializza zoom e rotazione di ispezione
+	CurrentInspectionOffset = CurrentInspectedProp->DefaultInspectionOffset;
+	TargetInspectionYaw = 0.0f;
+	TargetInspectionPitch = 0.0f;
+
 	// Attacca l'oggetto alla camera
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 	CurrentInspectedProp->AttachToComponent(GetFirstPersonCameraComponent(), AttachmentRules);
@@ -120,7 +132,7 @@ void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABase
 	// Posizionalo davanti alla camera (usa RootComponent per relative transform su Actor)
 	if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
 	{
-		RootComp->SetRelativeLocation(FVector(InspectionOffset, 0.f, 0.f));
+		RootComp->SetRelativeLocation(FVector(CurrentInspectionOffset, 0.f, 0.f));
 		RootComp->SetRelativeRotation(FRotator::ZeroRotator);
 	}
 
@@ -175,13 +187,44 @@ void AHorrorCharacter::ExitInspectionMode()
 	}
 }
 
+void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
+{
+	if (bIsInspecting && CurrentInspectedProp)
+	{
+		float AxisValue = Value.Get<float>();
+
+		float Speed = CurrentInspectedProp->ZoomSpeed;
+		float MinOffset = CurrentInspectedProp->MinInspectionOffset;
+		float MaxOffset = CurrentInspectedProp->MaxInspectionOffset;
+
+		// Scroll up (positive AxisValue) decreases the offset to zoom in (brings object closer)
+		CurrentInspectionOffset -= AxisValue * Speed;
+		CurrentInspectionOffset = FMath::Clamp(CurrentInspectionOffset, MinOffset, MaxOffset);
+
+		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
+		{
+			RootComp->SetRelativeLocation(FVector(CurrentInspectionOffset, 0.f, 0.f));
+		}
+	}
+}
+
 void AHorrorCharacter::DoAim(float Yaw, float Pitch)
 {
 	if (bIsInspecting && CurrentInspectedProp)
 	{
-		// Invece di ruotare la camera, ruotiamo l'oggetto
-		FRotator NewRotation = FRotator(Pitch, Yaw, 0.f);
-		CurrentInspectedProp->AddActorLocalRotation(NewRotation);
+		// Accumuliamo Yaw e Pitch in modo che la rotazione sia coerente con la visuale della camera (screen space)
+		// e non si perda l'orientamento con l'accumulo delle rotazioni locali.
+		TargetInspectionYaw -= Yaw;
+		TargetInspectionPitch += Pitch;
+
+		// Clamp della rotazione Pitch per prevenire capovolgimenti indesiderati e gimbal lock
+		TargetInspectionPitch = FMath::Clamp(TargetInspectionPitch, -89.0f, 89.0f);
+
+		FRotator NewRelativeRotation = FRotator(TargetInspectionPitch, TargetInspectionYaw, 0.0f);
+		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
+		{
+			RootComp->SetRelativeRotation(NewRelativeRotation);
+		}
 	}
 	else
 	{

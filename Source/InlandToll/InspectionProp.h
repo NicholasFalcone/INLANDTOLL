@@ -22,6 +22,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Prop Details")
 	FInspectionPropDetails PropDetails;
 
+	// --- Zoom Config for Inspection ---
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
+	float MinInspectionOffset = 30.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
+	float MaxInspectionOffset = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
+	float DefaultInspectionOffset = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
+	float ZoomSpeed = 5.0f;
+
 	// Salva la posizione e rotazione originale prima dell'ispezione
 	FVector OriginalLocation;
 	FRotator OriginalRotation;

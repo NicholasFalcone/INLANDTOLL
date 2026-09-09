@@ -49,6 +49,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* DropAction;
 
+	/** Zoom input action (mouse scroll wheel) */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ZoomAction;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	void EquipToolFromGround(class AATool* NewTool);
@@ -102,12 +106,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inspection")
 	void ExitInspectionMode();
 
+	void DoZoom(const FInputActionValue& Value);
+
 	virtual void DoAim(float Yaw, float Pitch) override;
 	virtual void DoMove(float Right, float Forward) override;
 
 	// Distanza dall'occhio della camera per l'oggetto in ispezione
 	UPROPERTY(EditAnywhere, Category = "Inspection")
 	float InspectionOffset = 50.0f;
+
+	// Accumulated orientation for stable and natural rotation during inspection
+	float TargetInspectionYaw = 0.0f;
+	float TargetInspectionPitch = 0.0f;
+
+	// Current distance from the camera during inspection
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection")
+	float CurrentInspectionOffset = 50.0f;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnPlayerDiedDelegate OnPlayerDied;
