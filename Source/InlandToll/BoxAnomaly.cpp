@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 #include "BoxAnomaly.h"
 
 ABoxAnomaly::ABoxAnomaly()
@@ -22,6 +23,7 @@ ABoxAnomaly::ABoxAnomaly()
 void ABoxAnomaly::BeginPlay()
 {
 	Super::BeginPlay();
+	LastSoundTime = 0;
 }
 
 void ABoxAnomaly::OnInteract()
@@ -43,5 +45,29 @@ void ABoxAnomaly::OnInteract()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CodeWidget is not set in BoxAnomaly."));
+	}
+}
+
+void ABoxAnomaly::TriggerEventSound()
+{
+	if (UpdateSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, UpdateSound, GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UpdateSound is not set in BoxAnomaly."));
+	}
+}
+
+void ABoxAnomaly::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	LastSoundTime += DeltaTime;
+
+	if(LastSoundTime >= SoundCooldown)
+	{
+		TriggerEventSound();
+		LastSoundTime = 0.0f;
 	}
 }

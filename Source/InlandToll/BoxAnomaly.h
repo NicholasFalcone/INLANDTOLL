@@ -24,6 +24,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box Details")
@@ -40,8 +42,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Prompt Data")
 	UWidgetComponent* CodeWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box Details")
+	USoundBase* UpdateSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Box Details")
+	float SoundCooldown = 3.0f;
+	float LastSoundTime = -INFINITY;
+
 public:
 	virtual void OnInteract() override;
+
+	void TriggerEventSound();
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnUpdateAddressWidget UpdateAddressWidget;
