@@ -52,6 +52,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
 	FOnMaxErrorsReached OnMaxErrorsReached;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	TArray<FST_DialogueLine> ErrorDialogueLines;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

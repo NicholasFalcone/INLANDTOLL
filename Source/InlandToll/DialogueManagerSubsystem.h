@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogueRequested, const FST_Dial
 /**
  * Global Dialogue Manager Subsystem to handle dialogue requests from anywhere in the game.
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class INLANDTOLL_API UDialogueManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()

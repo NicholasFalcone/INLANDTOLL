@@ -62,7 +62,7 @@ void AInspectionManager::SpawnNextInspectionCar()
 			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
 			CurrentInspectionCar->InitializeCarMovement(SplinePath);
 
-			// Trigger dialogue associated with this car/inspection
+			// Trigger dialogue associated with this anomaly comming up for inspection
 			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
 			{
 				DialogueSubsystem->PlayDialogueSequence(CurrentInspectionData->InspectionData.InspectionDialogueLines);
@@ -141,6 +141,15 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 		{
 			if (!Car->bIsRejected && Car->bIsDangerous)
 			{
+				// Trigger dialogue associated with this anomaly comming up for inspection
+				if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+				{
+					if (ErrorDialogueLines.Num() > 0)
+					{
+						int32 index = FMath::Clamp(CurrentErrors, 0, ErrorDialogueLines.Num() - 1);
+						DialogueSubsystem->PlayDialogue(ErrorDialogueLines[index]);
+					}
+				}
 				CurrentErrors++;
 				if(CurrentErrors < MaxErrorsAllowed)
 				{
