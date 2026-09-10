@@ -118,3 +118,18 @@ void AInspectionPayload::InitializeCarData(UStaticMesh* Mesh, FString SocketName
 	SetInspectionProp(PropClass, SocketName);
 	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
 }
+
+void AInspectionPayload::Destroyed()
+{
+	Super::Destroyed();
+
+	TArray<AActor*> AttachedActors;
+	GetAttachedActors(AttachedActors);
+	for (AActor* ChildActor : AttachedActors)
+	{
+		if (IsValid(ChildActor))
+		{
+			ChildActor->Destroy();
+		}
+	}
+}

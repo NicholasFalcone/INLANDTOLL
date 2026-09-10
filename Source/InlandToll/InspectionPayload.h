@@ -42,6 +42,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
 	USceneComponent* InteractablePosition;
@@ -54,6 +55,9 @@ protected:
 public:	
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	bool bIsRejected = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "State")
+	bool bIsDangerous = false;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void MoveCar(float DeltaTime);

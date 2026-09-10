@@ -58,6 +58,7 @@ void AInspectionManager::SpawnNextInspectionCar()
 
 		if (CurrentInspectionCar)
 		{
+			CurrentInspectionCar->bIsDangerous = CurrentInspectionData->InspectionData.bIsDangerous;
 			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
 			CurrentInspectionCar->InitializeCarMovement(SplinePath);
 
@@ -135,11 +136,10 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Car %s reached the end of the spline!"), *Car->GetName());
 		Car->OnCarReachedEnd.RemoveAll(this);
-		Car->Destroy();
 		
 		if (Car == CurrentInspectionCar)
 		{
-			if (!Car->bIsRejected && InspectionDataArray[CurrentInspectionIndex]->InspectionData.bIsDangerous)
+			if (!Car->bIsRejected && Car->bIsDangerous)
 			{
 				CurrentErrors++;
 				if(CurrentErrors < MaxErrorsAllowed)
@@ -156,6 +156,8 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 			}
 			CurrentInspectionCar = nullptr;
 		}
+		
+		Car->Destroy();
 		SpawnNextInspectionCar(); 
 	}
 }

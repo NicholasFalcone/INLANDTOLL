@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseAnomaly.h"
 #include "Components/WidgetComponent.h"
+#include "Components/AudioComponent.h"
 #include "BoxAnomaly.generated.h"
 
 /**
@@ -36,6 +37,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Box Details")
 	TSubclassOf<UInteractionPrompt> BoxDetailsWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
+	UAudioComponent* AudioComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Prompt Data")
 	UWidgetComponent* AddressWidget;

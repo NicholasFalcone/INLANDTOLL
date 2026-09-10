@@ -18,6 +18,11 @@ ABoxAnomaly::ABoxAnomaly()
 	CodeWidget->SetWidgetSpace(EWidgetSpace::World);
 	CodeWidget->SetDrawSize(FVector2D(200.0f, 50.0f));
 	CodeWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 150.0f)); // Adjust as needed
+
+	// Create and configure the AudioComponent
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
+	AudioComponent->bAutoActivate = false; // Prevent the audio from playing automatically
 }
 
 void ABoxAnomaly::BeginPlay()
@@ -52,7 +57,15 @@ void ABoxAnomaly::TriggerEventSound()
 {
 	if (UpdateSound)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, UpdateSound, GetActorLocation());
+		if (AudioComponent)
+		{
+			AudioComponent->SetSound(UpdateSound);
+			AudioComponent->Play();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AudioComponent is not set in BoxAnomaly."));
+		}
 	}
 	else
 	{
