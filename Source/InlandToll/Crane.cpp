@@ -115,7 +115,7 @@ void ACrane::StartSequence()
 		}
 		OpenAngle = 45.0f; // Claws open
 		HookedAnomaly = nullptr;
-		CurrentState = ECraneState::MovingForward;
+		CurrentState = ECraneState::Descending;
 	}
 	else
 	{
@@ -132,19 +132,19 @@ void ACrane::HandleMovingForward(float DeltaTime)
 		return;
 	}
 
-	float SplineLength = TargetSpline->GetSplineLength();
-	DistanceAlongSpline += MovementSpeed * DeltaTime;
+	DistanceAlongSpline -= MovementSpeed * DeltaTime;
 
-	if (DistanceAlongSpline >= SplineLength)
+	if (DistanceAlongSpline <= 0.0f)
 	{
-		DistanceAlongSpline = SplineLength;
+		DistanceAlongSpline = 0.0f;
 		SetActorLocationAndRotation(
 			TargetSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World),
 			TargetSpline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World)
 		);
 		
 		UE_LOG(LogTemp, Warning, TEXT("Crane reached end of spline. Starting descent."));
-		StartDescending();
+		// StartDescending();
+		CurrentState = ECraneState::Idle;
 	}
 	else
 	{
@@ -280,12 +280,13 @@ void ACrane::HandleMovingBackward(float DeltaTime)
 		CurrentState = ECraneState::Idle;
 		return;
 	}
+	float SplineLength = TargetSpline->GetSplineLength();
 
-	DistanceAlongSpline -= MovementSpeed * DeltaTime;
+	DistanceAlongSpline += MovementSpeed * DeltaTime;
 
-	if (DistanceAlongSpline <= 0.0f)
+	if (DistanceAlongSpline >= SplineLength)
 	{
-		DistanceAlongSpline = 0.0f;
+		DistanceAlongSpline = SplineLength;
 		SetActorLocationAndRotation(
 			TargetSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World),
 			TargetSpline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World)
@@ -337,6 +338,6 @@ void ACrane::HandleDropping(float DeltaTime)
 		HookedAnomaly = nullptr;
 	}
 
-	CurrentState = ECraneState::Idle;
+	CurrentState = ECraneState::MovingForward;
 }
 
