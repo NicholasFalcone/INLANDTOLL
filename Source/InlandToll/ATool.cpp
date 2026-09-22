@@ -59,9 +59,9 @@ void AATool::OnEquipped(ACharacter* InOwnerCharacter)
 		if (AInlandTollCharacter* TollChar = Cast<AInlandTollCharacter>(InOwnerCharacter))
 		{
 			USceneComponent* ParentComp = nullptr;
-			if (!AttachSocketName.IsNone() && TollChar->GetFirstPersonMesh())
+			if (!AttachSocketName.IsNone() && TollChar->GetToolSpringArmComponent())
 			{
-				ParentComp = TollChar->GetFirstPersonMesh();
+				ParentComp = TollChar->GetToolSpringArmComponent();
 			}
 			else
 			{

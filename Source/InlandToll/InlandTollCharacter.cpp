@@ -33,6 +33,12 @@ AInlandTollCharacter::AInlandTollCharacter()
 	FirstPersonCameraComponent->FirstPersonFieldOfView = 70.0f;
 	FirstPersonCameraComponent->FirstPersonScale = 0.6f;
 
+	// Create the Spring Arm Component
+	ToolSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm Component"));
+	ToolSpringArmComponent->AttachToComponent(FirstPersonCameraComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
+	ToolSpringArmComponent->TargetArmLength = 0.0f;
+	ToolSpringArmComponent->bUsePawnControlRotation = true;
+
 	// configure the character comps
 	GetMesh()->SetOwnerNoSee(true);
 	GetMesh()->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::WorldSpaceRepresentation;
