@@ -11,6 +11,7 @@
 
 class UInteractionComponent;
 class UInputAction;
+class ATablet;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
 /**
@@ -105,6 +106,31 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inspection")
 	void ExitInspectionMode();
+
+	// --- Tablet Mode ---
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tablet")
+	UInputAction* ToggleTabletAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tablet")
+	TSubclassOf<ATablet> TabletClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
+	ATablet* MyTablet;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
+	bool bIsTabletOpen = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
+	FVector TabletSocketOffset = FVector(30.0f, -20.0f, -10.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
+	FRotator TabletSocketRotation = FRotator(0.0f, 15.0f, -10.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "Tablet")
+	void ToggleTablet();
+
+	UFUNCTION(BlueprintCallable, Category = "Tablet")
+	void SetTabletOpen(bool bOpen);
 
 	void DoZoom(const FInputActionValue& Value);
 

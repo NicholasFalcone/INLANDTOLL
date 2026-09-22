@@ -38,6 +38,10 @@ class AInlandTollCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* ToolSpringArmComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* TabletSpringArmComponent;
+
+
 protected:
 
 	/** Jump Input Action */
@@ -102,6 +106,9 @@ public:
 
 	/** Returns the tool spring arm component **/
 	USpringArmComponent* GetToolSpringArmComponent() const { return ToolSpringArmComponent; }
+
+	/** Returns the tablet spring arm component **/
+	USpringArmComponent* GetTabletSpringArmComponent() const { return TabletSpringArmComponent; }
 
 };
 

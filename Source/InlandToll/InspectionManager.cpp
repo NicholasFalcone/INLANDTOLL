@@ -7,6 +7,7 @@
 #include "DialogueManagerSubsystem.h"
 #include "Incenerator.h"
 #include "InspectionPayload.h"
+#include "Variant_Horror/HorrorCharacter.h"
 
 // Sets default values
 AInspectionManager::AInspectionManager()
@@ -73,14 +74,16 @@ void AInspectionManager::SpawnNextInspectionCar()
 
 		if(!TabletInstance)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Tablet instance not found in the world. Cannot update anomaly."));
-			TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
-			if(!TabletInstance){
-				UE_LOG(LogTemp, Warning, TEXT("Tablet instance still not found in the world. Cannot update anomaly."));
+			if (AHorrorCharacter* PlayerChar = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+			{
+				TabletInstance = PlayerChar->MyTablet;
+			}
+			
+			if(!TabletInstance)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Tablet instance still not found in the player. Cannot update anomaly."));
 				return;
 			}
-			TabletInstance->UpdateAnomaly(CurrentInspectionData->InspectionData);
-			return;
 		}
 
 		TabletInstance->UpdateAnomaly(CurrentInspectionData->InspectionData);

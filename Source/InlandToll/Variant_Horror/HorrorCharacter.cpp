@@ -14,6 +14,7 @@
 #include "HorrorCharacter.h"
 #include "ATool.h"
 #include "InspectionProp.h"
+#include "Tablet.h"
 
 AHorrorCharacter::AHorrorCharacter()
 {
@@ -29,6 +30,82 @@ void AHorrorCharacter::BeginPlay()
 
 	// Initialize the walk speed
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+
+	if (TabletClass)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		MyTablet = GetWorld()->SpawnActor<ATablet>(TabletClass, SpawnParams);
+		if (MyTablet)
+		{
+			if (MyTablet->GetRootComponent())
+			{
+				MyTablet->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+			}
+
+			USceneComponent* ParentComp = nullptr;
+			TArray<USpringArmComponent*> SpringArms;
+			GetComponents<USpringArmComponent>(SpringArms);
+			for (USpringArmComponent* Arm : SpringArms)
+			{
+				if (Arm && !Arm->IsTemplate() && Arm->GetName().Contains(TEXT("Tablet")))
+				{
+					ParentComp = Arm;
+					break;
+				}
+			}
+			if (!ParentComp)
+			{
+				USceneComponent* RawComp = GetTabletSpringArmComponent();
+				if (RawComp && !RawComp->IsTemplate())
+				{
+					ParentComp = RawComp;
+				}
+			}
+			if (!ParentComp)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("GetTabletSpringArmComponent returned a template or null, falling back to FirstPersonCameraComponent"));
+				ParentComp = GetFirstPersonCameraComponent();
+			}
+
+			if (ParentComp)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Attaching tablet to parent component: %s"), *ParentComp->GetName());
+				FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+				bool bAttached = MyTablet->AttachToComponent(ParentComp, AttachRules);
+				if (bAttached)
+				{
+					UE_LOG(LogTemp, Log, TEXT("Tablet successfully attached to %s"), *ParentComp->GetName());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Tablet attachment returned false!"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("No valid parent component found for Tablet attachment!"));
+			}
+			
+			MyTablet->SetActorRelativeLocation(TabletSocketOffset);
+			MyTablet->SetActorRelativeRotation(TabletSocketRotation);
+
+			// Disabilita collisione per evitare blocchi o bug col character
+			MyTablet->SetActorEnableCollision(false);
+			TArray<UPrimitiveComponent*> PrimComps;
+			MyTablet->GetComponents<UPrimitiveComponent>(PrimComps);
+			for (UPrimitiveComponent* PrimComp : PrimComps)
+			{
+				PrimComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				PrimComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+			}
+
+			// Inizialmente nascosto
+			MyTablet->SetActorHiddenInGame(true);
+			bIsTabletOpen = false;
+		}
+	}
 }
 
 void AHorrorCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
@@ -65,6 +142,12 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			if (ZoomAction)
 			{
 				EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AHorrorCharacter::DoZoom);
+			}
+
+			// Toggle Tablet Input (TAB Key behavior)
+			if (ToggleTabletAction)
+			{
+				EnhancedInputComponent->BindAction(ToggleTabletAction, ETriggerEvent::Started, this, &AHorrorCharacter::ToggleTablet);
 			}
 		}
 	}
@@ -329,6 +412,105 @@ void AHorrorCharacter::DoDropTool()
 		InventoryComponent->EquipTool(nullptr);
 		ToolToDrop->OnDropped(this);
 		UE_LOG(LogTemp, Warning, TEXT("Dropped Tool: %s"), *ToolToDrop->GetName());
+	}
+}
+
+void AHorrorCharacter::ToggleTablet()
+{
+	if (bIsInspecting)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Cannot toggle tablet while inspecting."));
+		return;
+	}
+	SetTabletOpen(!bIsTabletOpen);
+}
+
+void AHorrorCharacter::SetTabletOpen(bool bOpen)
+{
+	if (!MyTablet)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MyTablet is null. Spawning on demand or aborting."));
+		return;
+	}
+
+	bIsTabletOpen = bOpen;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	if (bIsTabletOpen)
+	{
+		MyTablet->SetActorHiddenInGame(false);
+
+		// Double-check attachment in case it wasn't successful during BeginPlay
+		if (MyTablet->GetRootComponent() && MyTablet->GetRootComponent()->GetAttachParent() == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Tablet was not attached! Retrying attachment in SetTabletOpen..."));
+			MyTablet->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+			
+			USceneComponent* ParentComp = nullptr;
+			TArray<USpringArmComponent*> SpringArms;
+			GetComponents<USpringArmComponent>(SpringArms);
+			for (USpringArmComponent* Arm : SpringArms)
+			{
+				if (Arm && !Arm->IsTemplate() && Arm->GetName().Contains(TEXT("Tablet")))
+				{
+					ParentComp = Arm;
+					break;
+				}
+			}
+			if (!ParentComp)
+			{
+				USceneComponent* RawComp = GetTabletSpringArmComponent();
+				if (RawComp && !RawComp->IsTemplate())
+				{
+					ParentComp = RawComp;
+				}
+			}
+			if (!ParentComp)
+			{
+				ParentComp = GetFirstPersonCameraComponent();
+			}
+
+			if (ParentComp)
+			{
+				FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+				MyTablet->AttachToComponent(ParentComp, AttachRules);
+			}
+		}
+
+		// Apply relative offset to make sure it's positioned perfectly on the left side of the camera
+		MyTablet->SetActorRelativeLocation(TabletSocketOffset);
+		MyTablet->SetActorRelativeRotation(TabletSocketRotation);
+
+		if (PC)
+		{
+			PC->SetIgnoreMoveInput(true);
+			PC->SetIgnoreLookInput(true);
+
+			FInputModeGameAndUI InputMode;
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			
+			if (MyTablet->TabletWidgetComponent && MyTablet->TabletWidgetComponent->GetUserWidgetObject())
+			{
+				InputMode.SetWidgetToFocus(MyTablet->TabletWidgetComponent->GetUserWidgetObject()->TakeWidget());
+			}
+			PC->SetInputMode(InputMode);
+			PC->bShowMouseCursor = true;
+		}
+	}
+	else
+	{
+		MyTablet->SetActorHiddenInGame(true);
+
+		if (PC)
+		{
+			PC->SetIgnoreMoveInput(false);
+			PC->SetIgnoreLookInput(false);
+
+			FInputModeGameOnly InputMode;
+			PC->SetInputMode(InputMode);
+			PC->bShowMouseCursor = false;
+		}
 	}
 }
 

@@ -13,6 +13,7 @@ ABaseInteractable::ABaseInteractable()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetMobility(EComponentMobility::Movable);
 	RootComponent = MeshComp;
 
 	// 3. Creo e configuro il WidgetComponent

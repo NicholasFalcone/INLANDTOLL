@@ -39,6 +39,12 @@ AInlandTollCharacter::AInlandTollCharacter()
 	ToolSpringArmComponent->TargetArmLength = 0.0f;
 	ToolSpringArmComponent->bUsePawnControlRotation = true;
 
+	// Create the Tablet Spring Arm Component
+	TabletSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Tablet Spring Arm Component"));
+	TabletSpringArmComponent->AttachToComponent(FirstPersonCameraComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
+	TabletSpringArmComponent->TargetArmLength = 0.0f;
+	TabletSpringArmComponent->bUsePawnControlRotation = true;
+
 	// configure the character comps
 	GetMesh()->SetOwnerNoSee(true);
 	GetMesh()->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::WorldSpaceRepresentation;
