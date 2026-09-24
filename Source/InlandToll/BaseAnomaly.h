@@ -26,6 +26,7 @@ protected:
 	bool IsSpottedByUVLight();
 
 public:
+	/// --- Variable User of UV Light Interaction
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tools Interaction")
 	bool bIsBeingSpottedByUVLight = false;
 	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
@@ -34,6 +35,9 @@ public:
 	FOnSpottedByUVLight OnSpottedByUVLight;
 	void OnStartSpottedByUVLight();
 	void OnStopBeingSpottedByUVLight();
+	/// --- Variable User of Temperature Interaction
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tools Interaction")
+	float Temperature = 25.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	float MaxInspectionTime = -1.0f;

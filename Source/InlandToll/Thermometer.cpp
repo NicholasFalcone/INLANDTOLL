@@ -4,6 +4,7 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
+#include "BaseAnomaly.h"
 #include "CollisionQueryParams.h"
 #include "Engine/World.h"
 
@@ -93,20 +94,16 @@ void AThermometer::UpdateTargetTemperature()
 			AActor* HitActor = HitResult.GetActor();
 			if (HitActor)
 			{
-				// Detect anomaly, cold or hot spots by tags typical of horror games
-				if (HitActor->ActorHasTag("Cold") || HitActor->ActorHasTag("Anomaly"))
+				if(ABaseAnomaly* Anomaly = Cast<ABaseAnomaly>(HitActor))
 				{
-					NewTarget = 2.4f; // Cold room or entity
-				}
-				else if (HitActor->ActorHasTag("Freezing"))
-				{
-					NewTarget = -4.5f; // Freezing anomaly evidence
-				}
-				else if (HitActor->ActorHasTag("Hot"))
-				{
-					NewTarget = 45.2f; // Warm anomaly or object
+					NewTarget = Anomaly->Temperature;
 				}
 			}
+		}
+		else
+		{
+			// No hit, assume ambient temperature
+			NewTarget = AmbientTemperature;
 		}
 	}
 
