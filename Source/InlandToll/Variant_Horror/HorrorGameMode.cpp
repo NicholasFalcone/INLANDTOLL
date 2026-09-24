@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "Variant_Horror/HorrorGameMode.h"
 #include "EngineUtils.h"
 #include "GameFramework/PlayerStart.h"
-#include "Variant_Horror/HorrorGameMode.h"
 
 AHorrorGameMode::AHorrorGameMode()
 {
