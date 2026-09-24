@@ -5,6 +5,13 @@
 
 AAnomalyDoll::AAnomalyDoll()
 {
+    AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+    AudioComponent->SetupAttachment(RootComponent);
+    AudioComponent->bAutoActivate = false; // Prevent the audio from playing automatically on begin play
+    AudioComponent->bIsUISound = false; // Ensure the audio is treated as a 3D sound in the world
+    AudioComponent->bAllowSpatialization = true; // Enable 3D spatialization for the audio component
+    AudioComponent->SetRelativeLocation(FVector::ZeroVector); // Ensure the audio component is at the root location
+    AudioComponent->SetRelativeRotation(FRotator::ZeroRotator); // Ensure the audio component has no relative rotation
 }
 
 void AAnomalyDoll::BeginPlay()
@@ -12,6 +19,10 @@ void AAnomalyDoll::BeginPlay()
 	Super::BeginPlay();
 	bHasBeenShaken = false;
 	ShakeScore = 0.0f;
+    if (AudioComponent && ShakeSound)
+    {
+        AudioComponent->SetSound(ShakeSound);
+    }
 }
 
 void AAnomalyDoll::Tick(float DeltaTime)
@@ -45,9 +56,13 @@ FVector AAnomalyDoll::GetTargetAxisVector(const AActor* TargetActor) const
 
 void AAnomalyDoll::OnShaken()
 {
-	bHasBeenShaken = true;
 	ShakeScore = 0.0f; // Reset the shake score when the doll is manually shaken
     UE_LOG(LogTemp, Log, TEXT("Doll has been shaken manually."));
+    if (AudioComponent && ShakeSound)
+    {
+        AudioComponent->Play();
+    }
+	bHasBeenShaken = false;
 }
 void AAnomalyDoll::CheckBeenShaken(float DeltaTime)
 {
@@ -118,7 +133,7 @@ void AAnomalyDoll::OnTabletTicked()
 
 void AAnomalyDoll::OnEndInteract()
 {
-    bHasBeenShaken = false;
     ShakeScore = 0.0f;
+    bHasBeenShaken = false;
 }
 

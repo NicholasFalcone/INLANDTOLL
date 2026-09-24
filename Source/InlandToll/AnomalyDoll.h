@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseAnomaly.h"
+#include "Components/AudioComponent.h"
 #include "AnomalyDoll.generated.h"
-
 
 UENUM(BlueprintType)
 enum class EShakeRotationAxis : uint8
@@ -46,6 +46,12 @@ class INLANDTOLL_API AAnomalyDoll : public ABaseAnomaly
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shake Detection|Settings", meta = (ClampMin = "0.1"))
 		float ShakeThreshold = 1.0f;
+
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Shake")
+		UAudioComponent* AudioComponent;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shake")
+		USoundBase* ShakeSound;
 
 	private:
 		FVector LastTrackedAxis = FVector::ZeroVector;
