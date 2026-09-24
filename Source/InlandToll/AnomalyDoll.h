@@ -15,9 +15,7 @@ enum class EShakeRotationAxis : uint8
 	Up
 };
 
-/**
- * 
- */
+
 UCLASS()
 class INLANDTOLL_API AAnomalyDoll : public ABaseAnomaly
 {
@@ -48,7 +46,7 @@ class INLANDTOLL_API AAnomalyDoll : public ABaseAnomaly
 		float ShakeThreshold = 1.0f;
 
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Shake")
-		UAudioComponent* AudioComponent;
+		UAudioComponent* ShakeAudioComponent;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shake")
 		USoundBase* ShakeSound;
@@ -65,6 +63,7 @@ class INLANDTOLL_API AAnomalyDoll : public ABaseAnomaly
 
 		FVector GetTargetAxisVector(const AActor* TargetActor) const;
 
+
 	public:
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
@@ -72,6 +71,7 @@ class INLANDTOLL_API AAnomalyDoll : public ABaseAnomaly
 		virtual void OnEndInteract() override;
 
 	public:
+
 		void OnShaken();
 		void OnTabletTicked();
 

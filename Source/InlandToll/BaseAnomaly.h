@@ -4,19 +4,37 @@
 
 #include "CoreMinimal.h"
 #include "InspectionProp.h"
+#include "UVLight.h"
 #include "AnomalyCheckRow.h"
 #include "BaseAnomaly.generated.h"
 
-/**
- * 
- */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSpottedByUVLight);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStoppedBeingSpottedByUVLight);
 UCLASS()
 class INLANDTOLL_API ABaseAnomaly : public AInspectionProp
 {
 	GENERATED_BODY()
 	
+protected:
 	
+	UPROPERTY()
+	AUVLight* UVLight;
+	
+
+protected:		
+	bool IsSpottedByUVLight();
+
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tools Interaction")
+	bool bIsBeingSpottedByUVLight = false;
+	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
+	FOnStoppedBeingSpottedByUVLight OnStoppedBeingSpottedByUVLight;
+	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
+	FOnSpottedByUVLight OnSpottedByUVLight;
+	void OnStartSpottedByUVLight();
+	void OnStopBeingSpottedByUVLight();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	float MaxInspectionTime = -1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")

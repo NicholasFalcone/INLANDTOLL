@@ -19,14 +19,19 @@ class INLANDTOLL_API AUVLight : public AATool
 public:
 	AUVLight();
 
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UV Light", meta = (AllowPrivateAccess = "true"))
+	bool IsInUse;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UV Light", meta = (AllowPrivateAccess = "true"))
+	USpotLightComponent* UVSpotLight;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UV Light", meta = (AllowPrivateAccess = "true"))
-	USpotLightComponent* UVSpotLight;
 
 public:
 	virtual void OnUsed() override;

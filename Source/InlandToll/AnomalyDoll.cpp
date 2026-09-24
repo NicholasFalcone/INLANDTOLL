@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Kismet/GameplayStatics.h"
 #include "AnomalyDoll.h"
 
 AAnomalyDoll::AAnomalyDoll()
 {
-    AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-    AudioComponent->SetupAttachment(RootComponent);
-    AudioComponent->bAutoActivate = false; // Prevent the audio from playing automatically on begin play
-    AudioComponent->bIsUISound = false; // Ensure the audio is treated as a 3D sound in the world
-    AudioComponent->bAllowSpatialization = true; // Enable 3D spatialization for the audio component
-    AudioComponent->SetRelativeLocation(FVector::ZeroVector); // Ensure the audio component is at the root location
-    AudioComponent->SetRelativeRotation(FRotator::ZeroRotator); // Ensure the audio component has no relative rotation
+    ShakeAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+    ShakeAudioComponent->SetupAttachment(RootComponent);
+    ShakeAudioComponent->bAutoActivate = false; // Prevent the audio from playing automatically on begin play
+    ShakeAudioComponent->bIsUISound = false; // Ensure the audio is treated as a 3D sound in the world
+    ShakeAudioComponent->bAllowSpatialization = true; // Enable 3D spatialization for the audio component
+    ShakeAudioComponent->SetRelativeLocation(FVector::ZeroVector); // Ensure the audio component is at the root location
+    ShakeAudioComponent->SetRelativeRotation(FRotator::ZeroRotator); // Ensure the audio component has no relative rotation
 }
 
 void AAnomalyDoll::BeginPlay()
@@ -19,9 +19,14 @@ void AAnomalyDoll::BeginPlay()
 	Super::BeginPlay();
 	bHasBeenShaken = false;
 	ShakeScore = 0.0f;
-    if (AudioComponent && ShakeSound)
+    if (ShakeAudioComponent && ShakeSound)
     {
-        AudioComponent->SetSound(ShakeSound);
+        ShakeAudioComponent->SetSound(ShakeSound);
+    }
+
+    UVLight = Cast<AUVLight>(UGameplayStatics::GetActorOfClass(GetWorld(), AUVLight::StaticClass()));
+    if(!UVLight){
+        UE_LOG(LogTemp, Error, TEXT("UVLight actor not found in the scene."));
     }
 }
 
@@ -32,6 +37,7 @@ void AAnomalyDoll::Tick(float DeltaTime)
         CheckBeenShaken(DeltaTime);
     }
 }
+
 
 void AAnomalyDoll::Destroyed()
 {
@@ -54,13 +60,14 @@ FVector AAnomalyDoll::GetTargetAxisVector(const AActor* TargetActor) const
 	}
 }
 
+
 void AAnomalyDoll::OnShaken()
 {
 	ShakeScore = 0.0f; // Reset the shake score when the doll is manually shaken
     UE_LOG(LogTemp, Log, TEXT("Doll has been shaken manually."));
-    if (AudioComponent && ShakeSound)
+    if (ShakeAudioComponent && ShakeSound)
     {
-        AudioComponent->Play();
+        ShakeAudioComponent->Play();
     }
 	bHasBeenShaken = false;
 }
@@ -129,6 +136,7 @@ void AAnomalyDoll::CheckBeenShaken(float DeltaTime)
 
 void AAnomalyDoll::OnTabletTicked()
 {
+    UE_LOG(LogTemp, Log, TEXT("Doll has been ticked by the tablet."));
 }
 
 void AAnomalyDoll::OnEndInteract()

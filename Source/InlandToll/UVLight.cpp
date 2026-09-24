@@ -37,7 +37,7 @@ void AUVLight::OnUsed()
 	{
 		bool bNewHiddenState = !UVSpotLight->bHiddenInGame;
 		UVSpotLight->SetHiddenInGame(bNewHiddenState);
-		
+		IsInUse = !bNewHiddenState;
 		UE_LOG(LogTemp, Warning, TEXT("UVLight: Light toggled to %s"), bNewHiddenState ? TEXT("OFF") : TEXT("ON"));
 	}
 }
@@ -49,6 +49,7 @@ void AUVLight::OnEquipped(ACharacter* InOwnerCharacter)
 	// Ensure light starts turned off when equipped
 	if (UVSpotLight)
 	{
+		IsInUse = false;
 		UVSpotLight->SetHiddenInGame(true);
 	}
 }
@@ -60,6 +61,7 @@ void AUVLight::OnUnequipped()
 	// Turn off light when unequipped
 	if (UVSpotLight)
 	{
+		IsInUse = false;
 		UVSpotLight->SetHiddenInGame(true);
 	}
 }
