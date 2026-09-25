@@ -43,14 +43,14 @@ void ABaseInteractable::BeginPlay()
 
 	if (InteractionWidgetComp && InteractionPromptClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("InteractionWidgetComp and InteractionPromptClass are valid in BeginPlay"));
+		// UE_LOG(LogTemp, Warning, TEXT("InteractionWidgetComp and InteractionPromptClass are valid in BeginPlay"));
 		InteractionWidgetComp->SetWidgetClass(InteractionPromptClass);
 
 		// Accediamo all'istanza del widget creata dal componente invece che al CDO
 		UInteractionPrompt* PromptWidget = Cast<UInteractionPrompt>(InteractionWidgetComp->GetUserWidgetObject());
 		if (PromptWidget)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PromptWidget is valid in BeginPlay"));
+			// UE_LOG(LogTemp, Warning, TEXT("PromptWidget is valid in BeginPlay"));
 			PromptWidget->SetPromptText(InteractionPromptData.InteractionPrompt);
 		}
 		else{
@@ -84,13 +84,13 @@ void ABaseInteractable::Tick(float DeltaTime)
 
 void ABaseInteractable::OnHighlight()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnHighlight called for %s"), *GetName());
+	// UE_LOG(LogTemp, Warning, TEXT("OnHighlight called for %s"), *GetName());
 	InteractionWidgetComp->SetVisibility(true);
 }
 
 void ABaseInteractable::OnUnhighlight()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnUnhighlight called for %s"), *GetName());
+	// UE_LOG(LogTemp, Warning, TEXT("OnUnhighlight called for %s"), *GetName());
 	InteractionWidgetComp->SetVisibility(false);
 }
 
