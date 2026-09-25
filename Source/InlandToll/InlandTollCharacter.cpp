@@ -35,13 +35,13 @@ AInlandTollCharacter::AInlandTollCharacter()
 
 	// Create the Spring Arm Component
 	ToolSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm Component"));
-	ToolSpringArmComponent->AttachToComponent(FirstPersonCameraComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
+	ToolSpringArmComponent->SetupAttachment(FirstPersonCameraComponent, FName("head"));
 	ToolSpringArmComponent->TargetArmLength = 0.0f;
 	ToolSpringArmComponent->bUsePawnControlRotation = true;
 
 	// Create the Tablet Spring Arm Component
 	AnomalyCardBoardSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Tablet Holder"));
-	AnomalyCardBoardSpringArmComponent->AttachToComponent(FirstPersonMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
+	AnomalyCardBoardSpringArmComponent->SetupAttachment(FirstPersonMesh, FName("head"));
 	AnomalyCardBoardSpringArmComponent->TargetArmLength = 0.0f;
 	AnomalyCardBoardSpringArmComponent->bUsePawnControlRotation = true;
 

@@ -417,11 +417,13 @@ void AHorrorCharacter::DoDropTool()
 
 void AHorrorCharacter::ToggleTablet()
 {
-	if (bIsInspecting)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Cannot toggle tablet while inspecting."));
-		return;
-	}
+	/// CHECK IF IT WORKS
+
+	// if (bIsInspecting)
+	// {
+	// 	UE_LOG(LogTemp, Log, TEXT("Cannot toggle tablet while inspecting."));
+	// 	return;
+	// }
 	SetTabletOpen(!bIsTabletOpen);
 }
 
