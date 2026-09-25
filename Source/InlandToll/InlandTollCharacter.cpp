@@ -40,10 +40,10 @@ AInlandTollCharacter::AInlandTollCharacter()
 	ToolSpringArmComponent->bUsePawnControlRotation = true;
 
 	// Create the Tablet Spring Arm Component
-	TabletSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Tablet Spring Arm Component"));
-	TabletSpringArmComponent->AttachToComponent(FirstPersonCameraComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
-	TabletSpringArmComponent->TargetArmLength = 0.0f;
-	TabletSpringArmComponent->bUsePawnControlRotation = true;
+	AnomalyCardBoardSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Tablet Holder"));
+	AnomalyCardBoardSpringArmComponent->AttachToComponent(FirstPersonMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
+	AnomalyCardBoardSpringArmComponent->TargetArmLength = 0.0f;
+	AnomalyCardBoardSpringArmComponent->bUsePawnControlRotation = true;
 
 	// configure the character comps
 	GetMesh()->SetOwnerNoSee(true);

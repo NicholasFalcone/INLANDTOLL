@@ -39,7 +39,7 @@ class AInlandTollCharacter : public ACharacter
 	USpringArmComponent* ToolSpringArmComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* TabletSpringArmComponent;
+	USpringArmComponent* AnomalyCardBoardSpringArmComponent;
 
 
 protected:
@@ -108,7 +108,7 @@ public:
 	USpringArmComponent* GetToolSpringArmComponent() const { return ToolSpringArmComponent; }
 
 	/** Returns the tablet spring arm component **/
-	USpringArmComponent* GetTabletSpringArmComponent() const { return TabletSpringArmComponent; }
+	USpringArmComponent* GetTabletSpringArmComponent() const { return AnomalyCardBoardSpringArmComponent; }
 
 };
 
