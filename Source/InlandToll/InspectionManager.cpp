@@ -137,7 +137,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 {
 	if (Car && IsValid(Car))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Car %s reached the end of the spline!"), *Car->GetName());
+		// UE_LOG(LogTemp, Warning, TEXT("Car %s reached the end of the spline!"), *Car->GetName());
 		Car->OnCarReachedEnd.RemoveAll(this);
 		
 		if (Car == CurrentInspectionCar)
