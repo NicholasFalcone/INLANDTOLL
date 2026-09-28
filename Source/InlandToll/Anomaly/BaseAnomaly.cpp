@@ -8,6 +8,7 @@
 void ABaseAnomaly::BeginPlay()
 {
     Super::BeginPlay();
+    PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AHorrorCharacter::StaticClass()));
 }
 
 void ABaseAnomaly::Tick(float DeltaTime)
@@ -30,9 +31,9 @@ void ABaseAnomaly::Tick(float DeltaTime)
             if(GEngine)
                 GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Max inspection time reached for anomaly!"));
                 	
-            if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AHorrorCharacter::StaticClass())))
+            if (PlayerCharacter)
             {
-                HorrorCharacter->Die();
+                PlayerCharacter->Die();
             }
         }
     }

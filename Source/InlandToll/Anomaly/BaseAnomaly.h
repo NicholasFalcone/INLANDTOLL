@@ -6,6 +6,7 @@
 #include "InspectionProp.h"
 #include "Tools/UVLight.h"
 #include "AnomalyCheckRow.h"
+#include "HorrorCharacter.h"
 #include "BaseAnomaly.generated.h"
 
 
@@ -25,6 +26,8 @@ protected:
 protected:		
 	virtual void BeginPlay() override;
 	bool IsSpottedByUVLight();
+
+	AHorrorCharacter* PlayerCharacter;
 
 public:
 	/// --- Variable User of UV Light Interaction

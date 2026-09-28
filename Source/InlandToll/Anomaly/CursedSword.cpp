@@ -12,5 +12,6 @@ void ACursedSword::OnRotate(float delta)
     {
         // Implement the logic for when the rotation delta exceeds the cutting angle
         UE_LOG(LogTemp, Warning, TEXT("Cutting angle exceeded: %f"), delta);
+        PlayerCharacter->ExitInspectionMode();
     }
 }
