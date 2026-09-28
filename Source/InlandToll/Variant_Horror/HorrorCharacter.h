@@ -14,6 +14,7 @@ class UInputAction;
 class ATablet;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerGettingCutDelegate);
 /**
  *  Simple first person horror character
  *  Provides stamina-based sprinting
@@ -53,6 +54,8 @@ protected:
 	/** Zoom input action (mouse scroll wheel) */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ZoomAction;
+	
+	FTimerHandle UnusedHandle;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Tools")
@@ -90,6 +93,8 @@ protected:
 
 	void DoStartCrouch();
 	void DoEndCrouch();
+
+
 
 public:
 	// --- Inspection Mode ---
@@ -152,6 +157,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnPlayerDiedDelegate OnPlayerDied;
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnPlayerGettingCutDelegate OnPlayerGettingCut;
+
 	UFUNCTION()
 	void DisableMovement();
 
@@ -163,6 +171,15 @@ public:
 
 	UFUNCTION()
 	void ShowPlayerMesh();
+
+	UFUNCTION()
+	void DropProp();
+	
+	UFUNCTION()
+	void Recover();
+
+	UFUNCTION()
+	void GettingCut();
 
 	UFUNCTION()
 	AATool* GetEquippedTool();

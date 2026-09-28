@@ -15,9 +15,13 @@ void ABaseAnomaly::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    RotationDelta = FMath::Abs(StartAngle - LastAngle);
-    LastAngle = GetActorRotation().Yaw;
-    OnRotate(RotationDelta);
+    if(bIsBeingInspected)
+    {
+        RotationDelta = FMath::Abs(StartAngle - LastAngle);
+        LastAngle = GetActorRotation().Yaw;
+        OnRotate(RotationDelta);
+    }
+
 
     if (bIsBeingInspected && MaxInspectionTime > 0.0f)
     {

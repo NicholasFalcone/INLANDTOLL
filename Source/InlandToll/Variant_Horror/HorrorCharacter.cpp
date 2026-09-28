@@ -226,10 +226,37 @@ void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABase
 	}
 }
 
+void AHorrorCharacter::GettingCut()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player is getting cut!"));
+	OnPlayerGettingCut.Broadcast();
+	DropProp();
+	/// Need to set a timer here to enable input after a delay to simulate recovery from getting cut.
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AHorrorCharacter::Recover, 1.0f, false); // 1.0f is the delay in seconds before re-enabling input, false means it won't loop
+}
+
+void AHorrorCharacter::Recover()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player is recovering from getting cut."));
+	bIsInspecting = false;
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		PC->SetIgnoreMoveInput(false);
+	}
+}
+
 void AHorrorCharacter::ExitInspectionMode()
 {
 	bIsInspecting = false;
+	DropProp();
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		PC->SetIgnoreMoveInput(false);
+	}
+}
 
+void AHorrorCharacter::DropProp()
+{
 	if (!CurrentInspectedProp){
 		UE_LOG(LogTemp, Warning, TEXT("No inspected prop to exit from."));
 		if (CurrentInteractable)
@@ -264,10 +291,6 @@ void AHorrorCharacter::ExitInspectionMode()
 
 	CurrentInspectedProp = nullptr;
 
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
-	{
-		PC->SetIgnoreMoveInput(false);
-	}
 }
 
 void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
