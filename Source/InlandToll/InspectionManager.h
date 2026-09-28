@@ -9,7 +9,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/StaticMesh.h"
-#include "Tablet.h"
+#include "Tools/Tablet.h"
 #include "InspectionCarDataAsset.h"
 #include "InspectionManager.generated.h"
 

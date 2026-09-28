@@ -12,9 +12,9 @@
 #include "InteractionComponent.h"
 #include "InputAction.h"
 #include "HorrorCharacter.h"
-#include "ATool.h"
+#include "Tools/Tool.h"
 #include "InspectionProp.h"
-#include "Tablet.h"
+#include "Tools/Tablet.h"
 
 AHorrorCharacter::AHorrorCharacter()
 {

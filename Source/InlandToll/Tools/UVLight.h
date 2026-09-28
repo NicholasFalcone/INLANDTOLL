@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ATool.h"
+#include "Tool.h"
 #include "UVLight.generated.h"
 
 class USpotLightComponent;

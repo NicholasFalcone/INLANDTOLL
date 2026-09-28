@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ATool.h"
+#include "Tools/Tool.h"
 #include "Components/ActorComponent.h"
 #include "BPC_Inventory.generated.h"
 

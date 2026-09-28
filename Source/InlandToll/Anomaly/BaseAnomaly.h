@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InspectionProp.h"
-#include "UVLight.h"
+#include "Tools/UVLight.h"
 #include "AnomalyCheckRow.h"
 #include "BaseAnomaly.generated.h"
 

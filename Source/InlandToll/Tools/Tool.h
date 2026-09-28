@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseInteractable.h"
-#include "ATool.generated.h"
+#include "Tool.generated.h"
 
 UCLASS()
 class INLANDTOLL_API AATool : public ABaseInteractable

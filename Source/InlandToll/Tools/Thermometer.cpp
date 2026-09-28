@@ -4,7 +4,7 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
-#include "BaseAnomaly.h"
+#include "Anomaly/BaseAnomaly.h"
 #include "CollisionQueryParams.h"
 #include "Engine/World.h"
 

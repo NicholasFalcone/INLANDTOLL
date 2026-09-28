@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseAnomaly.h"
+#include "Anomaly/BaseAnomaly.h"
 #include "BaseInteractable.h"
 #include "InspectionCarDataAsset.h"
 #include "Components/WidgetComponent.h"
