@@ -69,7 +69,7 @@ ABaseInteractable* UInteractionComponent::CheckForInteractables()
     {
         AActor* HitActor = HitResult.GetActor();
         ABaseInteractable* Interactable = Cast<ABaseInteractable>(HitActor);
-        if (Interactable)
+        if (Interactable && Interactable->bIsInteractable)
         {
             return Interactable;
         }

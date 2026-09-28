@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Anomaly/BaseAnomaly.h"
+#include "Anomaly/InspectableAnomaly.h"
 #include "Flower.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INLANDTOLL_API AFlower : public ABaseAnomaly
+class INLANDTOLL_API AFlower : public AInspectableAnomaly
 {
 	GENERATED_BODY()
 	

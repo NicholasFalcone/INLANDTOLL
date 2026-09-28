@@ -23,11 +23,6 @@ void AAnomalyDoll::BeginPlay()
     {
         ShakeAudioComponent->SetSound(ShakeSound);
     }
-
-    UVLight = Cast<AUVLight>(UGameplayStatics::GetActorOfClass(GetWorld(), AUVLight::StaticClass()));
-    if(!UVLight){
-        UE_LOG(LogTemp, Error, TEXT("UVLight actor not found in the scene."));
-    }
 }
 
 void AAnomalyDoll::Tick(float DeltaTime)

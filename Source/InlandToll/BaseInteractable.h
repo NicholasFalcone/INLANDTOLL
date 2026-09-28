@@ -40,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	TArray<FST_DialogueLine> InteractionDialogueLines;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	bool bIsInteractable = true;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Anomaly/BaseAnomaly.h"
+#include "Anomaly/InteractableAnomaly.h"
 #include "InterdimentionalPortal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INLANDTOLL_API AInterdimentionalPortal : public ABaseAnomaly
+class INLANDTOLL_API AInterdimentionalPortal : public AInteractableAnomaly
 {
 	GENERATED_BODY()
 	

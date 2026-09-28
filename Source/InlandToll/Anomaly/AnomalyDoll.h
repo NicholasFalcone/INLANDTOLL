@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseAnomaly.h"
+#include "InspectableAnomaly.h"
 #include "Components/AudioComponent.h"
 #include "AnomalyDoll.generated.h"
 
@@ -17,7 +17,7 @@ enum class EShakeRotationAxis : uint8
 
 
 UCLASS()
-class INLANDTOLL_API AAnomalyDoll : public ABaseAnomaly
+class INLANDTOLL_API AAnomalyDoll : public AInspectableAnomaly
 {
 	GENERATED_BODY()
 	

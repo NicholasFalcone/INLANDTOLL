@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Anomaly/BaseAnomaly.h"
+#include "Anomaly/InspectableAnomaly.h"
 #include "LostMemory.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INLANDTOLL_API ALostMemory : public ABaseAnomaly
+class INLANDTOLL_API ALostMemory : public AInspectableAnomaly
 {
 	GENERATED_BODY()
 	

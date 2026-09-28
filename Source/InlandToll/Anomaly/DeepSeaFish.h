@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Anomaly/BaseAnomaly.h"
+#include "Anomaly/InspectableAnomaly.h"
 #include "DeepSeaFish.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INLANDTOLL_API ADeepSeaFish : public ABaseAnomaly
+class INLANDTOLL_API ADeepSeaFish : public AInspectableAnomaly
 {
 	GENERATED_BODY()
 	

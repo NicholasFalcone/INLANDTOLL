@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseAnomaly.h"
+#include "InspectableAnomaly.h"
 #include "Components/WidgetComponent.h"
 #include "Components/AudioComponent.h"
 #include "BoxAnomaly.generated.h"
@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateAddressWidget, const FStrin
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateCodeWidget, const FString&, NewCode);
 
 UCLASS()
-class INLANDTOLL_API ABoxAnomaly : public ABaseAnomaly
+class INLANDTOLL_API ABoxAnomaly : public AInspectableAnomaly
 {
 	GENERATED_BODY()
 

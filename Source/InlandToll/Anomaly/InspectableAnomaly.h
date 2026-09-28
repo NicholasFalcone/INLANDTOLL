@@ -7,13 +7,13 @@
 #include "Tools/UVLight.h"
 #include "AnomalyCheckRow.h"
 #include "HorrorCharacter.h"
-#include "BaseAnomaly.generated.h"
+#include "InspectableAnomaly.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSpottedByUVLight);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStoppedBeingSpottedByUVLight);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalySpottedByUVLight);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalyStoppedBeingSpottedByUVLight);
 UCLASS()
-class INLANDTOLL_API ABaseAnomaly : public AInspectionProp
+class INLANDTOLL_API AInspectableAnomaly : public AInspectionProp
 {
 	GENERATED_BODY()
 	
@@ -34,9 +34,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tools Interaction")
 	bool bIsBeingSpottedByUVLight = false;
 	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
-	FOnStoppedBeingSpottedByUVLight OnStoppedBeingSpottedByUVLight;
+	FOnInspectableAnomalyStoppedBeingSpottedByUVLight OnStoppedBeingSpottedByUVLight;
 	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
-	FOnSpottedByUVLight OnSpottedByUVLight;
+	FOnInspectableAnomalySpottedByUVLight OnSpottedByUVLight;
 	void OnStartSpottedByUVLight();
 	void OnStopBeingSpottedByUVLight();
 	/// --- Variable User of Temperature Interaction

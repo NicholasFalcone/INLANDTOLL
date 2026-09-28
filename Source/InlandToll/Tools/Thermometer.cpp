@@ -4,7 +4,7 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
-#include "Anomaly/BaseAnomaly.h"
+#include "Anomaly/InspectableAnomaly.h"
 #include "CollisionQueryParams.h"
 #include "Engine/World.h"
 
@@ -94,7 +94,7 @@ void AThermometer::UpdateTargetTemperature()
 			AActor* HitActor = HitResult.GetActor();
 			if (HitActor)
 			{
-				if(ABaseAnomaly* Anomaly = Cast<ABaseAnomaly>(HitActor))
+				if(AInspectableAnomaly* Anomaly = Cast<AInspectableAnomaly>(HitActor))
 				{
 					NewTarget = Anomaly->Temperature;
 				}

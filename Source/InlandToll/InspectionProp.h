@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Prop Details")
 	FInspectionPropDetails PropDetails;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
+	bool bIsInspectable = false;
+
 	// --- Zoom Config for Inspection ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
 	float MinInspectionOffset = 30.0f;

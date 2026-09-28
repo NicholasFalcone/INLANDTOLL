@@ -1,17 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BaseAnomaly.h"
+#include "InspectableAnomaly.h"
 #include "HorrorCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
-void ABaseAnomaly::BeginPlay()
+void AInspectableAnomaly::BeginPlay()
 {
     Super::BeginPlay();
     PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AHorrorCharacter::StaticClass()));
+    
+    UVLight = Cast<AUVLight>(UGameplayStatics::GetActorOfClass(GetWorld(), AUVLight::StaticClass()));
+    if(!UVLight){
+        UE_LOG(LogTemp, Error, TEXT("UVLight actor not found in the scene."));
+    }
 }
 
-void ABaseAnomaly::Tick(float DeltaTime)
+void AInspectableAnomaly::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
@@ -56,7 +61,7 @@ void ABaseAnomaly::Tick(float DeltaTime)
     }
 }
 
-bool ABaseAnomaly::IsSpottedByUVLight()
+bool AInspectableAnomaly::IsSpottedByUVLight()
 {
     if(UVLight && UVLight->IsInUse)
     {
@@ -75,17 +80,17 @@ bool ABaseAnomaly::IsSpottedByUVLight()
     return false;
 }
 
-void ABaseAnomaly::OnStartSpottedByUVLight()
+void AInspectableAnomaly::OnStartSpottedByUVLight()
 {
     OnSpottedByUVLight.Broadcast();
 }
 
-void ABaseAnomaly::OnStopBeingSpottedByUVLight()
+void AInspectableAnomaly::OnStopBeingSpottedByUVLight()
 {
     OnStoppedBeingSpottedByUVLight.Broadcast();
 }
 
-void ABaseAnomaly::OnInteract()
+void AInspectableAnomaly::OnInteract()
 {
     Super::OnInteract();
 
@@ -100,19 +105,19 @@ void ABaseAnomaly::OnInteract()
     LastAngle = StartAngle;
 }
 
-void ABaseAnomaly::OnEndInteract()
+void AInspectableAnomaly::OnEndInteract()
 {
     Super::OnEndInteract();
     bIsBeingInspected = false; // Reset the flag when interaction ends
 }
 
-void ABaseAnomaly::OnInspectionProgress(float DeltaTime)
+void AInspectableAnomaly::OnInspectionProgress(float DeltaTime)
 {
     // Log the inspection progress for debugging
     UE_LOG(LogTemp, Warning, TEXT("Inspection Progress: %f"), DeltaTime);
 }
 
-void ABaseAnomaly::OnRotate(float delta)
+void AInspectableAnomaly::OnRotate(float delta)
 {
     // Log the rotation delta for debugging
     UE_LOG(LogTemp, Warning, TEXT("Rotation Delta: %f"), delta);
