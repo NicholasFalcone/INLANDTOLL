@@ -23,6 +23,7 @@ protected:
 	
 
 protected:		
+	virtual void BeginPlay() override;
 	bool IsSpottedByUVLight();
 
 public:
@@ -45,6 +46,10 @@ public:
 	float CurrentInspectionTime = 0.0f;
 
 	bool bIsBeingInspected = false;
+
+	float StartAngle = 0.0f;
+	float LastAngle = 0.0f;
+	float RotationDelta = 0.0f;
 
 	virtual void Tick(float DeltaTime) override;
 

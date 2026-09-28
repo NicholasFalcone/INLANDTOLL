@@ -13,5 +13,12 @@ UCLASS()
 class INLANDTOLL_API ACursedSword : public ABaseAnomaly
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cursed Sword")
+	float CuttingAngle;
+
+public:
+	virtual void OnRotate(float delta) override;
 	
 };

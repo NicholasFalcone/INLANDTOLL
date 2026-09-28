@@ -5,10 +5,18 @@
 #include "HorrorCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
+void ABaseAnomaly::BeginPlay()
+{
+    Super::BeginPlay();
+}
 
 void ABaseAnomaly::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    RotationDelta = FMath::Abs(StartAngle - LastAngle);
+    LastAngle = GetActorRotation().Yaw;
+    OnRotate(RotationDelta);
 
     if (bIsBeingInspected && MaxInspectionTime > 0.0f)
     {
@@ -83,6 +91,8 @@ void ABaseAnomaly::OnInteract()
 
     // Additional logic for anomaly interaction can be added here
     bIsBeingInspected = true; // Set the flag to indicate that the anomaly is being inspected
+    StartAngle = GetActorRotation().Yaw;
+    LastAngle = StartAngle;
 }
 
 void ABaseAnomaly::OnEndInteract()
