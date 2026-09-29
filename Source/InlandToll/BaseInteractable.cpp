@@ -3,7 +3,7 @@
 
 #include "BaseInteractable.h"
 #include "Components/WidgetComponent.h"
-#include "InteractionPrompt.h"
+#include "UI/InteractionPrompt.h"
 #include "DialogueManagerSubsystem.h"
 
 // Sets default values

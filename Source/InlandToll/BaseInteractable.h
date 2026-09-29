@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractionPrompt.h"
+#include "UI/InteractionPrompt.h"
 #include "InteractionPromptData.h"
 #include "ST_DialogueLine.h"
 #include "BaseInteractable.generated.h"

@@ -10,7 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "HorrorCharacter.h"
-#include "TableUI.h"
+#include "UI/TableUI.h"
 #include "Tablet.generated.h"
 
 /**
