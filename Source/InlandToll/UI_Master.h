@@ -27,6 +27,11 @@ public:
 	UFUNCTION()
 	void HandleMaxErrorsReached();
 
+	UFUNCTION()
+	void HandlePlayerGettingCut();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Player Getting Cut"))
+	void BP_OnPlayerGettingCut();
 
 	UFUNCTION()
 	void HandleGameOver();

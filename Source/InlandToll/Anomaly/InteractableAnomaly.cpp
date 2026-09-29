@@ -16,7 +16,6 @@ void AInteractableAnomaly::BeginPlay()
     }
 }
 
-
 void AInteractableAnomaly::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);

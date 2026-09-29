@@ -6,6 +6,7 @@
 void UUI_Master::SetupCharacter(AHorrorCharacter* HorrorCharacter)
 {
     HorrorCharacter->OnPlayerDied.AddDynamic(this, &UUI_Master::HandleGameOver);
+    HorrorCharacter->OnPlayerGettingCut.AddDynamic(this, &UUI_Master::HandlePlayerGettingCut);
 }
 
 void UUI_Master::HandleGameOver()
@@ -31,4 +32,10 @@ void UUI_Master::HandleMaxErrorsReached()
 {
     // Call the Blueprint event to handle game over
     BP_OnGameOver(E_LOSE_REASON::LOSE_REASON_ERRORS);
+}
+
+void UUI_Master::HandlePlayerGettingCut()
+{
+    // Call the Blueprint event to handle player getting cut
+    BP_OnPlayerGettingCut();
 }
