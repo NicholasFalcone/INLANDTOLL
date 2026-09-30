@@ -33,13 +33,22 @@ void AInspectionManager::Tick(float DeltaTime)
 
 void AInspectionManager::SpawnNextInspectionCar()
 {
+	if(CurrentDayInspection >= InspectionToDailyReach)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Daily inspection limit reached. Cannot spawn more inspection cars."));
+		if(OnDailyInspectionLimitReached.IsBound())
+		{
+			OnDailyInspectionLimitReached.Broadcast();
+		}
+		return;
+	}
+
 	if(CurrentInspectionCar)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("An inspection car is already active. Cannot spawn a new one."));
 		return;
 	}
-
-
+	
 	if (CurrentInspectionIndex < InspectionDataArray.Num())
 	{
 		UInspectionCarDataAsset* CurrentInspectionData = InspectionDataArray[CurrentInspectionIndex];
@@ -71,6 +80,11 @@ void AInspectionManager::SpawnNextInspectionCar()
 		}
 		CurrentInspectionIndex++;
 		CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
+
+		if(OnDailyInspectionCountChanged.IsBound())
+		{
+			OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+		}
 
 		if(!TabletInstance)
 		{
@@ -113,6 +127,7 @@ void AInspectionManager::RejectCurrentInspectionCar()
 			CurrentInspectionCar->Destroy();
 			CurrentInspectionCar = nullptr;
 		}
+		CurrentDayInspection++;
 	}
 	else
 	{
@@ -168,7 +183,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 			}
 			CurrentInspectionCar = nullptr;
 		}
-		
+		CurrentDayInspection++;
 		Car->Destroy();
 		SpawnNextInspectionCar(); 
 	}

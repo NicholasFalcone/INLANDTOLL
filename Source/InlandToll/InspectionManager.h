@@ -13,8 +13,11 @@
 #include "InspectionCarDataAsset.h"
 #include "InspectionManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDailyInspectionLimitReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErrorCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaxErrorsReached);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int32, NewDailyInspectionCount);
+
 
 UCLASS()
 class INLANDTOLL_API AInspectionManager : public AActor
@@ -33,10 +36,8 @@ public:
 	TArray<UInspectionCarDataAsset*> InspectionDataArray;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	int32 CurrentInspectionIndex = 0;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	USplineComponent* SplinePath;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TSubclassOf<AInspectionPayload> CarTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
@@ -52,8 +53,19 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
 	FOnMaxErrorsReached OnMaxErrorsReached;
 
+	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
+	FOnDailyInspectionLimitReached OnDailyInspectionLimitReached;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
+	FOnDailyInspectionCountChanged OnDailyInspectionCountChanged;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<FST_DialogueLine> ErrorDialogueLines;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
+	int32 CurrentDayInspection = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	int32 InspectionToDailyReach = 5;
 
 protected:
 	// Called when the game starts or when spawned

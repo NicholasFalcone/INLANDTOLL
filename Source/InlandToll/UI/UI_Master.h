@@ -30,6 +30,12 @@ public:
 	UFUNCTION()
 	void HandlePlayerGettingCut();
 
+	UFUNCTION()
+	void HandleDailyInspectionLimitReached();
+
+	UFUNCTION()
+	void HandleDailyInspectionCountChanged(int32 NewDailyInspectionCount);
+
 	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Player Getting Cut"))
 	void BP_OnPlayerGettingCut();
 
@@ -42,4 +48,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Game Over"))
 	void BP_OnGameOver(E_LOSE_REASON Reason);
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Daily Inspection Limit Reached"))
+	void BP_OnDailyInspectionLimitReached();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Daily Inspection Count Changed"))
+	void BP_OnDailyInspectionCountChanged(int32 NewDailyInspectionCount);
 };
