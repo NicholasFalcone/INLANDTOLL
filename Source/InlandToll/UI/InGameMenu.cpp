@@ -63,6 +63,7 @@ void UInGameMenu::RestartGame()
     {
         UE_LOG(LogTemp, Warning, TEXT("Restarting game..."));
         InspectionManager->RestartGame();
+
     }
 }
 

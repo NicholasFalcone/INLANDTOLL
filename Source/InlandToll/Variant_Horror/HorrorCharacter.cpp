@@ -397,6 +397,7 @@ void AHorrorCharacter::Die()
 	UE_LOG(LogTemp, Warning, TEXT("Player has died."));
 	if(IsAlive)
 	{
+		ExitInspectionMode();
 		IsAlive = false;
 		// Disable movement
 		DisableMovement();

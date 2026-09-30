@@ -84,6 +84,23 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 	
 }
 
+void AHorrorPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+
+	if (MainUI)
+    {
+        MainUI->RemoveFromParent();
+        MainUI = nullptr; // Resettando il puntatore, OnPossess ricreerà e riconnetterà la UI pulita
+    }
+
+    if (DialogueBoxWidget)
+    {
+        DialogueBoxWidget->RemoveFromParent();
+        DialogueBoxWidget = nullptr;
+    }
+}
+
 void AHorrorPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();

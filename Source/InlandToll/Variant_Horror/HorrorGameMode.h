@@ -27,4 +27,7 @@ public:
 	AHorrorGameMode();
 
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Horror|GameMode")
+	void ResetGameplay(APlayerController* TargetController);
 };

@@ -250,10 +250,4 @@ void AInspectionManager::RestartGame()
 		CurrentInspectionCar = nullptr;
 	}
 	SpawnNextInspectionCar();
-
-	if (PlayerCharacter)
-	{
-		PlayerCharacter->IsAlive = true;
-		PlayerCharacter->EnableMovement();
-	}
 }

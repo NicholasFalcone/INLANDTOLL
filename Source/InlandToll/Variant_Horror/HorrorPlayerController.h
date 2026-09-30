@@ -69,8 +69,11 @@ protected:
 	/** Possessed pawn initialization */
 	virtual void OnPossess(APawn* aPawn) override;
 
+	virtual void OnUnPossess() override;
+
 	/** Input mapping context setup */
 	virtual void SetupInputComponent() override;
+
 
 	/** Returns true if the player should use UMG touch controls */
 	bool ShouldUseTouchControls() const;
