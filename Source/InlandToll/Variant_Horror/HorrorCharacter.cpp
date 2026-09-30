@@ -394,11 +394,15 @@ AATool* AHorrorCharacter::GetEquippedTool()
 
 void AHorrorCharacter::Die()
 {
-	// Disable movement
-	DisableMovement();
-
-	// Trigger the OnPlayerDied event
-	OnPlayerDied.Broadcast();
+	UE_LOG(LogTemp, Warning, TEXT("Player has died."));
+	if(IsAlive)
+	{
+		IsAlive = false;
+		// Disable movement
+		DisableMovement();
+		// Trigger the OnPlayerDied event
+		OnPlayerDied.Broadcast();
+	}
 }
 
 void AHorrorCharacter::EquipToolFromGround(AATool* NewTool)

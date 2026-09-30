@@ -1,6 +1,13 @@
 #include "InGameMenu.h"
+#include "InspectionManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+
+void UInGameMenu::NativeConstruct()
+{
+    Super::NativeConstruct();
+    InspectionManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass()));
+}
 
 void UInGameMenu::OpenPauseMenu()
 {
@@ -47,6 +54,15 @@ void UInGameMenu::ClosePauseMenu()
 
         FInputModeGameOnly InputModeData;
         PC->SetInputMode(InputModeData);
+    }
+}
+
+void UInGameMenu::RestartGame()
+{
+    if (InspectionManager)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Restarting game..."));
+        InspectionManager->RestartGame();
     }
 }
 

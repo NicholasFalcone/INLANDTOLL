@@ -120,5 +120,5 @@ void AInspectableAnomaly::OnInspectionProgress(float DeltaTime)
 void AInspectableAnomaly::OnRotate(float delta)
 {
     // Log the rotation delta for debugging
-    UE_LOG(LogTemp, Warning, TEXT("Rotation Delta: %f"), delta);
+    // UE_LOG(LogTemp, Warning, TEXT("Rotation Delta: %f"), delta);
 }

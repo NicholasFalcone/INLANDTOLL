@@ -67,6 +67,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	int32 InspectionToDailyReach = 5;
 
+	AHorrorCharacter* PlayerCharacter;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -85,6 +87,18 @@ public:
 	UFUNCTION()
 	void HandleCarReachedEnd(AInspectionPayload* Car);
 	
+	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
+	void RestartGame();
+
+	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
+	void DestroyCurrentInspection();
+	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
+	void HandlePlayerDied();
+
+	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
+	void DestroyAllAnomaly();
+
+
 protected:
 
 

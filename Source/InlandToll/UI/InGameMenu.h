@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InspectionManager.h"
 #include "Blueprint/UserWidget.h"
 #include "InGameMenu.generated.h"
 
@@ -13,6 +14,12 @@ UCLASS()
 class INLANDTOLL_API UInGameMenu : public UUserWidget
 {
 	GENERATED_BODY()
+
+protected:
+	void NativeConstruct() override;
+
+private:
+	TObjectPtr<class AInspectionManager> InspectionManager;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "InGameMenu")
@@ -26,5 +33,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "InGameMenu")
 	void BackToMainMenu();
+
+	UFUNCTION(BlueprintCallable, Category = "InGameMenu")
+	void RestartGame();
 
 };

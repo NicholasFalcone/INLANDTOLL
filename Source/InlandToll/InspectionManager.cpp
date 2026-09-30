@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineComponent.h"
 #include "DialogueManagerSubsystem.h"
+#include "Anomaly/InspectableAnomaly.h"
 #include "Incenerator.h"
 #include "InspectionPayload.h"
 #include "Variant_Horror/HorrorCharacter.h"
@@ -17,12 +18,40 @@ AInspectionManager::AInspectionManager()
 
 	SplinePath = CreateDefaultSubobject<USplineComponent>(TEXT("SplinePath"));
 	RootComponent = SplinePath;
+
+}
+
+void AInspectionManager::HandlePlayerDied()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player died. Handling inspection car destruction."));
+	DestroyAllAnomaly();
+}
+
+void AInspectionManager::DestroyAllAnomaly()
+{
+	DestroyCurrentInspection();
+	/// Find all Actor of class Anomaly
+	TArray<AActor*> FoundAnomalies;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInspectableAnomaly::StaticClass(), FoundAnomalies);
+	for (AActor* Anomaly : FoundAnomalies)
+	{
+		if (Anomaly)
+		{
+			Anomaly->Destroy();
+		}
+	}
 }
 
 // Called when the game starts or when spawned
 void AInspectionManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if(PlayerCharacter)
+	{
+		PlayerCharacter->OnPlayerDied.AddDynamic(this, &AInspectionManager::HandlePlayerDied);
+	}
 }
 
 // Called every frame
@@ -88,9 +117,9 @@ void AInspectionManager::SpawnNextInspectionCar()
 
 		if(!TabletInstance)
 		{
-			if (AHorrorCharacter* PlayerChar = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+			if (PlayerCharacter)
 			{
-				TabletInstance = PlayerChar->MyTablet;
+				TabletInstance = PlayerCharacter->MyTablet;
 			}
 			
 			if(!TabletInstance)
@@ -115,23 +144,34 @@ void AInspectionManager::RejectCurrentInspectionCar()
 		else
 		{
 			// Fallback if no Incenerator in level
-			TArray<AActor*> AttachedActors;
-			CurrentInspectionCar->GetAttachedActors(AttachedActors);
-			for (AActor* ChildActor : AttachedActors)
-			{
-				if (IsValid(ChildActor))
-				{
-					ChildActor->Destroy();
-				}
-			}
-			CurrentInspectionCar->Destroy();
-			CurrentInspectionCar = nullptr;
+			DestroyCurrentInspection();
 		}
 		CurrentDayInspection++;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No current inspection car to reject."));
+	}
+}
+
+void AInspectionManager::DestroyCurrentInspection(){
+	if (AIncenerator* Incenerator = Cast<AIncenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), AIncenerator::StaticClass())))
+	{
+		AActor* FoundAnomaly = nullptr;
+		TArray<AActor*> AttachedActors;
+		CurrentInspectionCar->GetAttachedActors(AttachedActors);
+		for (AActor* Actor : AttachedActors)
+		{
+			if (Actor && Actor->IsA(AInspectionProp::StaticClass()))
+			{
+				FoundAnomaly = Actor;
+				break;
+			}
+		}
+		if (FoundAnomaly)
+		{
+			Incenerator->BurnAnomaly(FoundAnomaly);
+		}
 	}
 }
 
@@ -189,3 +229,31 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 	}
 }
 
+
+void AInspectionManager::RestartGame()
+{
+	CurrentErrors = 0;
+	CurrentDayInspection = 0;
+	CurrentInspectionIndex = 0;
+
+	if(OnErrorCountChanged.IsBound())
+	{
+		OnErrorCountChanged.Broadcast(CurrentErrors);
+	}
+	if(OnDailyInspectionCountChanged.IsBound())
+	{
+		OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+	}
+	if(CurrentInspectionCar)
+	{
+		CurrentInspectionCar->Destroy();
+		CurrentInspectionCar = nullptr;
+	}
+	SpawnNextInspectionCar();
+
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->IsAlive = true;
+		PlayerCharacter->EnableMovement();
+	}
+}

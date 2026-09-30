@@ -40,6 +40,7 @@ void ALostMemory::OnRotate(float delta)
         {
             if (PlayerCharacter)
             {
+	            PrimaryActorTick.bCanEverTick = false;
                 PlayerCharacter->Die();
             }
         }

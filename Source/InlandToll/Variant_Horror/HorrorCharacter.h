@@ -146,6 +146,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Inspection")
 	float InspectionOffset = 50.0f;
 
+	bool IsAlive = true;
+
 	// Accumulated orientation for stable and natural rotation during inspection
 	float TargetInspectionYaw = 0.0f;
 	float TargetInspectionPitch = 0.0f;
