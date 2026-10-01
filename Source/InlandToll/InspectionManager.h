@@ -4,12 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InspectionPayload.h"
 #include "InspectionData.h"
 #include "Components/SceneComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/StaticMesh.h"
-#include "Tools/Tablet.h"
 #include "InspectionCarDataAsset.h"
 #include "InspectionManager.generated.h"
 
@@ -18,6 +16,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErro
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaxErrorsReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int32, NewDailyInspectionCount);
 
+class ADesk;
+class AHorrorCharacter;
+class ATablet;
+class AInspectionPayload;
 
 UCLASS()
 class INLANDTOLL_API AInspectionManager : public AActor
@@ -68,6 +70,7 @@ public:
 	int32 InspectionToDailyReach = 5;
 
 	AHorrorCharacter* PlayerCharacter;
+	ADesk* DeskInstance;
 
 protected:
 	// Called when the game starts or when spawned
@@ -78,11 +81,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
-	void SpawnNextInspectionCar();
+	void SpawnNextAnomaly();
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
-	void PassCurrentInspectionDataToCar();
+	void PassCurrentInspectionDataToAnomaly();
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
-	void RejectCurrentInspectionCar();
+	void RejectCurrentInspectedAnomaly();
 
 	UFUNCTION()
 	void HandleCarReachedEnd(AInspectionPayload* Car);
@@ -94,12 +97,7 @@ public:
 	void DestroyCurrentInspection();
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
 	void HandlePlayerDied();
-
 	UFUNCTION(BlueprintCallable, Exec, Category = "Inspection Car Manager")
 	void DestroyAllAnomaly();
-
-
-protected:
-
 
 };

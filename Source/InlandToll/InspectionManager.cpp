@@ -8,6 +8,7 @@
 #include "Anomaly/InspectableAnomaly.h"
 #include "Incenerator.h"
 #include "InspectionPayload.h"
+#include "Tools/Tablet.h"
 #include "Variant_Horror/HorrorCharacter.h"
 
 // Sets default values
@@ -18,7 +19,6 @@ AInspectionManager::AInspectionManager()
 
 	SplinePath = CreateDefaultSubobject<USplineComponent>(TEXT("SplinePath"));
 	RootComponent = SplinePath;
-
 }
 
 void AInspectionManager::HandlePlayerDied()
@@ -60,7 +60,7 @@ void AInspectionManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AInspectionManager::SpawnNextInspectionCar()
+void AInspectionManager::SpawnNextAnomaly()
 {
 	if(CurrentDayInspection >= InspectionToDailyReach)
 	{
@@ -133,7 +133,7 @@ void AInspectionManager::SpawnNextInspectionCar()
 	}
 }
 
-void AInspectionManager::RejectCurrentInspectionCar()
+void AInspectionManager::RejectCurrentInspectedAnomaly()
 {
 	if (CurrentInspectionCar)
 	{
@@ -175,7 +175,7 @@ void AInspectionManager::DestroyCurrentInspection(){
 	}
 }
 
-void AInspectionManager::PassCurrentInspectionDataToCar()
+void AInspectionManager::PassCurrentInspectionDataToAnomaly()
 {
 	if (CurrentInspectionCar)
 	{
@@ -225,7 +225,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 		}
 		CurrentDayInspection++;
 		Car->Destroy();
-		SpawnNextInspectionCar(); 
+		SpawnNextAnomaly(); 
 	}
 }
 
@@ -249,5 +249,5 @@ void AInspectionManager::RestartGame()
 		CurrentInspectionCar->Destroy();
 		CurrentInspectionCar = nullptr;
 	}
-	SpawnNextInspectionCar();
+	SpawnNextAnomaly();
 }
