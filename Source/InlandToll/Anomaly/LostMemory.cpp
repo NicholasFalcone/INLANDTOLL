@@ -18,9 +18,8 @@ void ALostMemory::OnRotate(float delta)
 	// Implement rotation logic here
     Super::OnRotate(delta);
 
-    float remainder = FMath::Fmod(FMath::Abs(delta), 180.0f);
-
-    if(remainder > MaxAngleTolerance)
+    UE_LOG(LogTemp, Warning, TEXT("DEBUG: Remainder %f"), delta);
+    if(delta > MaxAngleTolerance)
     {
         // Implement logic for when the rotation exceeds the maximum angle tolerance
         MonsterDistance = FMath::Min(MonsterDistance + .1, MaxMonsterDistance);
