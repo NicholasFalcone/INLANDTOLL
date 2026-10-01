@@ -12,6 +12,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalySpottedByUVLight);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalyStoppedBeingSpottedByUVLight);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLightStateChanged, bool, bIsLightOn);
 UCLASS()
 class INLANDTOLL_API AInspectableAnomaly : public AInspectionProp
 {
@@ -42,6 +43,9 @@ public:
 	/// --- Variable User of Temperature Interaction
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tools Interaction")
 	float Temperature = 25.0f;
+	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
+	/// --- Variable User of Light Interaction
+	FOnLightStateChanged OnLightStateChanged;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	float MaxInspectionTime = -1.0f;
@@ -60,5 +64,8 @@ public:
 	virtual void OnEndInteract() override;
 	virtual void OnInspectionProgress(float DeltaTime);
 	virtual void OnRotate(float delta);
+
+	UFUNCTION()
+	void HandleLightStateChanged(bool bIsLightOn);
 
 };

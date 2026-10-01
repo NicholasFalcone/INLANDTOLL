@@ -16,7 +16,7 @@ void AGeneralLightSwitch::ToggleLights()
             Light->SetEnabled(bIsLightOn);
         }
     }
-    OnLightsToggled.Broadcast();
+    OnLightsToggled.Broadcast(bIsLightOn);
 }
 
 void AGeneralLightSwitch::SetLight(bool bNewState)
@@ -29,7 +29,7 @@ void AGeneralLightSwitch::SetLight(bool bNewState)
             Light->SetEnabled(bNewState);
         }
     }
-    OnLightsToggled.Broadcast();
+    OnLightsToggled.Broadcast(bIsLightOn);
 }
 
 void AGeneralLightSwitch::BeginPlay()

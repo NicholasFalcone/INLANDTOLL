@@ -3,6 +3,7 @@
 
 #include "InspectableAnomaly.h"
 #include "HorrorCharacter.h"
+#include "GeneralLightSwitch.h"
 #include "Kismet/GameplayStatics.h"
 
 void AInspectableAnomaly::BeginPlay()
@@ -13,6 +14,15 @@ void AInspectableAnomaly::BeginPlay()
     UVLight = Cast<AUVLight>(UGameplayStatics::GetActorOfClass(GetWorld(), AUVLight::StaticClass()));
     if(!UVLight){
         UE_LOG(LogTemp, Error, TEXT("UVLight actor not found in the scene."));
+    }
+    
+    if(AGeneralLightSwitch* foundLightSwitch = Cast<AGeneralLightSwitch>(UGameplayStatics::GetActorOfClass(GetWorld(), AGeneralLightSwitch::StaticClass())))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GeneralLightSwitch found and bound to light state change."));
+        foundLightSwitch->OnLightsToggled.AddDynamic(this, &AInspectableAnomaly::HandleLightStateChanged);
+    }
+    else{
+        UE_LOG(LogTemp, Warning, TEXT("GeneralLightSwitch actor not found in the scene."));
     }
 }
 
@@ -88,6 +98,12 @@ void AInspectableAnomaly::OnStartSpottedByUVLight()
 void AInspectableAnomaly::OnStopBeingSpottedByUVLight()
 {
     OnStoppedBeingSpottedByUVLight.Broadcast();
+}
+
+void AInspectableAnomaly::HandleLightStateChanged(bool bIsLightOn)
+{
+    UE_LOG(LogTemp, Warning, TEXT("HandleLightStateChanged called with bIsLightOn: %s"), bIsLightOn ? TEXT("true") : TEXT("false"));
+    OnLightStateChanged.Broadcast(bIsLightOn);
 }
 
 void AInspectableAnomaly::OnInteract()

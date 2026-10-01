@@ -8,7 +8,7 @@
 #include "GeneralLightSwitch.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLightsToggled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLightsToggled, bool, bIsLightOn);
 UCLASS()
 class INLANDTOLL_API AGeneralLightSwitch : public ABaseInteractable
 {

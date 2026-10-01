@@ -14,6 +14,7 @@ void AInteractableAnomaly::BeginPlay()
     if(!UVLight){
         UE_LOG(LogTemp, Error, TEXT("UVLight actor not found in the scene."));
     }
+
 }
 
 void AInteractableAnomaly::Tick(float DeltaTime)
@@ -63,4 +64,3 @@ void AInteractableAnomaly::OnStopBeingSpottedByUVLight()
 {
     OnStoppedBeingSpottedByUVLight.Broadcast();
 }
-
