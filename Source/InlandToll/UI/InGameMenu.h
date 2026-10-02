@@ -3,13 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InspectionManager.h"
 #include "Blueprint/UserWidget.h"
 #include "InGameMenu.generated.h"
 
-/**
- * 
- */
+class ADesk;
+
 UCLASS()
 class INLANDTOLL_API UInGameMenu : public UUserWidget
 {
@@ -19,7 +17,7 @@ protected:
 	void NativeConstruct() override;
 
 private:
-	TObjectPtr<class AInspectionManager> InspectionManager;
+	TObjectPtr<class ADesk> DeskInstance;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "InGameMenu")

@@ -65,14 +65,16 @@ void ADesk::OnInspectionErrorIncreese()
     }
     else
     {
-        /// Trigger game over or appropriate response for reaching max errors
         OnMaxErrorsReached.Broadcast();
     }
-			
 }
 
 void ADesk::RestartGame()
 {
+    CurrentDayInspection = 0;
+    CurrentErrors = 0;
+    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+    OnErrorCountChanged.Broadcast(CurrentErrors);
     if (InspectionManager)
     {
         InspectionManager->RestartGame();
@@ -113,7 +115,6 @@ void ADesk::OnRejectButtonPressed()
 {
     InspectionManager->RejectCurrentInspectedAnomaly();
 }
-
 
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
 ABaseInteractable* ADesk::GetApproveButton() const

@@ -1,12 +1,12 @@
 #include "InGameMenu.h"
-#include "InspectionManager.h"
+#include "Desk.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 
 void UInGameMenu::NativeConstruct()
 {
     Super::NativeConstruct();
-    InspectionManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass()));
+    DeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
 }
 
 void UInGameMenu::OpenPauseMenu()
@@ -59,11 +59,10 @@ void UInGameMenu::ClosePauseMenu()
 
 void UInGameMenu::RestartGame()
 {
-    if (InspectionManager)
+    if (DeskInstance)
     {
         UE_LOG(LogTemp, Warning, TEXT("Restarting game..."));
-        InspectionManager->RestartGame();
-
+        DeskInstance->RestartGame();
     }
 }
 
