@@ -102,21 +102,7 @@ void AInspectionManager::SpawnNextAnomaly()
 		CurrentInspectionIndex++;
 		CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
 
-		if(!TabletInstance)
-		{
-			if (PlayerCharacter)
-			{
-				TabletInstance = PlayerCharacter->MyTablet;
-			}
-			
-			if(!TabletInstance)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Tablet instance still not found in the player. Cannot update anomaly."));
-				return;
-			}
-		}
-
-		TabletInstance->UpdateAnomaly(CurrentInspectionData->InspectionData);
+		OnAnomalyDetailsChange.Broadcast(CurrentInspectionData->InspectionData);
 	}
 }
 

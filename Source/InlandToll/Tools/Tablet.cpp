@@ -15,9 +15,6 @@ ATablet::ATablet()
     TabletWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TabletWidgetComponent"));
     TabletWidgetComponent->SetWidgetClass(TabletWidgetClass);
     TabletWidgetComponent->SetupAttachment(RootComponent);
-
-    InteractionCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("InteractionCamera"));
-    InteractionCamera->SetupAttachment(RootComponent);
 }
 
 void ATablet::BeginPlay()
@@ -25,6 +22,7 @@ void ATablet::BeginPlay()
     Super::BeginPlay();
 
     PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    TabletWidget = Cast<UTableUI>(TabletWidgetComponent->GetUserWidgetObject());
 }
 
 void ATablet::OnInteract()
@@ -45,18 +43,38 @@ void ATablet::OnEndInteract()
     PlayerCharacter->SetTabletOpen(false);
 }
 
+bool ATablet::HasSheet() const
+{
+    return bHasSheet;
+}
+
 void ATablet::UpdateAnomaly(const FInspectionData& currentInspectionData)
 {
     // Assuming the Tablet has a method to update its display based on the inspection data
     // You would implement the logic here to update the tablet's UI or state
     UE_LOG(LogTemp, Log, TEXT("Updating Tablet with new anomaly data."));
-    UTableUI* TableWidget = Cast<UTableUI>(TabletWidgetComponent->GetUserWidgetObject());
-    if (TableWidget)
+    if (TabletWidget)
     {
-        TableWidget->UpdateAnomaly(currentInspectionData);
+        UE_LOG(LogTemp, Log, TEXT("Calling UpdateAnomaly on TabletWidget. %s"), *currentInspectionData.InspectionName.ToString());
+        TabletWidget->UpdateAnomaly(currentInspectionData);
     }
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("TabletWidgetComponent does not have a valid UTableUI instance."));
     }
+    bHasSheet = true;
+}
+
+bool ATablet::CanBeDelivered() const
+{
+    return TabletWidget && bHasSheet && TabletWidget->bSheetCompiled;
+}
+
+void ATablet::RemoveSheet()
+{
+    if (TabletWidget)
+    {
+        TabletWidget->RemoveSheet();
+    }
+    bHasSheet = false;
 }

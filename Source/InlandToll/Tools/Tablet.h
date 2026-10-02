@@ -22,10 +22,6 @@ class INLANDTOLL_API ATablet : public ABaseInteractable
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* InteractionCamera;
-
-protected:
 	virtual void BeginPlay() override;
 
 public:
@@ -35,10 +31,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
 	TSubclassOf<UTableUI> TabletWidgetClass;
 
+	TObjectPtr<UTableUI> TabletWidget;
+
 	AHorrorCharacter* PlayerCharacter;
 
 	void UpdateAnomaly(const FInspectionData& currentInspectionData);
 
+	void RemoveSheet();
+
+	bool bHasSheet = false;
+
 	virtual void OnInteract() override;
 	virtual void OnEndInteract() override;
+public:
+	bool CanBeDelivered() const;
+	bool HasSheet() const;
 };

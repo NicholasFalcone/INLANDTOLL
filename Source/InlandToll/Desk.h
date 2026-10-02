@@ -2,8 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "InspectionData.h"
 #include "Desk.generated.h"
 
+class ATablet;
+struct FInspectionData;
 class UWidgetComponent;
 class UChildActorComponent;
 class ABaseInteractable;
@@ -23,6 +26,10 @@ class INLANDTOLL_API ADesk : public AActor
 public:
     ADesk();
 
+private:
+    FInspectionData CurrentAnomalyDetails;
+    ATablet* TabletInstance;
+    
 protected:
     virtual void BeginPlay() override;
 
@@ -39,10 +46,19 @@ public:
     void OnRejectButtonPressed();
 
     UFUNCTION()
+    void OnNewAnomalyButtonPressed();
+
+    UFUNCTION()
     void OnInspectionEnded();
 
     UFUNCTION()
     void OnInspectionErrorIncreese();
+
+    UFUNCTION()
+    void UpdateTabletDetails(const FInspectionData& NewAnomalyDetails);
+
+    UFUNCTION()
+    void DeliverAnomalySheet();
 
 public:
     // Child Actor Components per i pulsanti
@@ -54,6 +70,9 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<UChildActorComponent> RejectButtonComponent;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> NewAnomalyButtonComponent;
 
     // Monitor UI
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
@@ -76,6 +95,10 @@ public:
     ABaseInteractable* GetApproveButton() const;
     ABaseInteractable* GetRejectButton() const;
     ABaseInteractable* GetPrintDetailsButton() const;
+    ABaseInteractable* GetNewAnomalyButtonComponent() const;
+
+    ATablet* GetTabletInstance();
+
 
     AInspectionManager* InspectionManager;
 

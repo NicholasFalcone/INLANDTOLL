@@ -2,6 +2,7 @@
 #include "Components/ChildActorComponent.h"
 #include "Components/WidgetComponent.h"
 #include "BaseInteractable.h"
+#include "Tools/Tablet.h"
 #include "Kismet/GameplayStatics.h"
 #include "InspectionManager.h"
 
@@ -10,7 +11,6 @@ ADesk::ADesk()
     PrimaryActorTick.bCanEverTick = false;
 
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-
     // --- BUTTONS (Child Actor Components) ---
     PrintDetailsButtonComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("PrintDetailsButton"));
     PrintDetailsButtonComponent->SetupAttachment(RootComponent);
@@ -24,6 +24,11 @@ ADesk::ADesk()
     RejectButtonComponent->SetupAttachment(RootComponent);
     RejectButtonComponent->SetChildActorClass(ABaseInteractable::StaticClass());
 
+    NewAnomalyButtonComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("NewAnomalyButton"));
+    NewAnomalyButtonComponent->SetupAttachment(RootComponent);
+    NewAnomalyButtonComponent->SetChildActorClass(ABaseInteractable::StaticClass());
+
+
     // --- MONITORS (Widget Components) ---
     LeftMonitor = CreateDefaultSubobject<UWidgetComponent>(TEXT("LeftMonitor"));
     LeftMonitor->SetupAttachment(RootComponent);
@@ -36,11 +41,35 @@ void ADesk::BeginPlay()
 {
     Super::BeginPlay();
     InspectionManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass()));
-    
     InspectionManager->OnInspectionEnded.AddDynamic(this, &ADesk::OnInspectionEnded);
     InspectionManager->OnInspectionError.AddDynamic(this, &ADesk::OnInspectionErrorIncreese);
-
+    InspectionManager->OnAnomalyDetailsChange.AddDynamic(this, &ADesk::UpdateTabletDetails);
+    TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
     SetupButtons();
+}
+
+void ADesk::UpdateTabletDetails(const FInspectionData& NewAnomalyDetails)
+{
+    // Implement the logic to update the tablet details based on the new anomaly details
+    if (GetTabletInstance())
+    {
+        UE_LOG(LogTemp, Log, TEXT("Updating tablet details with new anomaly data."));
+        CurrentAnomalyDetails = NewAnomalyDetails;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Tablet instance is not valid."));
+    }
+}
+
+void ADesk::OnNewAnomalyButtonPressed()
+{
+    CurrentDayInspection++;
+    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+    if (InspectionManager)
+    {
+        InspectionManager->SpawnNextAnomaly();
+    }
 }
 
 void ADesk::OnInspectionEnded()
@@ -97,13 +126,38 @@ void ADesk::SetupButtons()
     {
         PrintDetailsButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnPrintDetailsButtonPressed);
     }
+    
+    if (ABaseInteractable* NewAnomalyButton = GetNewAnomalyButtonComponent())
+    {
+        NewAnomalyButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnNewAnomalyButtonPressed);
+    }
 }
 
 void ADesk::OnPrintDetailsButtonPressed()
 {
-    CurrentDayInspection++;
-    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
-    InspectionManager->SpawnNextAnomaly();
+    UE_LOG(LogTemp, Log, TEXT("Print Details button pressed. %s \n anomaly details %s"), GetTabletInstance() ? (GetTabletInstance()->HasSheet() ? TEXT("Has Sheet") : TEXT("No Sheet")) : TEXT("No Tablet Instance"), *CurrentAnomalyDetails.InspectionName.ToString());
+    if(GetTabletInstance()->HasSheet())
+    {
+        UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
+        if(GetTabletInstance()->CanBeDelivered())
+        {
+            UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
+            DeliverAnomalySheet();
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("$$$$######Updating anomaly on the tablet."));
+        GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
+    }
+}
+
+void ADesk::DeliverAnomalySheet()
+{
+    if(GetTabletInstance() )
+    {
+        GetTabletInstance()->RemoveSheet();
+    }
 }
 
 void ADesk::OnApproveButtonPressed()
@@ -117,6 +171,11 @@ void ADesk::OnRejectButtonPressed()
 }
 
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
+ABaseInteractable* ADesk::GetNewAnomalyButtonComponent() const
+{
+    return NewAnomalyButtonComponent ? Cast<ABaseInteractable>(NewAnomalyButtonComponent->GetChildActor()) : nullptr;
+}
+
 ABaseInteractable* ADesk::GetApproveButton() const
 {
     return ApproveButtonComponent ? Cast<ABaseInteractable>(ApproveButtonComponent->GetChildActor()) : nullptr;
@@ -130,4 +189,16 @@ ABaseInteractable* ADesk::GetRejectButton() const
 ABaseInteractable* ADesk::GetPrintDetailsButton() const
 {
     return PrintDetailsButtonComponent ? Cast<ABaseInteractable>(PrintDetailsButtonComponent->GetChildActor()) : nullptr;
+}
+
+ATablet* ADesk::GetTabletInstance()
+{
+    if(TabletInstance)
+        return TabletInstance;
+    else{
+        TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
+        if(TabletInstance)
+            return TabletInstance;
+    }
+    return nullptr;
 }

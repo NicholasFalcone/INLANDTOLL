@@ -13,10 +13,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectionError);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectionEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnomalyDetailsChange, const FInspectionData&, NewAnomalyDetails);
 
 class ADesk;
 class AHorrorCharacter;
-class ATablet;
 class AInspectionPayload;
 
 UCLASS()
@@ -24,9 +24,6 @@ class INLANDTOLL_API AInspectionManager : public AActor
 {
 	GENERATED_BODY()
 	
-private:
-	ATablet* TabletInstance;
-
 public:	
 	// Sets default values for this actor's properties
 	AInspectionManager();
@@ -48,6 +45,8 @@ public:
 	FOnInspectionError OnInspectionError;
 	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
 	FOnInspectionEnded OnInspectionEnded;
+	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
+	FOnAnomalyDetailsChange OnAnomalyDetailsChange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<FST_DialogueLine> ErrorDialogueLines;
