@@ -36,7 +36,39 @@ void ADesk::BeginPlay()
 {
     Super::BeginPlay();
     InspectionManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass()));
+    
+    InspectionManager->OnInspectionEnded.AddDynamic(this, &ADesk::OnInspectionEnded);
+    InspectionManager->OnInspectionError.AddDynamic(this, &ADesk::OnInspectionErrorIncreese);
+
     SetupButtons();
+}
+
+void ADesk::OnInspectionEnded()
+{
+    CurrentDayInspection++;
+    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+    if(CurrentDayInspection >= InspectionToDailyReach)
+    {
+        OnDailyInspectionLimitReached.Broadcast();
+    }
+}
+
+void ADesk::OnInspectionErrorIncreese()
+{
+    CurrentErrors++;
+    OnErrorCountChanged.Broadcast(CurrentErrors);
+
+    if(CurrentErrors < MaxErrorsAllowed)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Current errors: %d"), CurrentErrors);
+        /// Update ui on left panel
+    }
+    else
+    {
+        /// Trigger game over or appropriate response for reaching max errors
+        OnMaxErrorsReached.Broadcast();
+    }
+			
 }
 
 void ADesk::RestartGame()
@@ -67,6 +99,8 @@ void ADesk::SetupButtons()
 
 void ADesk::OnPrintDetailsButtonPressed()
 {
+    CurrentDayInspection++;
+    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
     InspectionManager->SpawnNextAnomaly();
 }
 

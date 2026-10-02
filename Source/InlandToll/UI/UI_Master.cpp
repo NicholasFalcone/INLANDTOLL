@@ -2,6 +2,8 @@
 
 
 #include "UI_Master.h"
+#include "Desk.h"
+#include "Variant_Horror/HorrorCharacter.h"
 
 void UUI_Master::SetupCharacter(AHorrorCharacter* HorrorCharacter)
 {
@@ -15,13 +17,13 @@ void UUI_Master::HandleGameOver()
     BP_OnGameOver(E_LOSE_REASON::LOSE_REASON_ANOMALY);
 }
 
-void UUI_Master::SetupManager(AInspectionManager* InspectionManager)
+void UUI_Master::SetupManager(ADesk* DeskInstance)
 {
-    // Implement logic to set up the inspection car manager in the UI
-    InspectionManager->OnErrorCountChanged.AddDynamic(this, &UUI_Master::HandleErrorCountChanged);
-    InspectionManager->OnMaxErrorsReached.AddDynamic(this, &UUI_Master::HandleMaxErrorsReached);
-    InspectionManager->OnDailyInspectionLimitReached.AddDynamic(this, &UUI_Master::HandleDailyInspectionLimitReached);
-    InspectionManager->OnDailyInspectionCountChanged.AddDynamic(this, &UUI_Master::HandleDailyInspectionCountChanged);
+    // Implement logic to set up the desk instance in the UI
+    DeskInstance->OnErrorCountChanged.AddDynamic(this, &UUI_Master::HandleErrorCountChanged);
+    DeskInstance->OnMaxErrorsReached.AddDynamic(this, &UUI_Master::HandleMaxErrorsReached);
+    DeskInstance->OnDailyInspectionLimitReached.AddDynamic(this, &UUI_Master::HandleDailyInspectionLimitReached);
+    DeskInstance->OnDailyInspectionCountChanged.AddDynamic(this, &UUI_Master::HandleDailyInspectionCountChanged);
 }
 
 void UUI_Master::HandleErrorCountChanged(int32 NewErrorCount)

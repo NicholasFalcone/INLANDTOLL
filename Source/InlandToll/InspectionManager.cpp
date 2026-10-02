@@ -63,15 +63,6 @@ void AInspectionManager::Tick(float DeltaTime)
 void AInspectionManager::SpawnNextAnomaly()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Spawning next anomaly."));
-	if(CurrentDayInspection >= InspectionToDailyReach)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Daily inspection limit reached. Cannot spawn more inspection cars."));
-		if(OnDailyInspectionLimitReached.IsBound())
-		{
-			OnDailyInspectionLimitReached.Broadcast();
-		}
-		return;
-	}
 
 	if(CurrentInspectionCar)
 	{
@@ -111,11 +102,6 @@ void AInspectionManager::SpawnNextAnomaly()
 		CurrentInspectionIndex++;
 		CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
 
-		if(OnDailyInspectionCountChanged.IsBound())
-		{
-			OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
-		}
-
 		if(!TabletInstance)
 		{
 			if (PlayerCharacter)
@@ -147,7 +133,6 @@ void AInspectionManager::RejectCurrentInspectedAnomaly()
 			// Fallback if no Incenerator in level
 			DestroyCurrentInspection();
 		}
-		CurrentDayInspection++;
 	}
 	else
 	{
@@ -210,41 +195,29 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 					}
 				}
 				CurrentErrors++;
-				if(CurrentErrors < MaxErrorsAllowed)
+				if(OnInspectionError.IsBound())
 				{
-					if(OnErrorCountChanged.IsBound())
-					{
-						OnErrorCountChanged.Broadcast(CurrentErrors);
-					}
+					OnInspectionError.Broadcast();
 				}
-				else
-				{
-					OnMaxErrorsReached.Broadcast();
-				}
+
 			}
 			CurrentInspectionCar = nullptr;
 		}
-		CurrentDayInspection++;
+
+		if(OnInspectionEnded.IsBound())
+		{
+			OnInspectionEnded.Broadcast();
+		}
+		
 		Car->Destroy();
 		SpawnNextAnomaly(); 
 	}
 }
 
-
 void AInspectionManager::RestartGame()
 {
-	CurrentErrors = 0;
-	CurrentDayInspection = 0;
 	CurrentInspectionIndex = 0;
-
-	if(OnErrorCountChanged.IsBound())
-	{
-		OnErrorCountChanged.Broadcast(CurrentErrors);
-	}
-	if(OnDailyInspectionCountChanged.IsBound())
-	{
-		OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
-	}
+	CurrentErrors = 0;
 	if(CurrentInspectionCar)
 	{
 		CurrentInspectionCar->Destroy();

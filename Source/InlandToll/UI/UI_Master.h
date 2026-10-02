@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Variant_Horror/HorrorCharacter.h"
-#include "InspectionManager.h"
 #include "LoseReason.h"
 #include "UI_Master.generated.h"
 
 /**
  * 
  */
+class ADesk;
+class AHorrorCharacter;
+
 UCLASS()
 class INLANDTOLL_API UUI_Master : public UUserWidget
 {
@@ -19,7 +21,7 @@ class INLANDTOLL_API UUI_Master : public UUserWidget
 	
 public:
 	void SetupCharacter(AHorrorCharacter* HorrorCharacter);
-	void SetupManager(AInspectionManager* CarManager);
+	void SetupManager(ADesk* DeskInstance);
 
 	UFUNCTION()
 	void HandleErrorCountChanged(int32 NewErrorCount);

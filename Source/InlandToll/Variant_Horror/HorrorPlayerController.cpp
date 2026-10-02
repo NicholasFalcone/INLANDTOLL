@@ -12,7 +12,7 @@
 #include "InlandToll.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 #include "Kismet/GameplayStatics.h"
-#include "InspectionManager.h"
+#include "Desk.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
@@ -74,9 +74,9 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 			{
 				MainUI->SetupCharacter(HorrorCharacter);
 
-				if (AInspectionManager* CarManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass())))
+				if (ADesk* DeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass())))
 				{
-					MainUI->SetupManager(CarManager);
+					MainUI->SetupManager(DeskInstance);
 				}
 			}
 		}

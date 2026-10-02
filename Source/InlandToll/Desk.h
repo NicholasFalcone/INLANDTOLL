@@ -9,6 +9,12 @@ class UChildActorComponent;
 class ABaseInteractable;
 class AInspectionManager;
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDailyInspectionLimitReached);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErrorCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaxErrorsReached);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int32, NewDailyInspectionCount);
+
 UCLASS()
 class INLANDTOLL_API ADesk : public AActor
 {
@@ -32,6 +38,12 @@ public:
     UFUNCTION()
     void OnRejectButtonPressed();
 
+    UFUNCTION()
+    void OnInspectionEnded();
+
+    UFUNCTION()
+    void OnInspectionErrorIncreese();
+
 public:
     // Child Actor Components per i pulsanti
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
@@ -50,6 +62,15 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
     TObjectPtr<UWidgetComponent> RightMonitor;
 
+	UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnDailyInspectionLimitReached OnDailyInspectionLimitReached;
+    UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnErrorCountChanged OnErrorCountChanged;
+    UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnMaxErrorsReached OnMaxErrorsReached;
+    UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnDailyInspectionCountChanged OnDailyInspectionCountChanged;
+
 public:
     // Helper function se vuoi accedere comodamente alla classe ABaseInteractable nel codice
     ABaseInteractable* GetApproveButton() const;
@@ -57,4 +78,14 @@ public:
     ABaseInteractable* GetPrintDetailsButton() const;
 
     AInspectionManager* InspectionManager;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	int32 MaxErrorsAllowed = 3;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
+	int32 CurrentErrors = 0;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
+	int32 CurrentDayInspection = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	int32 InspectionToDailyReach = 5;
 };

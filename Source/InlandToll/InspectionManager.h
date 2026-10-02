@@ -11,10 +11,8 @@
 #include "InspectionCarDataAsset.h"
 #include "InspectionManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDailyInspectionLimitReached);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErrorCount);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaxErrorsReached);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int32, NewDailyInspectionCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectionError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectionEnded);
 
 class ADesk;
 class AHorrorCharacter;
@@ -44,30 +42,15 @@ public:
 	TSubclassOf<AInspectionPayload> CarTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	AInspectionPayload* CurrentInspectionCar;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	int32 MaxErrorsAllowed = 3;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
 	int32 CurrentErrors = 0;
-	
-	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
-	FOnErrorCountChanged OnErrorCountChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
-	FOnMaxErrorsReached OnMaxErrorsReached;
-
+	FOnInspectionError OnInspectionError;
 	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
-	FOnDailyInspectionLimitReached OnDailyInspectionLimitReached;
-	
-	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")
-	FOnDailyInspectionCountChanged OnDailyInspectionCountChanged;
+	FOnInspectionEnded OnInspectionEnded;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<FST_DialogueLine> ErrorDialogueLines;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
-	int32 CurrentDayInspection = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	int32 InspectionToDailyReach = 5;
 
 	AHorrorCharacter* PlayerCharacter;
 	ADesk* DeskInstance;
