@@ -98,6 +98,7 @@ void ABaseInteractable::OnInteract()
 {
 	if (OnInteractDelegate.IsBound())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("OnInteractDelegate is bound and will be broadcasted."));
 		OnInteractDelegate.Broadcast();
 	}
 

@@ -7,6 +7,7 @@
 class UWidgetComponent;
 class UChildActorComponent;
 class ABaseInteractable;
+class AInspectionManager;
 
 UCLASS()
 class INLANDTOLL_API ADesk : public AActor
@@ -18,6 +19,18 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+
+public:
+    UFUNCTION()
+    void RestartGame();
+    UFUNCTION()
+    void SetupButtons();
+    UFUNCTION()
+    void OnPrintDetailsButtonPressed();
+    UFUNCTION()
+    void OnApproveButtonPressed();
+    UFUNCTION()
+    void OnRejectButtonPressed();
 
 public:
     // Child Actor Components per i pulsanti
@@ -42,4 +55,6 @@ public:
     ABaseInteractable* GetApproveButton() const;
     ABaseInteractable* GetRejectButton() const;
     ABaseInteractable* GetPrintDetailsButton() const;
+
+    AInspectionManager* InspectionManager;
 };

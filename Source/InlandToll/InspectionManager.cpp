@@ -62,6 +62,7 @@ void AInspectionManager::Tick(float DeltaTime)
 
 void AInspectionManager::SpawnNextAnomaly()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Spawning next anomaly."));
 	if(CurrentDayInspection >= InspectionToDailyReach)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Daily inspection limit reached. Cannot spawn more inspection cars."));

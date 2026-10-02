@@ -2,6 +2,8 @@
 #include "Components/ChildActorComponent.h"
 #include "Components/WidgetComponent.h"
 #include "BaseInteractable.h"
+#include "Kismet/GameplayStatics.h"
+#include "InspectionManager.h"
 
 ADesk::ADesk()
 {
@@ -33,7 +35,51 @@ ADesk::ADesk()
 void ADesk::BeginPlay()
 {
     Super::BeginPlay();
+    InspectionManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass()));
+    SetupButtons();
 }
+
+void ADesk::RestartGame()
+{
+    if (InspectionManager)
+    {
+        InspectionManager->RestartGame();
+    }
+}
+
+void ADesk::SetupButtons()
+{
+    if (ABaseInteractable* ApproveButton = GetApproveButton())
+    {
+        ApproveButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnApproveButtonPressed);
+    }
+
+    if (ABaseInteractable* RejectButton = GetRejectButton())
+    {
+        RejectButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnRejectButtonPressed);
+    }
+
+    if (ABaseInteractable* PrintDetailsButton = GetPrintDetailsButton())
+    {
+        PrintDetailsButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnPrintDetailsButtonPressed);
+    }
+}
+
+void ADesk::OnPrintDetailsButtonPressed()
+{
+    InspectionManager->SpawnNextAnomaly();
+}
+
+void ADesk::OnApproveButtonPressed()
+{
+    InspectionManager->PassCurrentInspectionDataToAnomaly();
+}
+
+void ADesk::OnRejectButtonPressed()
+{
+    InspectionManager->RejectCurrentInspectedAnomaly();
+}
+
 
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
 ABaseInteractable* ADesk::GetApproveButton() const
