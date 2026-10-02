@@ -1,6 +1,8 @@
 #include "Desk.h"
 #include "Components/ChildActorComponent.h"
 #include "Components/WidgetComponent.h"
+#include "DialogueManagerSubsystem.h"
+#include "ST_DialogueLine.h"
 #include "BaseInteractable.h"
 #include "Tools/Tablet.h"
 #include "Kismet/GameplayStatics.h"
@@ -48,6 +50,116 @@ void ADesk::BeginPlay()
     SetupButtons();
 }
 
+void ADesk::SetupButtons()
+{
+    if (ABaseInteractable* ApproveButton = GetApproveButton())
+    {
+        ApproveButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnApproveButtonPressed);
+    }
+
+    if (ABaseInteractable* RejectButton = GetRejectButton())
+    {
+        RejectButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnRejectButtonPressed);
+    }
+
+    if (ABaseInteractable* PrintDetailsButton = GetPrintDetailsButton())
+    {
+        PrintDetailsButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnPrintDetailsButtonPressed);
+    }
+    
+    if (ABaseInteractable* NewAnomalyButton = GetNewAnomalyButtonComponent())
+    {
+        NewAnomalyButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnNewAnomalyButtonPressed);
+    }
+
+    GetPrintDetailsButton()->bIsInteractable = false;
+    GetApproveButton()->bIsInteractable = false;
+    GetRejectButton()->bIsInteractable = false;
+    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+}
+
+void ADesk::OnNewAnomalyButtonPressed()
+{
+    CurrentDayInspection++;
+    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+    if (InspectionManager)
+    {
+        InspectionManager->SpawnNextAnomaly();
+    }
+    GetPrintDetailsButton()->bIsInteractable = true;
+    GetApproveButton()->bIsInteractable = false;
+    GetRejectButton()->bIsInteractable = false;
+    GetNewAnomalyButtonComponent()->bIsInteractable = false;
+}
+
+void ADesk::OnPrintDetailsButtonPressed()
+{
+    UE_LOG(LogTemp, Log, TEXT("Print Details button pressed. %s \n anomaly details %s"), GetTabletInstance() ? (GetTabletInstance()->HasSheet() ? TEXT("Has Sheet") : TEXT("No Sheet")) : TEXT("No Tablet Instance"), *CurrentAnomalyDetails.InspectionName.ToString());
+    if(GetTabletInstance()->HasSheet())
+    {
+        UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
+        if(GetTabletInstance()->CanBeDelivered())
+        {
+            UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
+            DeliverAnomalySheet();
+            /// Update button states after delivering the anomaly sheet.
+            GetPrintDetailsButton()->bIsInteractable = false;
+            GetApproveButton()->bIsInteractable = true;
+            GetRejectButton()->bIsInteractable = true;
+            GetNewAnomalyButtonComponent()->bIsInteractable = false;
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Cannot deliver anomaly sheet. Tablet cannot be delivered."));
+
+            			// Trigger dialogue associated with this anomaly comming up for inspection
+			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+			{
+                FST_DialogueLine CurrentDialogueLine = FST_DialogueLine();
+                CurrentDialogueLine.SpeakerName = "Player";
+                CurrentDialogueLine.DialogueText = "Cannot deliver anomaly sheet. You must complete the inspection first.";
+				DialogueSubsystem->PlayDialogue(CurrentDialogueLine);
+			}
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("$$$$######Updating anomaly on the tablet."));
+        GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
+        GetPrintDetailsButton()->bIsInteractable = true;
+        GetApproveButton()->bIsInteractable = false;
+        GetRejectButton()->bIsInteractable = false;
+        GetNewAnomalyButtonComponent()->bIsInteractable = false;
+    }
+}
+
+void ADesk::OnApproveButtonPressed()
+{
+    InspectionManager->PassCurrentInspectionDataToAnomaly();
+    GetPrintDetailsButton()->bIsInteractable = false;
+    GetApproveButton()->bIsInteractable = false;
+    GetRejectButton()->bIsInteractable = false;
+    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+}
+
+void ADesk::OnRejectButtonPressed()
+{
+    InspectionManager->RejectCurrentInspectedAnomaly();
+    GetPrintDetailsButton()->bIsInteractable = false;
+    GetApproveButton()->bIsInteractable = false;
+    GetRejectButton()->bIsInteractable = false;
+    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+}
+
+void ADesk::DeliverAnomalySheet()
+{
+    if(GetTabletInstance() )
+    {
+        UE_LOG(LogTemp, Log, TEXT("Removed anomaly sheet from the tablet."));
+        GetTabletInstance()->RemoveSheet();
+    }
+}
+
 void ADesk::UpdateTabletDetails(const FInspectionData& NewAnomalyDetails)
 {
     // Implement the logic to update the tablet details based on the new anomaly details
@@ -59,16 +171,6 @@ void ADesk::UpdateTabletDetails(const FInspectionData& NewAnomalyDetails)
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("Tablet instance is not valid."));
-    }
-}
-
-void ADesk::OnNewAnomalyButtonPressed()
-{
-    CurrentDayInspection++;
-    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
-    if (InspectionManager)
-    {
-        InspectionManager->SpawnNextAnomaly();
     }
 }
 
@@ -110,65 +212,6 @@ void ADesk::RestartGame()
     }
 }
 
-void ADesk::SetupButtons()
-{
-    if (ABaseInteractable* ApproveButton = GetApproveButton())
-    {
-        ApproveButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnApproveButtonPressed);
-    }
-
-    if (ABaseInteractable* RejectButton = GetRejectButton())
-    {
-        RejectButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnRejectButtonPressed);
-    }
-
-    if (ABaseInteractable* PrintDetailsButton = GetPrintDetailsButton())
-    {
-        PrintDetailsButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnPrintDetailsButtonPressed);
-    }
-    
-    if (ABaseInteractable* NewAnomalyButton = GetNewAnomalyButtonComponent())
-    {
-        NewAnomalyButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnNewAnomalyButtonPressed);
-    }
-}
-
-void ADesk::OnPrintDetailsButtonPressed()
-{
-    UE_LOG(LogTemp, Log, TEXT("Print Details button pressed. %s \n anomaly details %s"), GetTabletInstance() ? (GetTabletInstance()->HasSheet() ? TEXT("Has Sheet") : TEXT("No Sheet")) : TEXT("No Tablet Instance"), *CurrentAnomalyDetails.InspectionName.ToString());
-    if(GetTabletInstance()->HasSheet())
-    {
-        UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
-        if(GetTabletInstance()->CanBeDelivered())
-        {
-            UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
-            DeliverAnomalySheet();
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("$$$$######Updating anomaly on the tablet."));
-        GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
-    }
-}
-
-void ADesk::DeliverAnomalySheet()
-{
-    if(GetTabletInstance() )
-    {
-        GetTabletInstance()->RemoveSheet();
-    }
-}
-
-void ADesk::OnApproveButtonPressed()
-{
-    InspectionManager->PassCurrentInspectionDataToAnomaly();
-}
-
-void ADesk::OnRejectButtonPressed()
-{
-    InspectionManager->RejectCurrentInspectedAnomaly();
-}
 
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
 ABaseInteractable* ADesk::GetNewAnomalyButtonComponent() const

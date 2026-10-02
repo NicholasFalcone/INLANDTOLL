@@ -67,6 +67,11 @@ void ABaseInteractable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(!bIsInteractable)
+	{
+		return;
+	}
+
 	if(InteractionWidgetComp && InteractionWidgetComp->IsVisible())
 	{
 		// Mantieni il widget rivolto verso la camera del giocatore
@@ -96,6 +101,8 @@ void ABaseInteractable::OnUnhighlight()
 
 void ABaseInteractable::OnInteract()
 {
+	if (!bIsInteractable) return;
+	
 	if (OnInteractDelegate.IsBound())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnInteractDelegate is bound and will be broadcasted."));
