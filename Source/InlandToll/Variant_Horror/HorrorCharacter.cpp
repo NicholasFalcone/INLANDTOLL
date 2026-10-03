@@ -20,7 +20,6 @@ AHorrorCharacter::AHorrorCharacter()
 {
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->Init(this);
-
 	InventoryComponent = CreateDefaultSubobject<UBPC_Inventory>(TEXT("InventoryComponent"));
 }
 
