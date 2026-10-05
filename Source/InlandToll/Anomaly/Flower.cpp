@@ -2,6 +2,7 @@
 
 
 #include "Anomaly/Flower.h"
+#include "TimerManager.h"
 
 AFlower::AFlower()
 {
@@ -11,6 +12,17 @@ AFlower::AFlower()
 void AFlower::BeginPlay()
 {
 	Super::BeginPlay();
+
+    TArray<UStaticMeshComponent*> AllPetals;
+    GetComponents<UStaticMeshComponent>(AllPetals); 
+    // 2. Filtra per Tag
+    for (UStaticMeshComponent* Petal : AllPetals)
+    {
+        if (Petal && Petal->ComponentHasTag(FName("Petal")))
+        {
+            Petals.Add(Petal);
+        }
+    }
 }
 
 void AFlower::OnRotate(float delta)
@@ -44,8 +56,8 @@ void AFlower::LosePetal()
 	// Implement petal loss logic here
     if(HasPetals())
     {
-        UChildActorComponent* Petal = Cast<UChildActorComponent>(Petals.Pop());
-        Petal->SetSimulatePhysics(true);
+        UStaticMeshComponent* Petal = Petals.Pop();
+        // Petal->SetSimulatePhysics(true);
         Petal->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		FTimerHandle PetalTimer;
 		FTimerDelegate PetalDropDelegate;
@@ -55,8 +67,8 @@ void AFlower::LosePetal()
     }
 }
 
-void AFlower::DestroyPetal(UChildActorComponent* Petal)
-{
+void AFlower::DestroyPetal(UStaticMeshComponent* Petal)
+{   
 	if(Petal)
 	{
 		Petal->DestroyComponent();

@@ -23,22 +23,21 @@ public:
 	TArray<FST_DialogueLine> OnCheckBoxChangeLine;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	TArray<FST_DialogueLine> OnDangerDeclarationLine;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flower")
-	float MaxTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flower")
 	float PetalLossRateTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flower")
-	TArray<UChildActorComponent*> Petals;
+	TArray<UStaticMeshComponent*> Petals;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
+	AFlower();
 	virtual void OnRotate(float delta) override;
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	int32 GetPetalCount() const { return Petals.Num(); }
 	void LosePetal();
 	bool HasPetals();
+	void DestroyPetal(UStaticMeshComponent* Petal);
 };
