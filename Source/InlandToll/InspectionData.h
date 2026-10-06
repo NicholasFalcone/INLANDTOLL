@@ -6,6 +6,7 @@
 #include "InspectionProp.h"
 #include "ST_DialogueLine.h"
 #include "AnomalyCheckRow.h"
+#include "Anomaly/InteractableAnomaly.h"
 #include "InspectionData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -24,6 +25,8 @@ public:
 	FString AttachedSocketName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
 	TSubclassOf<AInspectionProp> InspectionPropClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Data")
+	TSubclassOf<AInteractableAnomaly> InspectionAnomalyClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue Lines")
 	TArray<FST_DialogueLine> InspectionDialogueLines;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")

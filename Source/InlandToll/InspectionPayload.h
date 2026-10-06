@@ -8,6 +8,7 @@
 #include "Components/ChildActorComponent.h"
 #include "Components/SplineComponent.h"
 #include "InspectionProp.h"
+#include "Anomaly/InteractableAnomaly.h"
 #include "Engine/StaticMesh.h"
 #include "InspectionPayload.generated.h"
 
@@ -66,9 +67,12 @@ public:
 	void ResumeMovementToEnd();
 
 	UFUNCTION(BlueprintCallable, Category = "Car")
-	void InitializeCarData(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass);
+	void InitializeStaticAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInteractableAnomaly> AnomalyClass);
 
-	void InitializeCarMovement(USplineComponent* InSpline)
+	UFUNCTION(BlueprintCallable, Category = "Car")
+	void InitializeInspectableAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass);
+
+	void InitializeSplineMovement(USplineComponent* InSpline)
 	{
 		TargetSpline = InSpline;
 		DistanceAlongSpline = 0.0f;
@@ -81,4 +85,6 @@ public:
 	}
 
 	void SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName);
+
+	void SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> AnomalyClass, FString SocketName);
 };

@@ -64,7 +64,7 @@ void AInspectionManager::SpawnNextAnomaly()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Spawning next anomaly."));
 
-	if(CurrentInspectionCar)
+	if(CurrentInspectionPayload)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("An inspection car is already active. Cannot spawn a new one."));
 		return;
@@ -85,13 +85,20 @@ void AInspectionManager::SpawnNextAnomaly()
 			return;
 		}
 
-		CurrentInspectionCar = GetWorld()->SpawnActor<AInspectionPayload>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
+		CurrentInspectionPayload = GetWorld()->SpawnActor<AInspectionPayload>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
 
-		if (CurrentInspectionCar)
+		if (CurrentInspectionPayload)
 		{
-			CurrentInspectionCar->bIsDangerous = CurrentInspectionData->InspectionData.bIsDangerous;
-			CurrentInspectionCar->InitializeCarData(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
-			CurrentInspectionCar->InitializeCarMovement(SplinePath);
+			CurrentInspectionPayload->bIsDangerous = CurrentInspectionData->InspectionData.bIsDangerous;
+			if(CurrentInspectionData->InspectionData.InspectionPropClass != nullptr)
+			{
+				CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
+			}
+			else if(CurrentInspectionData->InspectionData.InspectionAnomalyClass != nullptr)
+			{
+				CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionAnomalyClass);
+			}
+			CurrentInspectionPayload->InitializeSplineMovement(SplinePath);
 
 			// Trigger dialogue associated with this anomaly comming up for inspection
 			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
@@ -108,7 +115,7 @@ void AInspectionManager::SpawnNextAnomaly()
 
 void AInspectionManager::RejectCurrentInspectedAnomaly()
 {
-	if (CurrentInspectionCar)
+	if (CurrentInspectionPayload)
 	{
 		if (AIncenerator* Incenerator = Cast<AIncenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), AIncenerator::StaticClass())))
 		{
@@ -131,7 +138,7 @@ void AInspectionManager::DestroyCurrentInspection(){
 	{
 		AActor* FoundAnomaly = nullptr;
 		TArray<AActor*> AttachedActors;
-		CurrentInspectionCar->GetAttachedActors(AttachedActors);
+		CurrentInspectionPayload->GetAttachedActors(AttachedActors);
 		for (AActor* Actor : AttachedActors)
 		{
 			if (Actor && Actor->IsA(AInspectionProp::StaticClass()))
@@ -149,10 +156,10 @@ void AInspectionManager::DestroyCurrentInspection(){
 
 void AInspectionManager::PassCurrentInspectionDataToAnomaly()
 {
-	if (CurrentInspectionCar)
+	if (CurrentInspectionPayload)
 	{
-		CurrentInspectionCar->ResumeMovementToEnd();		
-		CurrentInspectionCar->OnCarReachedEnd.AddDynamic(this, &AInspectionManager::HandleCarReachedEnd);
+		CurrentInspectionPayload->ResumeMovementToEnd();		
+		CurrentInspectionPayload->OnCarReachedEnd.AddDynamic(this, &AInspectionManager::HandleCarReachedEnd);
 	}
 	else
 	{
@@ -167,7 +174,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 		// UE_LOG(LogTemp, Warning, TEXT("Car %s reached the end of the spline!"), *Car->GetName());
 		Car->OnCarReachedEnd.RemoveAll(this);
 		
-		if (Car == CurrentInspectionCar)
+		if (Car == CurrentInspectionPayload)
 		{
 			if (!Car->bIsRejected && Car->bIsDangerous)
 			{
@@ -187,7 +194,7 @@ void AInspectionManager::HandleCarReachedEnd(AInspectionPayload* Car)
 				}
 
 			}
-			CurrentInspectionCar = nullptr;
+			CurrentInspectionPayload = nullptr;
 		}
 
 		if(OnInspectionEnded.IsBound())
@@ -204,10 +211,10 @@ void AInspectionManager::RestartGame()
 {
 	CurrentInspectionIndex = 0;
 	CurrentErrors = 0;
-	if(CurrentInspectionCar)
+	if(CurrentInspectionPayload)
 	{
-		CurrentInspectionCar->Destroy();
-		CurrentInspectionCar = nullptr;
+		CurrentInspectionPayload->Destroy();
+		CurrentInspectionPayload = nullptr;
 	}
 	SpawnNextAnomaly();
 }

@@ -85,6 +85,18 @@ void AInspectionPayload::ResumeMovementToEnd()
 	bIsMoving = true;
 	StopAtSplineIndex = -1;
 }
+void AInspectionPayload::SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> AnomalyClass, FString SocketName){
+	if (AnomalyClass && InteractablePosition)
+	{
+		AInteractableAnomaly* InspectionInteraction = GetWorld()->SpawnActor<AInteractableAnomaly>(AnomalyClass, InteractablePosition->GetComponentLocation(), InteractablePosition->GetComponentRotation());
+		if (!InspectionInteraction)
+		{
+			UE_LOG(LogTemp, Error, TEXT("ERRORE: Impossibile spawnare InspectionInteraction su %s!"), *GetName());
+			return;
+		}
+		InspectionInteraction->AttachToComponent(CarMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, *SocketName);
+	}
+}
 
 void AInspectionPayload::SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName)
 {
@@ -100,7 +112,7 @@ void AInspectionPayload::SetInspectionProp(TSubclassOf<AInspectionProp> PropClas
 	}
 }
 
-void AInspectionPayload::InitializeCarData(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
+void AInspectionPayload::InitializeInspectableAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
 {
 	if (!CarMesh)
 	{
@@ -116,6 +128,26 @@ void AInspectionPayload::InitializeCarData(UStaticMesh* Mesh, FString SocketName
 
 	CarMesh->SetStaticMesh(Mesh);
 	SetInspectionProp(PropClass, SocketName);
+	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
+}
+
+
+void AInspectionPayload::InitializeStaticAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInteractableAnomaly> AnomalyClass)
+{
+	if (!CarMesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERRORE: CarMesh component è NULL su %s! Il Blueprint potrebbe essere corrotto."), *GetName());
+		return;
+	}
+
+	if (!Mesh)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ATTENZIONE: Mesh passata a InitializeStaticAnomaly è NULL su %s"), *GetName());
+		return;
+	}
+
+	CarMesh->SetStaticMesh(Mesh);
+	SetInspectionAnomaly(AnomalyClass, SocketName);
 	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
 }
 

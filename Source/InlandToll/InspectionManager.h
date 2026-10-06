@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TSubclassOf<AInspectionPayload> CarTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
-	AInspectionPayload* CurrentInspectionCar;
+	AInspectionPayload* CurrentInspectionPayload;
 	int32 CurrentErrors = 0;
 
 	UPROPERTY(BlueprintAssignable, Category = "Inspection Car Manager")

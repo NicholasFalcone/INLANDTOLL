@@ -182,10 +182,10 @@ void ACrane::HandleHooking()
 	// Method 1: Check from current inspection car via InspectionManager
 	if (AInspectionManager* Mgr = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass())))
 	{
-		if (Mgr->CurrentInspectionCar)
+		if (Mgr->CurrentInspectionPayload)
 		{
 			TArray<AActor*> AttachedActors;
-			Mgr->CurrentInspectionCar->GetAttachedActors(AttachedActors);
+			Mgr->CurrentInspectionPayload->GetAttachedActors(AttachedActors);
 			for (AActor* Actor : AttachedActors)
 			{
 				if (Actor && Actor->IsA(AInspectionProp::StaticClass()))
@@ -196,9 +196,9 @@ void ACrane::HandleHooking()
 			}
 
 			// Mark car as rejected and send it on its way!
-			Mgr->CurrentInspectionCar->bIsRejected = true;
-			Mgr->CurrentInspectionCar->ResumeMovementToEnd();
-			Mgr->CurrentInspectionCar->OnCarReachedEnd.AddDynamic(Mgr, &AInspectionManager::HandleCarReachedEnd);
+			Mgr->CurrentInspectionPayload->bIsRejected = true;
+			Mgr->CurrentInspectionPayload->ResumeMovementToEnd();
+			Mgr->CurrentInspectionPayload->OnCarReachedEnd.AddDynamic(Mgr, &AInspectionManager::HandleCarReachedEnd);
 		}
 	}
 
