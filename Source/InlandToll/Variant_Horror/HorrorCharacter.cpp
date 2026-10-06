@@ -400,6 +400,8 @@ void AHorrorCharacter::Die()
 		IsAlive = false;
 		// Disable movement
 		DisableMovement();
+		// Drop Tool
+		DoDropTool();
 		// Trigger the OnPlayerDied event
 		OnPlayerDied.Broadcast();
 	}
