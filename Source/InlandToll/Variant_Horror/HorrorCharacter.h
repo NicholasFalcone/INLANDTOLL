@@ -43,6 +43,8 @@ protected:
 	/** Default walk speed when not sprinting or recovering */
 	UPROPERTY(EditAnywhere, Category="Walk")
 	float WalkSpeed = 250.0f;
+	UPROPERTY(EditAnywhere, Category="Walk")
+	float CrouchWalkSpeed = 150.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UBPC_Inventory* InventoryComponent;

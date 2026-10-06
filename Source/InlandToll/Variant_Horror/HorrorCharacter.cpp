@@ -29,7 +29,8 @@ void AHorrorCharacter::BeginPlay()
 
 	// Initialize the walk speed
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-
+	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchWalkSpeed;
+	
 	if (TabletClass)
 	{
 		FActorSpawnParameters SpawnParams;
