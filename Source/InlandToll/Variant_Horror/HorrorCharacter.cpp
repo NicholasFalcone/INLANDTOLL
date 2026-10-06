@@ -152,6 +152,8 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+#pragma region InputActions
+
 void AHorrorCharacter::DoStartUsingTool()
 {
 	UE_LOG(LogTemp, Warning, TEXT("DoStartUsingTool called"));
@@ -173,13 +175,90 @@ void AHorrorCharacter::DoEndUsingTool()
 
 void AHorrorCharacter::DoStartCrouch()
 {
-	//.. add crouch logic here
-	Crouch();
+	if(!bIsInspecting)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DoStartCrouch called"));
+		//.. add crouch logic here
+		Crouch();
+	}
 }
 
 void AHorrorCharacter::DoEndCrouch()
 {
+	UE_LOG(LogTemp, Warning, TEXT("DoEndCrouch called"));
+	//.. add uncrouch logic here
+	UnCrouch();
 }
+
+void AHorrorCharacter::DoStartInteract()
+{
+	if (bIsInspecting) return; // Non interagire con altro mentre ispezioni
+
+	if(InteractionComponent->HasInteractableInRange())
+	{
+		InteractionComponent->CurrentInteractable->OnInteract();
+	}
+}
+
+void AHorrorCharacter::DoEndInteract()
+{
+	// Gestione tasto destro (potrebbe essere UseItem in questo progetto)
+}
+
+void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
+{
+	if (bIsInspecting && CurrentInspectedProp)
+	{
+		float AxisValue = Value.Get<float>();
+
+		float Speed = CurrentInspectedProp->ZoomSpeed;
+		float MinOffset = CurrentInspectedProp->MinInspectionOffset;
+		float MaxOffset = CurrentInspectedProp->MaxInspectionOffset;
+
+		// Scroll up (positive AxisValue) decreases the offset to zoom in (brings object closer)
+		CurrentInspectionOffset -= AxisValue * Speed;
+		CurrentInspectionOffset = FMath::Clamp(CurrentInspectionOffset, MinOffset, MaxOffset);
+
+		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
+		{
+			RootComp->SetRelativeLocation(FVector(CurrentInspectionOffset, 0.f, 0.f));
+		}
+	}
+}
+
+void AHorrorCharacter::DoAim(float Yaw, float Pitch)
+{
+	if (bIsInspecting && CurrentInspectedProp)
+	{
+		// Accumuliamo Yaw e Pitch in modo che la rotazione sia coerente con la visuale della camera (screen space)
+		// e non si perda l'orientamento con l'accumulo delle rotazioni locali.
+		TargetInspectionYaw -= Yaw;
+		TargetInspectionPitch += Pitch;
+
+		// Clamp della rotazione Pitch per prevenire capovolgimenti indesiderati e gimbal lock
+		TargetInspectionPitch = FMath::Clamp(TargetInspectionPitch, -89.0f, 89.0f);
+
+		FRotator NewRelativeRotation = FRotator(TargetInspectionPitch, TargetInspectionYaw, 0.0f);
+		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
+		{
+			RootComp->SetRelativeRotation(NewRelativeRotation);
+		}
+	}
+	else
+	{
+		Super::DoAim(Yaw, Pitch);
+	}
+}
+
+void AHorrorCharacter::DoMove(float Right, float Forward)
+{
+	if (!bIsInspecting)
+	{
+		Super::DoMove(Right, Forward);
+	}
+}
+
+#pragma endregion InputActions
 
 void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABaseInteractable* Interactable)
 {
@@ -232,6 +311,22 @@ void AHorrorCharacter::GettingCut()
 	DropProp();
 	/// Need to set a timer here to enable input after a delay to simulate recovery from getting cut.
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AHorrorCharacter::Recover, 1.0f, false); // 1.0f is the delay in seconds before re-enabling input, false means it won't loop
+}
+
+void AHorrorCharacter::Die()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player has died."));
+	if(IsAlive)
+	{
+		ExitInspectionMode();
+		IsAlive = false;
+		// Disable movement
+		DisableMovement();
+		// Drop Tool
+		DoDropTool();
+		// Trigger the OnPlayerDied event
+		OnPlayerDied.Broadcast();
+	}
 }
 
 void AHorrorCharacter::Recover()
@@ -292,74 +387,6 @@ void AHorrorCharacter::DropProp()
 
 }
 
-void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
-{
-	if (bIsInspecting && CurrentInspectedProp)
-	{
-		float AxisValue = Value.Get<float>();
-
-		float Speed = CurrentInspectedProp->ZoomSpeed;
-		float MinOffset = CurrentInspectedProp->MinInspectionOffset;
-		float MaxOffset = CurrentInspectedProp->MaxInspectionOffset;
-
-		// Scroll up (positive AxisValue) decreases the offset to zoom in (brings object closer)
-		CurrentInspectionOffset -= AxisValue * Speed;
-		CurrentInspectionOffset = FMath::Clamp(CurrentInspectionOffset, MinOffset, MaxOffset);
-
-		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
-		{
-			RootComp->SetRelativeLocation(FVector(CurrentInspectionOffset, 0.f, 0.f));
-		}
-	}
-}
-
-void AHorrorCharacter::DoAim(float Yaw, float Pitch)
-{
-	if (bIsInspecting && CurrentInspectedProp)
-	{
-		// Accumuliamo Yaw e Pitch in modo che la rotazione sia coerente con la visuale della camera (screen space)
-		// e non si perda l'orientamento con l'accumulo delle rotazioni locali.
-		TargetInspectionYaw -= Yaw;
-		TargetInspectionPitch += Pitch;
-
-		// Clamp della rotazione Pitch per prevenire capovolgimenti indesiderati e gimbal lock
-		TargetInspectionPitch = FMath::Clamp(TargetInspectionPitch, -89.0f, 89.0f);
-
-		FRotator NewRelativeRotation = FRotator(TargetInspectionPitch, TargetInspectionYaw, 0.0f);
-		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
-		{
-			RootComp->SetRelativeRotation(NewRelativeRotation);
-		}
-	}
-	else
-	{
-		Super::DoAim(Yaw, Pitch);
-	}
-}
-
-void AHorrorCharacter::DoMove(float Right, float Forward)
-{
-	if (!bIsInspecting)
-	{
-		Super::DoMove(Right, Forward);
-	}
-}
-
-void AHorrorCharacter::DoStartInteract()
-{
-	if (bIsInspecting) return; // Non interagire con altro mentre ispezioni
-
-	if(InteractionComponent->HasInteractableInRange())
-	{
-		InteractionComponent->CurrentInteractable->OnInteract();
-	}
-}
-
-void AHorrorCharacter::DoEndInteract()
-{
-	// Gestione tasto destro (potrebbe essere UseItem in questo progetto)
-}
-
 void AHorrorCharacter::DisableMovement()
 {
 	GetCharacterMovement()->DisableMovement();
@@ -386,25 +413,11 @@ void AHorrorCharacter::ShowPlayerMesh()
 	}
 }
 
+#pragma region Tool Functions
+
 AATool* AHorrorCharacter::GetEquippedTool()
 {
 	return InventoryComponent ? InventoryComponent->EquippedTool : nullptr;
-}
-
-void AHorrorCharacter::Die()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Player has died."));
-	if(IsAlive)
-	{
-		ExitInspectionMode();
-		IsAlive = false;
-		// Disable movement
-		DisableMovement();
-		// Drop Tool
-		DoDropTool();
-		// Trigger the OnPlayerDied event
-		OnPlayerDied.Broadcast();
-	}
 }
 
 void AHorrorCharacter::EquipToolFromGround(AATool* NewTool)
@@ -443,16 +456,11 @@ void AHorrorCharacter::DoDropTool()
 		UE_LOG(LogTemp, Warning, TEXT("Dropped Tool: %s"), *ToolToDrop->GetName());
 	}
 }
+#pragma endregion
 
+#pragma region Tablet Functions
 void AHorrorCharacter::ToggleTablet()
 {
-	/// CHECK IF IT WORKS
-
-	// if (bIsInspecting)
-	// {
-	// 	UE_LOG(LogTemp, Log, TEXT("Cannot toggle tablet while inspecting."));
-	// 	return;
-	// }
 	SetTabletOpen(!bIsTabletOpen);
 }
 
@@ -544,4 +552,4 @@ void AHorrorCharacter::SetTabletOpen(bool bOpen)
 		}
 	}
 }
-
+#pragma endregion
