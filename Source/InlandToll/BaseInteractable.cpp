@@ -87,6 +87,17 @@ void ABaseInteractable::Tick(float DeltaTime)
 	}
 }
 
+void ABaseInteractable::ChangeInteractablePromptText(const FText& NewText)
+{
+	if (InteractionWidgetComp)
+	{
+		if (UInteractionPrompt* PromptWidget = Cast<UInteractionPrompt>(InteractionWidgetComp->GetUserWidgetObject()))
+		{
+			PromptWidget->SetPromptText(NewText);
+		}
+	}
+}
+
 void ABaseInteractable::OnHighlight()
 {
 	// UE_LOG(LogTemp, Warning, TEXT("OnHighlight called for %s"), *GetName());

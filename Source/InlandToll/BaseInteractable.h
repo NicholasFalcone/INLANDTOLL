@@ -63,4 +63,6 @@ public:
 	virtual void OnEndInteract();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
 	void CallOnEndInteraction();
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void ChangeInteractablePromptText(const FText& NewText);
 };

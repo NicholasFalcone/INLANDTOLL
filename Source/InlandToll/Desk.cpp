@@ -87,6 +87,7 @@ void ADesk::OnNewAnomalyButtonPressed()
         InspectionManager->SpawnNextAnomaly();
     }
     GetPrintDetailsButton()->bIsInteractable = true;
+    GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
     GetApproveButton()->bIsInteractable = false;
     GetRejectButton()->bIsInteractable = false;
     GetNewAnomalyButtonComponent()->bIsInteractable = false;
@@ -124,12 +125,12 @@ void ADesk::OnPrintDetailsButtonPressed()
     }
     else
     {
-        UE_LOG(LogTemp, Log, TEXT("$$$$######Updating anomaly on the tablet."));
         GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
         GetPrintDetailsButton()->bIsInteractable = true;
         GetApproveButton()->bIsInteractable = false;
         GetRejectButton()->bIsInteractable = false;
         GetNewAnomalyButtonComponent()->bIsInteractable = false;
+        GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Submit"));
     }
 }
 
