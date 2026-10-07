@@ -32,6 +32,8 @@ void ATablet::OnInteract()
     if(!PlayerCharacter) return;
 
     PlayerCharacter->SetTabletOpen(true);
+    
+   
 }
 
 void ATablet::OnEndInteract()
@@ -41,6 +43,7 @@ void ATablet::OnEndInteract()
     if(!PlayerCharacter) return;
 
     PlayerCharacter->SetTabletOpen(false);
+
 }
 
 bool ATablet::HasSheet() const

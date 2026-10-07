@@ -532,10 +532,17 @@ void AHorrorCharacter::SetTabletOpen(bool bOpen)
 			
 			if (MyTablet->TabletWidgetComponent && MyTablet->TabletWidgetComponent->GetUserWidgetObject())
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Setting widget to focus for the tablet."));
 				InputMode.SetWidgetToFocus(MyTablet->TabletWidgetComponent->GetUserWidgetObject()->TakeWidget());
 			}
 			PC->SetInputMode(InputMode);
 			PC->bShowMouseCursor = true;
+
+			if (MyTablet->TabletWidget)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Enabling sheet on TabletWidget."));
+				MyTablet->TabletWidget->EnableSheet();
+			}
 		}
 	}
 	else

@@ -16,3 +16,8 @@ void UTableUI::RemoveSheet()
     OnSheetRemoved.Broadcast();
     bSheetCompiled = false;
 }
+
+void UTableUI::EnableSheet()
+{
+    OnSheetEnabled.Broadcast();
+}

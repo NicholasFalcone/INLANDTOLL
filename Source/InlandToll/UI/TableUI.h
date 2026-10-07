@@ -8,6 +8,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSheetRemoved);
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSheetEnabled);
+
 UCLASS()
 class INLANDTOLL_API UTableUI : public UUserWidget
 {
@@ -16,6 +19,9 @@ class INLANDTOLL_API UTableUI : public UUserWidget
 public:
 	UPROPERTY(BlueprintAssignable, Category = "TableUI")
 	FOnSheetRemoved OnSheetRemoved;
+	
+	UPROPERTY(BlueprintAssignable, Category = "TableUI")
+	FOnSheetEnabled OnSheetEnabled;
 
 public:
 	void UpdateAnomaly(const FInspectionData& currentInspectionData);
@@ -25,6 +31,7 @@ public:
 	
 	void RemoveSheet();
 
+	void EnableSheet();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TableUI")
 	bool bSheetCompiled = false;
