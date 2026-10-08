@@ -40,6 +40,8 @@ void AIncenerator::StartInceneratorSequence()
 	if (CraneInstance)
 	{
 		CraneInstance->StartSequence();
+		if(OnInceneratorSequenceStarted.IsBound())
+			OnInceneratorSequenceStarted.Broadcast();
 	}
 	else
 	{
@@ -49,11 +51,13 @@ void AIncenerator::StartInceneratorSequence()
 
 void AIncenerator::NotifyAnomalyDropped(AActor* Anomaly)
 {
+	if(OnAnomalyDroppedDelegate.IsBound())
+		OnAnomalyDroppedDelegate.Broadcast();
+		
 	if (Anomaly)
 	{
 		// Call Blueprint implementable event first so VFX/SFX are triggered
 		OnAnomalyDropped(Anomaly);
-
 		// Burn (destroy) the anomaly after a 2.0-second delay so it's visible falling in
 		FTimerHandle BurnTimer;
 		FTimerDelegate BurnDelegate;
@@ -67,6 +71,8 @@ void AIncenerator::BurnAnomaly(AActor* Anomaly)
 	if (IsValid(Anomaly))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Incinerator is burning anomaly: %s"), *Anomaly->GetName());
+		if(OnAnomalyBurnedDelegate.IsBound())
+			OnAnomalyBurnedDelegate.Broadcast();
 		Anomaly->Destroy();
 	}
 }

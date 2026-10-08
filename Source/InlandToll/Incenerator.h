@@ -9,6 +9,9 @@
 #include "Incenerator.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInceneratorSequenceStarted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnomalyDropped);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnomalyBurned);
 UCLASS()
 class INLANDTOLL_API AIncenerator : public AActor
 {
@@ -32,6 +35,15 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Incenerator")
+	FOnInceneratorSequenceStarted OnInceneratorSequenceStarted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Incenerator")
+	FOnAnomalyDropped OnAnomalyDroppedDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Incenerator")
+	FOnAnomalyBurned OnAnomalyBurnedDelegate;
 
 	UFUNCTION(BlueprintCallable, Category = "Incenerator")
 	void StartInceneratorSequence();

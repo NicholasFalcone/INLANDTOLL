@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "InspectionManager.h"
 #include "InspectionPayload.h"
+#include "Anomaly/InteractableAnomaly.h"
 #include "InspectionProp.h"
 #include "Incenerator.h"
 
@@ -188,7 +189,7 @@ void ACrane::HandleHooking()
 			Mgr->CurrentInspectionPayload->GetAttachedActors(AttachedActors);
 			for (AActor* Actor : AttachedActors)
 			{
-				if (Actor && Actor->IsA(AInspectionProp::StaticClass()))
+				if (Actor && (Actor->IsA(AInspectionProp::StaticClass()) || Actor->IsA(AInteractableAnomaly::StaticClass()) ))
 				{
 					FoundAnomaly = Actor;
 					break;
