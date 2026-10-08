@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InspectionData.h"
+#include "AnomalyData.h"
 
-FInspectionData::FInspectionData()
+UAnomalyData::UAnomalyData()
 	: InspectionName(FText::GetEmpty())
 	, InspectionDescription(FText::GetEmpty())
 	, InspectionID(0)
@@ -12,6 +12,6 @@ FInspectionData::FInspectionData()
 {
 }
 
-FInspectionData::~FInspectionData()
+UAnomalyData::~UAnomalyData()
 {
 }

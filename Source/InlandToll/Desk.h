@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InspectionData.h"
+#include "AnomalyData.h"
+#include "InspectionDayDataAsset.h"
 #include "Desk.generated.h"
 
 class ATablet;
-struct FInspectionData;
+class UAnomalyData;
 class UWidgetComponent;
 class UChildActorComponent;
 class ABaseInteractable;
@@ -27,7 +28,7 @@ public:
     ADesk();
 
 private:
-    FInspectionData CurrentAnomalyDetails;
+    const UAnomalyData* CurrentAnomalyDetails;
     ATablet* TabletInstance;
     
 protected:
@@ -55,12 +56,25 @@ public:
     void OnInspectionErrorIncreese();
 
     UFUNCTION()
-    void UpdateTabletDetails(const FInspectionData& NewAnomalyDetails);
+    void UpdateTabletDetails(const UAnomalyData* NewAnomalyDetails);
 
     UFUNCTION()
     void DeliverAnomalySheet();
 
+    UAnomalyData* GetInspectionDataForCurrentDay(int32 inspectionIndex);
+
+    UFUNCTION()
+    bool IsDayOver(int32 inspectionIndex) const;
+
+    UFUNCTION(BlueprintCallable, Category = "Desk Functions")
+	int32 GetInspectionToDailyReach() const{
+        return InspectionDataArray[CurrentDayReach].InspectionData.Num();
+    }
+
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+	TArray<FInspectionDayDataAsset> InspectionDataArray;
+
     // Child Actor Components per i pulsanti
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<UChildActorComponent> PrintDetailsButtonComponent;
@@ -102,13 +116,16 @@ public:
 
     AInspectionManager* InspectionManager;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Desk Functions")
 	int32 MaxErrorsAllowed = 3;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Desk Functions")
 	int32 CurrentErrors = 0;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Desk Functions")
+    int32 CurrentDayReach = 0;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")
-	int32 CurrentDayInspection = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	int32 InspectionToDailyReach = 5;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Desk Functions")
+	int32 InspectionPassed = 0;
+
+
 };

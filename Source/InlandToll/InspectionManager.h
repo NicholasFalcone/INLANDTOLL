@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InspectionData.h"
+#include "AnomalyData.h"
 #include "Components/SceneComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/StaticMesh.h"
-#include "InspectionCarDataAsset.h"
+#include "InspectionDayDataAsset.h"
 #include "InspectionManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectionError);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectionEnded);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnomalyDetailsChange, const FInspectionData&, NewAnomalyDetails);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnomalyDetailsChange, const UAnomalyData*, NewAnomalyDetails);
 
 class ADesk;
 class AHorrorCharacter;
@@ -29,8 +29,7 @@ public:
 	AInspectionManager();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<UStaticMesh*> CarMeshes;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
-	TArray<UInspectionCarDataAsset*> InspectionDataArray;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	int32 CurrentInspectionIndex = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inspection Car Manager")

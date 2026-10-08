@@ -8,6 +8,7 @@
 #include "Anomaly/InspectableAnomaly.h"
 #include "Incenerator.h"
 #include "InspectionPayload.h"
+#include "Desk.h"
 #include "Tools/Tablet.h"
 #include "Variant_Horror/HorrorCharacter.h"
 
@@ -52,6 +53,7 @@ void AInspectionManager::BeginPlay()
 	{
 		PlayerCharacter->OnPlayerDied.AddDynamic(this, &AInspectionManager::HandlePlayerDied);
 	}
+	DeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
 }
 
 // Called every frame
@@ -70,9 +72,17 @@ void AInspectionManager::SpawnNextAnomaly()
 		return;
 	}
 	
-	if (CurrentInspectionIndex < InspectionDataArray.Num())
+	if(DeskInstance == nullptr)
 	{
-		UInspectionCarDataAsset* CurrentInspectionData = InspectionDataArray[CurrentInspectionIndex];
+		UE_LOG(LogTemp, Warning, TEXT("DeskInstance is not set. Cannot spawn next anomaly."));
+		return;
+	}
+
+	bool shouldSpawnNextAnomaly = !DeskInstance->IsDayOver(CurrentInspectionIndex);
+	UE_LOG(LogTemp, Warning, TEXT("Should spawn next anomaly: %s"), shouldSpawnNextAnomaly ? TEXT("true") : TEXT("false"));
+	if (shouldSpawnNextAnomaly)
+	{
+		UAnomalyData* CurrentInspectionData = DeskInstance->GetInspectionDataForCurrentDay(CurrentInspectionIndex);
 		UStaticMesh* CurrentCarMesh = CarMeshes[FMath::RandRange(0, CarMeshes.Num() - 1)]; // Randomly select a car mesh from the array
 		// Spawn the inspection car
 		FActorSpawnParameters SpawnParams;
@@ -89,27 +99,26 @@ void AInspectionManager::SpawnNextAnomaly()
 
 		if (CurrentInspectionPayload)
 		{
-			CurrentInspectionPayload->bIsDangerous = CurrentInspectionData->InspectionData.bIsDangerous;
-			if(CurrentInspectionData->InspectionData.InspectionPropClass != nullptr)
+			CurrentInspectionPayload->bIsDangerous = CurrentInspectionData->bIsDangerous;
+			if(CurrentInspectionData->InspectionPropClass != nullptr)
 			{
-				CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionPropClass);
+				CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionPropClass);
 			}
-			else if(CurrentInspectionData->InspectionData.InspectionAnomalyClass != nullptr)
+			else if(CurrentInspectionData->InspectionAnomalyClass != nullptr)
 			{
-				CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->InspectionData.AttachedSocketName, CurrentInspectionData->InspectionData.InspectionAnomalyClass);
+				CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionAnomalyClass);
 			}
 			CurrentInspectionPayload->InitializeSplineMovement(SplinePath);
 
 			// Trigger dialogue associated with this anomaly comming up for inspection
 			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
 			{
-				DialogueSubsystem->PlayDialogueSequence(CurrentInspectionData->InspectionData.InspectionDialogueLines);
+				DialogueSubsystem->PlayDialogueSequence(CurrentInspectionData->InspectionDialogueLines);
 			}
 		}
 		CurrentInspectionIndex++;
-		CurrentInspectionIndex = CurrentInspectionIndex % InspectionDataArray.Num(); // Wrap around if index exceeds array size
 
-		OnAnomalyDetailsChange.Broadcast(CurrentInspectionData->InspectionData);
+		OnAnomalyDetailsChange.Broadcast(CurrentInspectionData);
 	}
 }
 

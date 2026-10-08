@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Anomaly/InspectableAnomaly.h"
 #include "BaseInteractable.h"
-#include "InspectionCarDataAsset.h"
+#include "InspectionDayDataAsset.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
@@ -35,7 +35,7 @@ public:
 
 	AHorrorCharacter* PlayerCharacter;
 
-	void UpdateAnomaly(const FInspectionData& currentInspectionData);
+	void UpdateAnomaly(const UAnomalyData* currentInspectionData);
 
 	void RemoveSheet();
 

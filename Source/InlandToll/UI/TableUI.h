@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "AnomalyData.h"
 #include "TableUI.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSheetRemoved);
-
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSheetEnabled);
 
 UCLASS()
@@ -24,10 +23,10 @@ public:
 	FOnSheetEnabled OnSheetEnabled;
 
 public:
-	void UpdateAnomaly(const FInspectionData& currentInspectionData);
+	void UpdateAnomaly(const UAnomalyData* currentInspectionData);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
-	void CallUpdateAnomaly(const FInspectionData& currentInspectionData);
+	void CallUpdateAnomaly(const UAnomalyData* currentInspectionData);
 	
 	void RemoveSheet();
 

@@ -7,10 +7,10 @@
 #include "ST_DialogueLine.h"
 #include "AnomalyCheckRow.h"
 #include "Anomaly/InteractableAnomaly.h"
-#include "InspectionData.generated.h"
-
-USTRUCT(BlueprintType)
-struct INLANDTOLL_API FInspectionData
+#include "AnomalyData.generated.h"
+	
+UCLASS()
+class INLANDTOLL_API UAnomalyData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
@@ -35,6 +35,6 @@ public:
 	bool bIsDangerous = false;
 
 public:
-	FInspectionData();
-	~FInspectionData();
+	UAnomalyData();
+	~UAnomalyData();
 };

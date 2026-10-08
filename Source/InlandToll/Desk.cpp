@@ -4,6 +4,7 @@
 #include "DialogueManagerSubsystem.h"
 #include "ST_DialogueLine.h"
 #include "BaseInteractable.h"
+#include "InspectionDayDataAsset.h"
 #include "Tools/Tablet.h"
 #include "Kismet/GameplayStatics.h"
 #include "InspectionManager.h"
@@ -80,8 +81,8 @@ void ADesk::SetupButtons()
 
 void ADesk::OnNewAnomalyButtonPressed()
 {
-    CurrentDayInspection++;
-    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+    InspectionPassed++;
+    OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     if (InspectionManager)
     {
         InspectionManager->SpawnNextAnomaly();
@@ -95,7 +96,6 @@ void ADesk::OnNewAnomalyButtonPressed()
 
 void ADesk::OnPrintDetailsButtonPressed()
 {
-    UE_LOG(LogTemp, Log, TEXT("Print Details button pressed. %s \n anomaly details %s"), GetTabletInstance() ? (GetTabletInstance()->HasSheet() ? TEXT("Has Sheet") : TEXT("No Sheet")) : TEXT("No Tablet Instance"), *CurrentAnomalyDetails.InspectionName.ToString());
     if(GetTabletInstance()->HasSheet())
     {
         UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
@@ -161,7 +161,7 @@ void ADesk::DeliverAnomalySheet()
     }
 }
 
-void ADesk::UpdateTabletDetails(const FInspectionData& NewAnomalyDetails)
+void ADesk::UpdateTabletDetails(const UAnomalyData* NewAnomalyDetails)
 {
     // Implement the logic to update the tablet details based on the new anomaly details
     if (GetTabletInstance())
@@ -177,9 +177,9 @@ void ADesk::UpdateTabletDetails(const FInspectionData& NewAnomalyDetails)
 
 void ADesk::OnInspectionEnded()
 {
-    CurrentDayInspection++;
-    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
-    if(CurrentDayInspection >= InspectionToDailyReach)
+    InspectionPassed++;
+    OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
+    if(InspectionPassed >= GetInspectionToDailyReach())
     {
         OnDailyInspectionLimitReached.Broadcast();
     }
@@ -203,9 +203,9 @@ void ADesk::OnInspectionErrorIncreese()
 
 void ADesk::RestartGame()
 {
-    CurrentDayInspection = 0;
+    InspectionPassed = 0;
     CurrentErrors = 0;
-    OnDailyInspectionCountChanged.Broadcast(CurrentDayInspection);
+    OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
     if (InspectionManager)
     {
@@ -213,7 +213,21 @@ void ADesk::RestartGame()
     }
 }
 
+UAnomalyData* ADesk::GetInspectionDataForCurrentDay(int32 inspectionIndex)
+{
+    if (InspectionDataArray.IsValidIndex(CurrentDayReach))
+    {
+        return InspectionDataArray[CurrentDayReach].InspectionData.IsValidIndex(inspectionIndex) ? InspectionDataArray[CurrentDayReach].InspectionData[inspectionIndex] : nullptr;
+    }
+    return nullptr;
+}
 
+bool ADesk::IsDayOver(int32 inspectionIndex) const
+{
+    return CurrentDayReach >= InspectionDataArray.Num() || (InspectionDataArray.IsValidIndex(CurrentDayReach) && inspectionIndex >= InspectionDataArray[CurrentDayReach].InspectionData.Num());
+}
+
+#pragma region HelperFunctions
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
 ABaseInteractable* ADesk::GetNewAnomalyButtonComponent() const
 {
@@ -246,3 +260,5 @@ ATablet* ADesk::GetTabletInstance()
     }
     return nullptr;
 }
+
+#pragma endregion

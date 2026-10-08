@@ -4,7 +4,7 @@
 #include "TableUI.h"
 
 
-void UTableUI::UpdateAnomaly(const FInspectionData& currentInspectionData)
+void UTableUI::UpdateAnomaly(const UAnomalyData* currentInspectionData)
 {
     bSheetCompiled = false;
     // Call the Blueprint-implemented event to update the UI
