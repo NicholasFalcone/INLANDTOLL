@@ -15,7 +15,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCarReachedEnd, AInspectionPayload*, ReachedCar);
 
 UCLASS(Blueprintable)
-class INLANDTOLL_API AInspectionPayload : public APawn
+class INLANDTOLL_API AInspectionPayload : public AActor
 {
 	GENERATED_BODY()
 	
