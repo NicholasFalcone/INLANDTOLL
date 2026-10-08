@@ -44,6 +44,12 @@ public:
 	UFUNCTION()
 	void HandleGameOver();
 
+	UFUNCTION()
+	void HandleLoadNextDay();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Load Next Day"))
+	void BP_OnLoadNextDay();
+
 	/** Passes control to Blueprint to update the sprint meter status */
 	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "User error count changed"))
 	void BP_UserErrorCountChanged(int32 NewErrorCount);

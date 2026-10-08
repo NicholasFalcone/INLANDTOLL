@@ -87,8 +87,8 @@ void ADesk::OnNewAnomalyButtonPressed()
     {
         InspectionManager->SpawnNextAnomaly();
     }
-    GetPrintDetailsButton()->bIsInteractable = true;
     GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
+    GetPrintDetailsButton()->bIsInteractable = true;
     GetApproveButton()->bIsInteractable = false;
     GetRejectButton()->bIsInteractable = false;
     GetNewAnomalyButtonComponent()->bIsInteractable = false;
@@ -137,6 +137,7 @@ void ADesk::OnPrintDetailsButtonPressed()
 void ADesk::OnApproveButtonPressed()
 {
     InspectionManager->PassCurrentInspectionDataToAnomaly();
+    GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
     GetPrintDetailsButton()->bIsInteractable = true;
     GetApproveButton()->bIsInteractable = false;
     GetRejectButton()->bIsInteractable = false;
@@ -146,6 +147,7 @@ void ADesk::OnApproveButtonPressed()
 void ADesk::OnRejectButtonPressed()
 {
     InspectionManager->RejectCurrentInspectedAnomaly();
+    GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
     GetPrintDetailsButton()->bIsInteractable = true;
     GetApproveButton()->bIsInteractable = false;
     GetRejectButton()->bIsInteractable = false;
@@ -178,11 +180,15 @@ void ADesk::UpdateTabletDetails(const UAnomalyData* NewAnomalyDetails)
 void ADesk::OnInspectionEnded()
 {
     InspectionPassed++;
+}
+
+void ADesk::LoadNextDay()
+{
+    CurrentDayReach++;
+    CurrentErrors = 0;
+    InspectionPassed = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
-    if(InspectionPassed >= GetInspectionToDailyReach())
-    {
-        OnDailyInspectionLimitReached.Broadcast();
-    }
+    OnErrorCountChanged.Broadcast(CurrentErrors);
 }
 
 void ADesk::OnInspectionErrorIncreese()
@@ -217,14 +223,24 @@ UAnomalyData* ADesk::GetInspectionDataForCurrentDay(int32 inspectionIndex)
 {
     if (InspectionDataArray.IsValidIndex(CurrentDayReach))
     {
-        return InspectionDataArray[CurrentDayReach].InspectionData.IsValidIndex(inspectionIndex) ? InspectionDataArray[CurrentDayReach].InspectionData[inspectionIndex] : nullptr;
+        return InspectionDataArray[CurrentDayReach].InspectionData.IsValidIndex(inspectionIndex) ? InspectionDataArray[CurrentDayReach].InspectionData[inspectionIndex]++ : nullptr;
     }
     return nullptr;
 }
 
 bool ADesk::IsDayOver(int32 inspectionIndex) const
 {
-    return CurrentDayReach >= InspectionDataArray.Num() || (InspectionDataArray.IsValidIndex(CurrentDayReach) && inspectionIndex >= InspectionDataArray[CurrentDayReach].InspectionData.Num());
+    bool isEnded = CurrentDayReach >= InspectionDataArray.Num() || (InspectionDataArray.IsValidIndex(CurrentDayReach) && inspectionIndex >= InspectionDataArray[CurrentDayReach].InspectionData.Num());
+
+    if(isEnded)
+    {
+        OnDailyInspectionLimitReached.Broadcast();
+    }
+    else{
+        OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
+    }
+
+    return isEnded;
 }
 
 #pragma region HelperFunctions

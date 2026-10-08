@@ -55,3 +55,9 @@ void UUI_Master::HandleDailyInspectionCountChanged(int32 NewDailyInspectionCount
     // Call the Blueprint event to update the daily inspection count in the UI
     BP_OnDailyInspectionCountChanged(NewDailyInspectionCount);
 }
+
+void UUI_Master::HandleLoadNextDay()
+{
+    // Call the Blueprint event to handle loading the next day
+    BP_OnLoadNextDay();
+}

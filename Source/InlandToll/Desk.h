@@ -70,6 +70,9 @@ public:
 	int32 GetInspectionToDailyReach() const{
         return InspectionDataArray[CurrentDayReach].InspectionData.Num();
     }
+    
+    UFUNCTION(BlueprintCallable, Category = "Desk Functions")
+    void LoadNextDay();
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")

@@ -20,7 +20,6 @@ ATablet::ATablet()
 void ATablet::BeginPlay()
 {
     Super::BeginPlay();
-
     PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
     TabletWidget = Cast<UTableUI>(TabletWidgetComponent->GetUserWidgetObject());
 }
@@ -28,22 +27,15 @@ void ATablet::BeginPlay()
 void ATablet::OnInteract()
 {
     Super::OnInteract();
-    
     if(!PlayerCharacter) return;
-
     PlayerCharacter->SetTabletOpen(true);
-    
-   
 }
 
 void ATablet::OnEndInteract()
 {
     Super::OnEndInteract();
-
     if(!PlayerCharacter) return;
-
     PlayerCharacter->SetTabletOpen(false);
-
 }
 
 bool ATablet::HasSheet() const
