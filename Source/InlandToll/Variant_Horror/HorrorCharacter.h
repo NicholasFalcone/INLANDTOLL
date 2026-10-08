@@ -124,6 +124,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
 	ATablet* MyTablet;
 
+	// Inoltra i click del mouse ai widget 3D (checkbox del tablet)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
+	class UWidgetInteractionComponent* TabletWidgetInteraction;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
 	bool bIsTabletOpen = false;
 
@@ -135,6 +139,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Tablet")
 	void ToggleTablet();
+
+	void TabletMousePressed();
+	void TabletMouseReleased();
 
 	UFUNCTION(BlueprintCallable, Category = "Tablet")
 	void SetTabletOpen(bool bOpen);

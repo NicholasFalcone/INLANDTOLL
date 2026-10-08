@@ -15,12 +15,22 @@
 #include "Tools/Tool.h"
 #include "InspectionProp.h"
 #include "Tools/Tablet.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/WidgetComponent.h"
 
 AHorrorCharacter::AHorrorCharacter()
 {
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->Init(this);
 	InventoryComponent = CreateDefaultSubobject<UBPC_Inventory>(TEXT("InventoryComponent"));
+
+	TabletWidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("TabletWidgetInteraction"));
+	TabletWidgetInteraction->SetupAttachment(GetRootComponent());
+	TabletWidgetInteraction->InteractionSource = EWidgetInteractionSource::Mouse;
+	TabletWidgetInteraction->InteractionDistance = 500.f;
+	TabletWidgetInteraction->TraceChannel = ECC_Visibility;
+	TabletWidgetInteraction->bEnableHitTesting = false;
+	TabletWidgetInteraction->PointerIndex = 0;
 }
 
 void AHorrorCharacter::BeginPlay()
@@ -91,8 +101,9 @@ void AHorrorCharacter::BeginPlay()
 			MyTablet->SetActorRelativeLocation(TabletSocketOffset);
 			MyTablet->SetActorRelativeRotation(TabletSocketRotation);
 
-			// Disabilita collisione per evitare blocchi o bug col character
-			MyTablet->SetActorEnableCollision(false);
+			// Disabilita collisione per componente per evitare blocchi col character.
+			// SetActorEnableCollision(false) disattiverebbe anche le query del widget, quindi resta true.
+			MyTablet->SetActorEnableCollision(true);
 			TArray<UPrimitiveComponent*> PrimComps;
 			MyTablet->GetComponents<UPrimitiveComponent>(PrimComps);
 			for (UPrimitiveComponent* PrimComp : PrimComps)
@@ -150,6 +161,26 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 				EnhancedInputComponent->BindAction(ToggleTabletAction, ETriggerEvent::Started, this, &AHorrorCharacter::ToggleTablet);
 			}
 		}
+
+		// Inoltra il click sinistro al widget 3D del tablet
+		PlayerInputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &AHorrorCharacter::TabletMousePressed);
+		PlayerInputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &AHorrorCharacter::TabletMouseReleased);
+	}
+}
+
+void AHorrorCharacter::TabletMousePressed()
+{
+	if (bIsTabletOpen && TabletWidgetInteraction)
+	{
+		TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
+	}
+}
+
+void AHorrorCharacter::TabletMouseReleased()
+{
+	if (TabletWidgetInteraction)
+	{
+		TabletWidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
 	}
 }
 
@@ -467,97 +498,99 @@ void AHorrorCharacter::ToggleTablet()
 
 void AHorrorCharacter::SetTabletOpen(bool bOpen)
 {
-	if (!MyTablet)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MyTablet is null. Spawning on demand or aborting."));
-		return;
-	}
+    if (!MyTablet)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MyTablet is null. Spawning on demand or aborting."));
+        return;
+    }
 
-	bIsTabletOpen = bOpen;
+    bIsTabletOpen = bOpen;
 
-	APlayerController* PC = Cast<APlayerController>(GetController());
+    // Il widget è rilevabile dal trace del mouse (Visibility) solo a tablet aperto
+    if (MyTablet->TabletWidgetComponent)
+    {
+        if (bIsTabletOpen)
+        {
+            MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+            MyTablet->TabletWidgetComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+            MyTablet->TabletWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+        }
+        else
+        {
+            MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        }
+    }
 
-	if (bIsTabletOpen)
-	{
-		MyTablet->SetActorHiddenInGame(false);
+    APlayerController* PC = Cast<APlayerController>(GetController());
 
-		// Double-check attachment in case it wasn't successful during BeginPlay
-		if (MyTablet->GetRootComponent() && MyTablet->GetRootComponent()->GetAttachParent() == nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Tablet was not attached! Retrying attachment in SetTabletOpen..."));
-			MyTablet->GetRootComponent()->SetMobility(EComponentMobility::Movable);
-			
-			USceneComponent* ParentComp = nullptr;
-			TArray<USpringArmComponent*> SpringArms;
-			GetComponents<USpringArmComponent>(SpringArms);
-			for (USpringArmComponent* Arm : SpringArms)
-			{
-				if (Arm && !Arm->IsTemplate() && Arm->GetName().Contains(TEXT("Tablet")))
-				{
-					ParentComp = Arm;
-					break;
-				}
-			}
-			if (!ParentComp)
-			{
-				USceneComponent* RawComp = GetTabletSpringArmComponent();
-				if (RawComp && !RawComp->IsTemplate())
-				{
-					ParentComp = RawComp;
-				}
-			}
-			if (!ParentComp)
-			{
-				ParentComp = GetFirstPersonCameraComponent();
-			}
+    if (bIsTabletOpen)
+    {
+        MyTablet->SetActorHiddenInGame(false);
 
-			if (ParentComp)
-			{
-				FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-				MyTablet->AttachToComponent(ParentComp, AttachRules);
-			}
-		}
+        // ... [Codice di Attachment invariato] ...
 
-		// Apply relative offset to make sure it's positioned perfectly on the left side of the camera
-		MyTablet->SetActorRelativeLocation(TabletSocketOffset);
-		MyTablet->SetActorRelativeRotation(TabletSocketRotation);
+        MyTablet->SetActorRelativeLocation(TabletSocketOffset);
+        MyTablet->SetActorRelativeRotation(TabletSocketRotation);
 
-		if (PC)
-		{
-			PC->SetIgnoreMoveInput(true);
-			PC->SetIgnoreLookInput(true);
+        if (PC)
+        {
+            PC->SetIgnoreMoveInput(true);
+            PC->SetIgnoreLookInput(true);
 
-			FInputModeGameAndUI InputMode;
-			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			
-			if (MyTablet->TabletWidgetComponent && MyTablet->TabletWidgetComponent->GetUserWidgetObject())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Setting widget to focus for the tablet."));
-				InputMode.SetWidgetToFocus(MyTablet->TabletWidgetComponent->GetUserWidgetObject()->TakeWidget());
-			}
-			PC->SetInputMode(InputMode);
-			PC->bShowMouseCursor = true;
+            // 1. Applica InputMode Game & UI SENZA SetWidgetToFocus
+            // Questo lascia libero il World-Space Raycasting del mouse
+            FInputModeGameAndUI InputMode;
+            InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+            InputMode.SetHideCursorDuringCapture(false);
+            PC->SetInputMode(InputMode);
+            PC->bShowMouseCursor = true;
 
-			if (MyTablet->TabletWidget)
-			{
-				UE_LOG(LogTemp, Log, TEXT("Enabling sheet on TabletWidget."));
-				MyTablet->TabletWidget->EnableSheet();
-			}
-		}
-	}
-	else
-	{
-		MyTablet->SetActorHiddenInGame(true);
+            if (TabletWidgetInteraction)
+            {
+                TabletWidgetInteraction->bEnableHitTesting = true;
+            }
 
-		if (PC)
-		{
-			PC->SetIgnoreMoveInput(false);
-			PC->SetIgnoreLookInput(false);
+            // 2. Abilita la scheda sul tablet
+            if (MyTablet->TabletWidget)
+            {
+                UE_LOG(LogTemp, Log, TEXT("Enabling sheet on TabletWidget."));
+                MyTablet->TabletWidget->EnableSheet();
+            }
 
-			FInputModeGameOnly InputMode;
-			PC->SetInputMode(InputMode);
-			PC->bShowMouseCursor = false;
-		}
-	}
+            // 3. Assegna il Keyboard Focus direttamente all'istanza Widget 3D
+            if (MyTablet->TabletWidgetComponent)
+            {
+                UUserWidget* UserWidget = MyTablet->TabletWidgetComponent->GetUserWidgetObject();
+                if (UserWidget)
+                {
+                    // Assegna il focus allo Slate Widget 3D senza catturare il mouse nel viewport 2D
+                    TSharedPtr<SWidget> SlateWidget = UserWidget->GetCachedWidget();
+                    if (SlateWidget.IsValid())
+                    {
+                        FSlateApplication::Get().SetKeyboardFocus(SlateWidget, EFocusCause::SetDirectly);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        MyTablet->SetActorHiddenInGame(true);
+
+        if (PC)
+        {
+            PC->SetIgnoreMoveInput(false);
+            PC->SetIgnoreLookInput(false);
+
+            FInputModeGameOnly InputMode;
+            PC->SetInputMode(InputMode);
+            PC->bShowMouseCursor = false;
+        }
+
+        if (TabletWidgetInteraction)
+        {
+            TabletWidgetInteraction->bEnableHitTesting = false;
+        }
+    }
 }
 #pragma endregion

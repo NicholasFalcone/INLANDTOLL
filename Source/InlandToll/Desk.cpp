@@ -137,19 +137,19 @@ void ADesk::OnPrintDetailsButtonPressed()
 void ADesk::OnApproveButtonPressed()
 {
     InspectionManager->PassCurrentInspectionDataToAnomaly();
-    GetPrintDetailsButton()->bIsInteractable = false;
+    GetPrintDetailsButton()->bIsInteractable = true;
     GetApproveButton()->bIsInteractable = false;
     GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+    GetNewAnomalyButtonComponent()->bIsInteractable = false;
 }
 
 void ADesk::OnRejectButtonPressed()
 {
     InspectionManager->RejectCurrentInspectedAnomaly();
-    GetPrintDetailsButton()->bIsInteractable = false;
+    GetPrintDetailsButton()->bIsInteractable = true;
     GetApproveButton()->bIsInteractable = false;
     GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+    GetNewAnomalyButtonComponent()->bIsInteractable = false;
 }
 
 void ADesk::DeliverAnomalySheet()
