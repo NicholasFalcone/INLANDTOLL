@@ -182,13 +182,14 @@ void ADesk::OnInspectionEnded()
     InspectionPassed++;
 }
 
-void ADesk::LoadNextDay()
+int ADesk::LoadNextDay()
 {
     CurrentDayReach++;
     CurrentErrors = 0;
     InspectionPassed = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
+    return CurrentDayReach;
 }
 
 void ADesk::OnInspectionErrorIncreese()
