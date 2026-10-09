@@ -74,6 +74,11 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Desk Functions")
     int LoadNextDay();
 
+    UFUNCTION(BlueprintCallable, Category = "Desk Functions")
+    int32 CurrentDayReachGetter() const;
+
+
+
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<FInspectionDayDataAsset> InspectionDataArray;

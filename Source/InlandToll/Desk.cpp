@@ -262,4 +262,9 @@ ATablet* ADesk::GetTabletInstance()
     return nullptr;
 }
 
+int32 ADesk::CurrentDayReachGetter() const
+{
+    return CurrentDayReach;
+}
+
 #pragma endregion
