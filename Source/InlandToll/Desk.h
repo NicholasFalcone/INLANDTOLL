@@ -79,17 +79,17 @@ public:
 	TArray<FInspectionDayDataAsset> InspectionDataArray;
 
     // Child Actor Components per i pulsanti
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
-    TObjectPtr<UChildActorComponent> PrintDetailsButtonComponent;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<ABaseInteractable> PrintDetailsButtonComponent;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
-    TObjectPtr<UChildActorComponent> ApproveButtonComponent;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<ABaseInteractable> ApproveButtonComponent;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
-    TObjectPtr<UChildActorComponent> RejectButtonComponent;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<ABaseInteractable> RejectButtonComponent;
     
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
-    TObjectPtr<UChildActorComponent> NewAnomalyButtonComponent;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<ABaseInteractable> NewAnomalyButtonComponent;
 
     // Monitor UI
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")

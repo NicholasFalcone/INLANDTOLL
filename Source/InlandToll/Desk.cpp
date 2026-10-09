@@ -14,23 +14,6 @@ ADesk::ADesk()
     PrimaryActorTick.bCanEverTick = false;
 
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-    // --- BUTTONS (Child Actor Components) ---
-    PrintDetailsButtonComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("PrintDetailsButton"));
-    PrintDetailsButtonComponent->SetupAttachment(RootComponent);
-    PrintDetailsButtonComponent->SetChildActorClass(ABaseInteractable::StaticClass());
-
-    ApproveButtonComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("ApproveButton"));
-    ApproveButtonComponent->SetupAttachment(RootComponent);
-    ApproveButtonComponent->SetChildActorClass(ABaseInteractable::StaticClass());
-
-    RejectButtonComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("RejectButton"));
-    RejectButtonComponent->SetupAttachment(RootComponent);
-    RejectButtonComponent->SetChildActorClass(ABaseInteractable::StaticClass());
-
-    NewAnomalyButtonComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("NewAnomalyButton"));
-    NewAnomalyButtonComponent->SetupAttachment(RootComponent);
-    NewAnomalyButtonComponent->SetChildActorClass(ABaseInteractable::StaticClass());
-
 
     // --- MONITORS (Widget Components) ---
     LeftMonitor = CreateDefaultSubobject<UWidgetComponent>(TEXT("LeftMonitor"));
@@ -189,6 +172,7 @@ int ADesk::LoadNextDay()
     InspectionPassed = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
+    InspectionManager->RestartGame();
     return CurrentDayReach;
 }
 
@@ -248,22 +232,22 @@ bool ADesk::IsDayOver(int32 inspectionIndex) const
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
 ABaseInteractable* ADesk::GetNewAnomalyButtonComponent() const
 {
-    return NewAnomalyButtonComponent ? Cast<ABaseInteractable>(NewAnomalyButtonComponent->GetChildActor()) : nullptr;
+    return NewAnomalyButtonComponent;
 }
 
 ABaseInteractable* ADesk::GetApproveButton() const
 {
-    return ApproveButtonComponent ? Cast<ABaseInteractable>(ApproveButtonComponent->GetChildActor()) : nullptr;
+    return ApproveButtonComponent;
 }
 
 ABaseInteractable* ADesk::GetRejectButton() const
 {
-    return RejectButtonComponent ? Cast<ABaseInteractable>(RejectButtonComponent->GetChildActor()) : nullptr;
+    return RejectButtonComponent;
 }
 
 ABaseInteractable* ADesk::GetPrintDetailsButton() const
 {
-    return PrintDetailsButtonComponent ? Cast<ABaseInteractable>(PrintDetailsButtonComponent->GetChildActor()) : nullptr;
+    return PrintDetailsButtonComponent;
 }
 
 ATablet* ADesk::GetTabletInstance()
