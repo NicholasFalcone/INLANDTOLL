@@ -33,6 +33,10 @@ ABaseInteractable::ABaseInteractable()
 
 	// Di base nascondiamo la UI fino a quando il giocatore non si avvicina
 	InteractionWidgetComp->SetVisibility(false);
+
+	// Creo e configuro l'AudioComponent
+	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
+	AudioComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

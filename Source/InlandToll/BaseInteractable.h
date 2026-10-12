@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "UI/InteractionPrompt.h"
 #include "InteractionPromptData.h"
+#include "Components/AudioComponent.h"
 #include "ST_DialogueLine.h"
 #include "BaseInteractable.generated.h"
 
@@ -42,6 +43,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bIsInteractable = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAudioComponent* AudioComp;
 
 protected:
 	// Called when the game starts or when spawned
