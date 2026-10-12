@@ -18,6 +18,12 @@ AATool::AATool()
 	SocketRotation = FRotator::ZeroRotator;
 	AttachSocketName = NAME_None;
 	bIsEquipped = false;
+
+	OnUsedAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("OnUsedAudioComp"));
+	OnUsedAudioComp->SetupAttachment(RootComponent);
+
+	OnEquippedAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("OnEquippedAudioComp"));
+	OnEquippedAudioComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -75,6 +81,11 @@ void AATool::OnEquipped(ACharacter* InOwnerCharacter)
 				
 				SetActorRelativeLocation(SocketOffset);
 				SetActorRelativeRotation(SocketRotation);
+
+				if(OnToolEquipped.IsBound())
+				{
+					OnToolEquipped.Broadcast();
+				}
 			}
 		}
 	}
@@ -90,6 +101,7 @@ void AATool::OnUnequipped()
 	}
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
 }
 
 void AATool::OnDropped(ACharacter* InDroppedByCharacter)
@@ -113,6 +125,11 @@ void AATool::OnDropped(ACharacter* InDroppedByCharacter)
 		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		MeshComp->SetSimulatePhysics(true);
 	}
+
+	if(OnToolDropped.IsBound())
+	{
+		OnToolDropped.Broadcast();
+	}
 }
 
 void AATool::OnInteract()
@@ -135,5 +152,9 @@ void AATool::OnInteract()
 void AATool::OnUsed()
 {
 	// Implement logic for when the tool is used
+	if(OnToolUsed.IsBound())
+	{
+		OnToolUsed.Broadcast();
+	}
 }
 

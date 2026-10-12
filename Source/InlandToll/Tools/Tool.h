@@ -3,8 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/AudioComponent.h"
+
 #include "BaseInteractable.h"
 #include "Tool.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolUsed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolEquipped);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolDropped);
 
 UCLASS()
 class INLANDTOLL_API AATool : public ABaseInteractable
@@ -28,6 +34,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	FName AttachSocketName;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAudioComponent* OnUsedAudioComp;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAudioComponent* OnEquippedAudioComp;
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Tool")
+	FOnToolUsed OnToolUsed;
+
+	UPROPERTY(BlueprintAssignable, Category = "Tool")
+	FOnToolEquipped OnToolEquipped;
+
+	UPROPERTY(BlueprintAssignable, Category = "Tool")
+	FOnToolDropped OnToolDropped;
 public:	
 
 	UPROPERTY(BlueprintReadOnly, Category = "Tool")
