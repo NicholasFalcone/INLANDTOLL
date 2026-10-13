@@ -83,6 +83,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<FInspectionDayDataAsset> InspectionDataArray;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<ABaseInteractable> NewAnomalyButtonComponent;
+
     // Child Actor Components per i pulsanti
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> PrintDetailsButtonComponent;
@@ -93,8 +96,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> RejectButtonComponent;
     
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
-    TObjectPtr<ABaseInteractable> NewAnomalyButtonComponent;
 
     // Monitor UI
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
