@@ -67,10 +67,10 @@ public:
 	void ResumeMovementToEnd();
 
 	UFUNCTION(BlueprintCallable, Category = "Car")
-	void InitializeStaticAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInteractableAnomaly> AnomalyClass);
+	void InitializeStaticAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInteractableAnomaly> AnomalyClass, float RotationOffset);
 
 	UFUNCTION(BlueprintCallable, Category = "Car")
-	void InitializeInspectableAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass);
+	void InitializeInspectableAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass, float RotationOffset);
 
 	void InitializeSplineMovement(USplineComponent* InSpline)
 	{
@@ -84,7 +84,7 @@ public:
 		StopAtSplineIndex = 2; // Set the index of the spline point where the car should stop
 	}
 
-	void SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName);
+	void SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName, float RotationOffset);
 
-	void SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> AnomalyClass, FString SocketName);
+	void SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> AnomalyClass, FString SocketName, float RotationOffset);
 };

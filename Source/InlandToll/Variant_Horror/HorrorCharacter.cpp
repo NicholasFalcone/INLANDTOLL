@@ -170,18 +170,13 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AHorrorCharacter::TabletMousePressed()
 {
-	if (bIsTabletOpen && TabletWidgetInteraction)
-	{
-		TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
-	}
+
+	TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
 }
 
 void AHorrorCharacter::TabletMouseReleased()
 {
-	if (TabletWidgetInteraction)
-	{
-		TabletWidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
-	}
+	TabletWidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
 }
 
 #pragma region InputActions

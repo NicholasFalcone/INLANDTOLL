@@ -33,6 +33,8 @@ public:
 	TArray<FAnomalyCheckRow> AnomalyCheckRows;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
 	bool bIsDangerous = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anomaly Details")
+	float RotationOffset;
 
 public:
 	UAnomalyData();

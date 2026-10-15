@@ -102,11 +102,11 @@ void AInspectionManager::SpawnNextAnomaly()
 			CurrentInspectionPayload->bIsDangerous = CurrentInspectionData->bIsDangerous;
 			if(CurrentInspectionData->InspectionPropClass != nullptr)
 			{
-				CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionPropClass);
+				CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionPropClass, CurrentInspectionData->RotationOffset);
 			}
 			else if(CurrentInspectionData->InspectionAnomalyClass != nullptr)
 			{
-				CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionAnomalyClass);
+				CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionAnomalyClass, CurrentInspectionData->RotationOffset);
 			}
 			CurrentInspectionPayload->InitializeSplineMovement(SplinePath);
 

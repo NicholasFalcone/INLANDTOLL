@@ -85,7 +85,8 @@ void AInspectionPayload::ResumeMovementToEnd()
 	bIsMoving = true;
 	StopAtSplineIndex = -1;
 }
-void AInspectionPayload::SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> AnomalyClass, FString SocketName){
+
+void AInspectionPayload::SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> AnomalyClass, FString SocketName, float RotationOffset){
 	if (AnomalyClass && InteractablePosition)
 	{
 		AInteractableAnomaly* InspectionInteraction = GetWorld()->SpawnActor<AInteractableAnomaly>(AnomalyClass, InteractablePosition->GetComponentLocation(), InteractablePosition->GetComponentRotation());
@@ -95,10 +96,11 @@ void AInspectionPayload::SetInspectionAnomaly(TSubclassOf<AInteractableAnomaly> 
 			return;
 		}
 		InspectionInteraction->AttachToComponent(CarMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, *SocketName);
+		InspectionInteraction->AddActorLocalRotation(FRotator(0.f, RotationOffset, 0.f));
 	}
 }
 
-void AInspectionPayload::SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName)
+void AInspectionPayload::SetInspectionProp(TSubclassOf<AInspectionProp> PropClass, FString SocketName, float RotationOffset)
 {
 	if (PropClass && InteractablePosition)
 	{
@@ -109,10 +111,11 @@ void AInspectionPayload::SetInspectionProp(TSubclassOf<AInspectionProp> PropClas
 			return;
 		}
 		InspectionInteraction->AttachToComponent(CarMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, *SocketName);
+		InspectionInteraction->AddActorLocalRotation(FRotator(0.f, RotationOffset, 0.f));
 	}
 }
 
-void AInspectionPayload::InitializeInspectableAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass)
+void AInspectionPayload::InitializeInspectableAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInspectionProp> PropClass, float RotationOffset)
 {
 	if (!CarMesh)
 	{
@@ -127,12 +130,12 @@ void AInspectionPayload::InitializeInspectableAnomaly(UStaticMesh* Mesh, FString
 	}
 
 	CarMesh->SetStaticMesh(Mesh);
-	SetInspectionProp(PropClass, SocketName);
+	SetInspectionProp(PropClass, SocketName, RotationOffset);
 	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
 }
 
 
-void AInspectionPayload::InitializeStaticAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInteractableAnomaly> AnomalyClass)
+void AInspectionPayload::InitializeStaticAnomaly(UStaticMesh* Mesh, FString SocketName, TSubclassOf<AInteractableAnomaly> AnomalyClass, float RotationOffset)
 {
 	if (!CarMesh)
 	{
@@ -147,7 +150,7 @@ void AInspectionPayload::InitializeStaticAnomaly(UStaticMesh* Mesh, FString Sock
 	}
 
 	CarMesh->SetStaticMesh(Mesh);
-	SetInspectionAnomaly(AnomalyClass, SocketName);
+	SetInspectionAnomaly(AnomalyClass, SocketName, RotationOffset);
 	UE_LOG(LogTemp, Log, TEXT("Mesh impostata correttamente su %s"), *GetName());
 }
 
