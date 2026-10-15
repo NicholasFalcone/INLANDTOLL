@@ -21,7 +21,8 @@ void AInterdimentionalPortal::SetPlayerCameraToLocker()
     GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
     GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
     LockerCode->SetVisibility(true);
-
+    /// Handle the ESC key to exit the locker camera
+    GetWorld()->GetFirstPlayerController()->InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AInterdimentionalPortal::ExitPlayerCameraFromLocker);
 }
 
 void AInterdimentionalPortal::CheckUnlockCode(FString EnteredCode)

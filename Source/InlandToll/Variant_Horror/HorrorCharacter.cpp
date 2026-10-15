@@ -170,7 +170,6 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AHorrorCharacter::TabletMousePressed()
 {
-
 	TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
 }
 
