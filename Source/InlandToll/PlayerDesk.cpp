@@ -4,6 +4,7 @@
 #include "PlayerDesk.h"
 #include "Kismet/GameplayStatics.h"
 #include "DialogueManagerSubsystem.h"
+#include "Desk.h"
 #include "Tools/Tablet.h"
 
 // Sets default values
@@ -26,7 +27,10 @@ void APlayerDesk::BeginPlay()
 
     TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
 	
-	
+	GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
+
+	GeneralDeskInstance->OnDailyInspectionLimitReached.AddDynamic(this, &APlayerDesk::OnDayshiftEnded);
+
     if (PowerButtonComponent)
     {
         PowerButtonComponent->OnInteractDelegate.AddDynamic(this, &APlayerDesk::OnPowerButtonPressed);
@@ -36,6 +40,11 @@ void APlayerDesk::BeginPlay()
     {
         PrintDetailsButtonComponent->OnInteractDelegate.AddDynamic(this, &APlayerDesk::OnPrintDetailsButtonPressed);
     }
+}
+
+void APlayerDesk::OnDayshiftEnded()
+{
+    // Handle the end of the day shift here.
 }
 
 void APlayerDesk::OnPowerButtonPressed()

@@ -10,6 +10,7 @@
 class ATablet;
 class ABaseInteractable;
 class UWidgetComponent;
+class ADesk;
 
 
 UCLASS()
@@ -40,6 +41,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Table")
 	ATablet* TabletInstance;
 
+	ADesk* GeneralDeskInstance;
+
     const UAnomalyData* CurrentAnomalyDetails;
 
 	int32 CurrentDayReach;
@@ -59,5 +62,7 @@ public:
 	void OnPowerButtonPressed();
 	UFUNCTION(BlueprintCallable, Category = "Interactable")
 	void OnPrintDetailsButtonPressed();
+	UFUNCTION(BlueprintCallable, Category = "Interactable")
+	void OnDayshiftEnded();
 
 };
