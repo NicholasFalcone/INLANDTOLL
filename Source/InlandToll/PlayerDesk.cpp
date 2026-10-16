@@ -73,6 +73,7 @@ void APlayerDesk::DeliverAnomalySheet()
     {
         UE_LOG(LogTemp, Log, TEXT("Removed anomaly sheet from the tablet."));
         GetTabletInstance()->RemoveSheet();
+        OnSurvayCompleted.Broadcast();
     }
 }
 
@@ -115,4 +116,3 @@ void APlayerDesk::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

@@ -12,6 +12,7 @@ class ABaseInteractable;
 class UWidgetComponent;
 class ADesk;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSurvayCompleted);
 
 UCLASS()
 class INLANDTOLL_API APlayerDesk : public AActor
@@ -36,6 +37,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Questionary")
 	FInspectionDayDataAsset DailyQuestionary;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnSurvayCompleted OnSurvayCompleted;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Table")
