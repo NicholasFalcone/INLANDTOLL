@@ -20,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	bool IsSpottedByUVLight();
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AHorrorCharacter* PlayerCharacter;
 	UPROPERTY()
 	AUVLight* UVLight;

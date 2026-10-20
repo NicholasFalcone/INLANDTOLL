@@ -195,5 +195,6 @@ public:
 	UFUNCTION()
 	AATool* GetEquippedTool();
 
+	UFUNCTION(BlueprintCallable, Category = "Player")
 	void Die();
 };
