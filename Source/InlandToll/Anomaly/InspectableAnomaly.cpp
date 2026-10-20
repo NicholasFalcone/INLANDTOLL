@@ -16,14 +16,21 @@ void AInspectableAnomaly::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("UVLight actor not found in the scene."));
     }
     
-    if(AGeneralLightSwitch* foundLightSwitch = Cast<AGeneralLightSwitch>(UGameplayStatics::GetActorOfClass(GetWorld(), AGeneralLightSwitch::StaticClass())))
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AGeneralLightSwitch::StaticClass(), FName("Main"), FoundActors);
+
+    AGeneralLightSwitch* foundLightSwitch = nullptr;
+    if (FoundActors.Num() > 0)
     {
         UE_LOG(LogTemp, Warning, TEXT("GeneralLightSwitch found and bound to light state change."));
+        foundLightSwitch = Cast<AGeneralLightSwitch>(FoundActors[0]);
         foundLightSwitch->OnLightsToggled.AddDynamic(this, &AInspectableAnomaly::HandleLightStateChanged);
     }
-    else{
+    else
+    {
         UE_LOG(LogTemp, Warning, TEXT("GeneralLightSwitch actor not found in the scene."));
     }
+
 }
 
 void AInspectableAnomaly::Tick(float DeltaTime)
