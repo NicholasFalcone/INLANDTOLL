@@ -73,3 +73,9 @@ void ATablet::RemoveSheet()
     }
     bHasSheet = false;
 }
+
+
+void ATablet::NotifyTabletSheetUpdated()
+{
+    OnTabletSheetUpdated.Broadcast();
+}

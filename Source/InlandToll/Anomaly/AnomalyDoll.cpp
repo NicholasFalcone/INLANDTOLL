@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AnomalyDoll.h"
+#include "Tools/Tablet.h"
 #include "Kismet/GameplayStatics.h"
 
 AAnomalyDoll::AAnomalyDoll()
@@ -12,6 +13,14 @@ AAnomalyDoll::AAnomalyDoll()
     ShakeAudioComponent->bAllowSpatialization = true; // Enable 3D spatialization for the audio component
     ShakeAudioComponent->SetRelativeLocation(FVector::ZeroVector); // Ensure the audio component is at the root location
     ShakeAudioComponent->SetRelativeRotation(FRotator::ZeroRotator); // Ensure the audio component has no relative rotation
+
+    WhisperingAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("WhisperingAudioComponent"));
+    WhisperingAudioComponent->SetupAttachment(RootComponent);
+    WhisperingAudioComponent->bAutoActivate = false; // Prevent the audio from playing automatically on begin play
+    WhisperingAudioComponent->bIsUISound = false; // Ensure the audio is treated as a 3D sound in the world
+    WhisperingAudioComponent->bAllowSpatialization = true; // Enable 3D spatialization for the audio component
+    WhisperingAudioComponent->SetRelativeLocation(FVector::ZeroVector); // Ensure the audio component is at the root location
+    WhisperingAudioComponent->SetRelativeRotation(FRotator::ZeroRotator); // Ensure the audio component has no relative rotation
 }
 
 void AAnomalyDoll::BeginPlay()
@@ -23,6 +32,13 @@ void AAnomalyDoll::BeginPlay()
     {
         ShakeAudioComponent->SetSound(ShakeSound);
     }
+    if(PlayerCharacter != nullptr)
+    {
+        if(PlayerCharacter->MyTablet != nullptr)
+        {
+            PlayerCharacter->MyTablet->OnTabletSheetUpdated.AddDynamic(this, &AAnomalyDoll::OnTabletTicked);
+        }
+    }
 }
 
 void AAnomalyDoll::Tick(float DeltaTime)
@@ -32,7 +48,6 @@ void AAnomalyDoll::Tick(float DeltaTime)
         CheckBeenShaken(DeltaTime);
     }
 }
-
 
 void AAnomalyDoll::Destroyed()
 {
@@ -55,7 +70,6 @@ FVector AAnomalyDoll::GetTargetAxisVector(const AActor* TargetActor) const
 	}
 }
 
-
 void AAnomalyDoll::OnShaken()
 {
 	ShakeScore = 0.0f; // Reset the shake score when the doll is manually shaken
@@ -66,6 +80,7 @@ void AAnomalyDoll::OnShaken()
     }
 	bHasBeenShaken = false;
 }
+
 void AAnomalyDoll::CheckBeenShaken(float DeltaTime)
 {
 	if(bHasBeenShaken){
@@ -132,6 +147,13 @@ void AAnomalyDoll::CheckBeenShaken(float DeltaTime)
 void AAnomalyDoll::OnTabletTicked()
 {
     UE_LOG(LogTemp, Log, TEXT("Doll has been ticked by the tablet."));
+    if (WhisperingAudioComponent)
+    {
+        if(WhisperingAudioComponent->IsPlaying() == false)
+        {
+            WhisperingAudioComponent->Play();
+        }
+    }
 }
 
 void AAnomalyDoll::OnEndInteract()

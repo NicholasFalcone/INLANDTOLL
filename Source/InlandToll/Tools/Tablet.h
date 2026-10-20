@@ -16,6 +16,7 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTabletSheetUpdated);
 UCLASS()
 class INLANDTOLL_API ATablet : public ABaseInteractable
 {
@@ -35,6 +36,9 @@ public:
 
 	AHorrorCharacter* PlayerCharacter;
 
+	UPROPERTY(BlueprintAssignable, Category = "Tablet")
+	FOnTabletSheetUpdated OnTabletSheetUpdated;
+
 	void UpdateAnomaly(const UAnomalyData* currentInspectionData);
 
 	void RemoveSheet();
@@ -43,6 +47,10 @@ public:
 
 	virtual void OnInteract() override;
 	virtual void OnEndInteract() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Tablet")
+	void NotifyTabletSheetUpdated();
+
 public:
 	bool CanBeDelivered() const;
 	bool HasSheet() const;
