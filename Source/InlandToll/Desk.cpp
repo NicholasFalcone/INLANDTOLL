@@ -208,7 +208,7 @@ UAnomalyData* ADesk::GetInspectionDataForCurrentDay(int32 inspectionIndex)
 {
     if (InspectionDataArray.IsValidIndex(CurrentDayReach))
     {
-        return InspectionDataArray[CurrentDayReach].InspectionData.IsValidIndex(inspectionIndex) ? InspectionDataArray[CurrentDayReach].InspectionData[inspectionIndex]++ : nullptr;
+        return InspectionDataArray[CurrentDayReach].InspectionData.IsValidIndex(inspectionIndex) ? InspectionDataArray[CurrentDayReach].InspectionData[inspectionIndex] : nullptr;
     }
     return nullptr;
 }

@@ -51,7 +51,7 @@ void APlayerDesk::OnPowerButtonPressed()
 {
 	if (DailyQuestionary.InspectionData.IsValidIndex(CurrentDayReach))
     {
-        CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(CurrentDayReach) ? DailyQuestionary.InspectionData[CurrentDayReach]++ : nullptr;
+        CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(CurrentDayReach) ? DailyQuestionary.InspectionData[CurrentDayReach] : nullptr;
     }
 }
 
@@ -105,6 +105,11 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
     }
     else
     {
+        if (!CurrentAnomalyDetails)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("CurrentAnomalyDetails is null: no anomaly data to print."));
+            return;
+        }
         GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
         PrintDetailsButtonComponent->ChangeInteractablePromptText(FText::FromString("Submit"));
     }
