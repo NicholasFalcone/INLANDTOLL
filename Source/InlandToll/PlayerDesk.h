@@ -48,8 +48,6 @@ protected:
 	ADesk* GeneralDeskInstance;
 
     const UAnomalyData* CurrentAnomalyDetails;
-
-	int32 CurrentDayReach;
 	
 	ATablet* GetTabletInstance();
 	void DeliverAnomalySheet();
@@ -68,5 +66,7 @@ public:
 	void OnPrintDetailsButtonPressed();
 	UFUNCTION(BlueprintCallable, Category = "Interactable")
 	void OnDayshiftEnded();
+
+	int32 GetCurrentDayReach() const;
 
 };

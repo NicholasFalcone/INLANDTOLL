@@ -49,10 +49,15 @@ void APlayerDesk::OnDayshiftEnded()
 
 void APlayerDesk::OnPowerButtonPressed()
 {
-	if (DailyQuestionary.InspectionData.IsValidIndex(CurrentDayReach))
+	if (DailyQuestionary.InspectionData.IsValidIndex(GetCurrentDayReach()))
     {
-        CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(CurrentDayReach) ? DailyQuestionary.InspectionData[CurrentDayReach] : nullptr;
+        CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(GetCurrentDayReach()) ? DailyQuestionary.InspectionData[GetCurrentDayReach()] : nullptr;
     }
+}
+
+int32 APlayerDesk::GetCurrentDayReach() const
+{
+    return GeneralDeskInstance ? GeneralDeskInstance->CurrentDayReach : 0;
 }
 
 ATablet* APlayerDesk::GetTabletInstance()

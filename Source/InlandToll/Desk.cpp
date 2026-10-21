@@ -167,12 +167,16 @@ void ADesk::OnInspectionEnded()
 
 int ADesk::LoadNextDay()
 {
-    CurrentDayReach++;
+    CurrentDayReach += 1;
     CurrentErrors = 0;
     InspectionPassed = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
     InspectionManager->RestartGame();
+    GetPrintDetailsButton()->bIsInteractable = false;
+    GetApproveButton()->bIsInteractable = false;
+    GetRejectButton()->bIsInteractable = false;
+    GetNewAnomalyButtonComponent()->bIsInteractable = true;
     return CurrentDayReach;
 }
 
@@ -226,7 +230,10 @@ bool ADesk::IsDayOver(int32 inspectionIndex) const
             CurrentDialogueLine.DialogueText = "It's time to go sleep.";
             DialogueSubsystem->PlayDialogue(CurrentDialogueLine);
         }
-
+        GetPrintDetailsButton()->bIsInteractable = false;
+        GetApproveButton()->bIsInteractable = false;
+        GetRejectButton()->bIsInteractable = false;
+        GetNewAnomalyButtonComponent()->bIsInteractable = false;
         OnDailyInspectionLimitReached.Broadcast();
     }
     else{

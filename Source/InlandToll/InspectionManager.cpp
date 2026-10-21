@@ -225,5 +225,4 @@ void AInspectionManager::RestartGame()
 		CurrentInspectionPayload->Destroy();
 		CurrentInspectionPayload = nullptr;
 	}
-	SpawnNextAnomaly();
 }

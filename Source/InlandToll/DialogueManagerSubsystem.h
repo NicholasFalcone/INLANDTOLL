@@ -29,6 +29,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
 	void PlayDialogue(const FST_DialogueLine& DialogueLine)
 	{
+        UE_LOG(LogTemp, Log, TEXT("Playing dialogue: %s"), *DialogueLine.DialogueText);
 		OnDialogueRequested.Broadcast(DialogueLine);
 	}
 
