@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI_Master.h"
+#include "Bed.h"
 #include "Desk.h"
 #include "Variant_Horror/HorrorCharacter.h"
 
@@ -17,13 +16,13 @@ void UUI_Master::HandleGameOver()
     BP_OnGameOver(E_LOSE_REASON::LOSE_REASON_ANOMALY);
 }
 
-void UUI_Master::SetupManager(ADesk* DeskInstance)
+void UUI_Master::SetupManager(ADesk* DeskInstance, ABed* BedInstance)
 {
     // Implement logic to set up the desk instance in the UI
     DeskInstance->OnErrorCountChanged.AddDynamic(this, &UUI_Master::HandleErrorCountChanged);
     DeskInstance->OnMaxErrorsReached.AddDynamic(this, &UUI_Master::HandleMaxErrorsReached);
-    DeskInstance->OnDailyInspectionLimitReached.AddDynamic(this, &UUI_Master::HandleDailyInspectionLimitReached);
     DeskInstance->OnDailyInspectionCountChanged.AddDynamic(this, &UUI_Master::HandleDailyInspectionCountChanged);
+    BedInstance->OnPlayerSleeping.AddDynamic(this, &UUI_Master::HandlePlayerSleeping);
 }
 
 void UUI_Master::HandleErrorCountChanged(int32 NewErrorCount)
@@ -44,7 +43,7 @@ void UUI_Master::HandlePlayerGettingCut()
     BP_OnPlayerGettingCut();
 }
 
-void UUI_Master::HandleDailyInspectionLimitReached()
+void UUI_Master::HandlePlayerSleeping()
 {
     // Call the Blueprint event to handle daily inspection limit reached
     BP_OnDailyInspectionLimitReached();

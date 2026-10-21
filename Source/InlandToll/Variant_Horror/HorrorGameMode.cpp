@@ -14,13 +14,11 @@ void AHorrorGameMode::ResetGameplay(APlayerController* TargetController)
 {
     if (TargetController)
     {
-        // Se il giocatore ha un Pawn vivo, lo distruggiamo prima del respawn
         if (APawn* CurrentPawn = TargetController->GetPawn())
         {
             CurrentPawn->Destroy();
         }
 
-        // Trova uno Player Start nella mappa e fa lo spawn di un nuovo Pawn
         RestartPlayer(TargetController);
     }
 }

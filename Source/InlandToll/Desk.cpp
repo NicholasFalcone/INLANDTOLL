@@ -219,6 +219,14 @@ bool ADesk::IsDayOver(int32 inspectionIndex) const
 
     if(isEnded)
     {
+        if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+        {
+            FST_DialogueLine CurrentDialogueLine = FST_DialogueLine();
+            CurrentDialogueLine.SpeakerName = "Boss";
+            CurrentDialogueLine.DialogueText = "It's time to go sleep.";
+            DialogueSubsystem->PlayDialogue(CurrentDialogueLine);
+        }
+
         OnDailyInspectionLimitReached.Broadcast();
     }
     else{

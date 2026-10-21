@@ -13,6 +13,7 @@
 #include "Widgets/Input/SVirtualJoystick.h"
 #include "Kismet/GameplayStatics.h"
 #include "Desk.h"
+#include "Bed.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
@@ -76,7 +77,10 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 
 				if (ADesk* DeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass())))
 				{
-					MainUI->SetupManager(DeskInstance);
+					if (ABed* BedInstance = Cast<ABed>(UGameplayStatics::GetActorOfClass(GetWorld(), ABed::StaticClass())))
+					{
+						MainUI->SetupManager(DeskInstance, BedInstance);
+					}
 				}
 			}
 		}

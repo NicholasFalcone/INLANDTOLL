@@ -3,7 +3,8 @@
 
 #include "Anomaly/InterdimentionalPortal.h"
 
-AInterdimentionalPortal::AInterdimentionalPortal(){
+AInterdimentionalPortal::AInterdimentionalPortal()
+{
     isUnlocked = false;
  
     LockerCode = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockerCode"));

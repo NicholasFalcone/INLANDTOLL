@@ -13,6 +13,7 @@
  */
 class ADesk;
 class AHorrorCharacter;
+class ABed;
 
 UCLASS()
 class INLANDTOLL_API UUI_Master : public UUserWidget
@@ -21,7 +22,7 @@ class INLANDTOLL_API UUI_Master : public UUserWidget
 	
 public:
 	void SetupCharacter(AHorrorCharacter* HorrorCharacter);
-	void SetupManager(ADesk* DeskInstance);
+	void SetupManager(ADesk* DeskInstance, ABed* BedInstance);
 
 	UFUNCTION()
 	void HandleErrorCountChanged(int32 NewErrorCount);
@@ -33,7 +34,7 @@ public:
 	void HandlePlayerGettingCut();
 
 	UFUNCTION()
-	void HandleDailyInspectionLimitReached();
+	void HandlePlayerSleeping();
 
 	UFUNCTION()
 	void HandleDailyInspectionCountChanged(int32 NewDailyInspectionCount);
