@@ -86,6 +86,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	bool CanStartSequence() const { return CurrentState == ECraneState::Idle; }
+
 	void StartDescending();
 	void StartAscending();
 

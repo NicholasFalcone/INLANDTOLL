@@ -2,6 +2,7 @@
 #include "Desk.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+#include "InlandTollPlayerController.h"
 
 void UInGameMenu::NativeConstruct()
 {
@@ -11,36 +12,25 @@ void UInGameMenu::NativeConstruct()
 
 void UInGameMenu::OpenPauseMenu()
 {
-    SetVisibility(ESlateVisibility::Visible);
-    
-    // 1. Mette in pausa la simulazione del gioco (fisica, tick, ecc.)
-    UGameplayStatics::SetGamePaused(GetWorld(), true);
-
-    // 2. Ottiene il Player Controller
     APlayerController* PC = GetOwningPlayer();
     if (!PC)
     {
         PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     }
 
-    if (PC)
+    AInlandTollPlayerController* InlandTollPC = Cast<AInlandTollPlayerController>(PC);
+    if (!InlandTollPC || !InlandTollPC->RequestInteractionState(EPlayerState::Paused, this))
     {
-        // 3. Mostra il cursore del mouse a schermo
-        PC->bShowMouseCursor = true;
-
-        // 4. Imposta l'input mode per permettere l'interazione con l'interfaccia (UI) e blocca il movimento
-        FInputModeGameAndUI InputModeData;
-        InputModeData.SetWidgetToFocus(TakeWidget());
-        InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        
-        PC->SetInputMode(InputModeData);
+        UE_LOG(LogTemp, Error, TEXT("Cannot open pause menu because the player state controller is unavailable."));
+        return;
     }
+
+    SetVisibility(ESlateVisibility::Visible);
 }
 
 void UInGameMenu::ClosePauseMenu()
 {
     SetVisibility(ESlateVisibility::Collapsed);
-    UGameplayStatics::SetGamePaused(GetWorld(), false);
 
     APlayerController* PC = GetOwningPlayer();
     if (!PC)
@@ -48,12 +38,13 @@ void UInGameMenu::ClosePauseMenu()
         PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     }
 
-    if (PC)
+    if (AInlandTollPlayerController* InlandTollPC = Cast<AInlandTollPlayerController>(PC))
     {
-        PC->bShowMouseCursor = false;
-
-        FInputModeGameOnly InputModeData;
-        PC->SetInputMode(InputModeData);
+        InlandTollPC->ResumeFromPause();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot close pause menu because the player state controller is unavailable."));
     }
 }
 
@@ -73,21 +64,20 @@ void UInGameMenu::BackToGame()
 
 void UInGameMenu::BackToMainMenu()
 {
-    // Disattiva la pausa prima di viaggiare, per evitare problemi nel caricamento
-    UGameplayStatics::SetGamePaused(GetWorld(), false);
-
     APlayerController* PC = GetOwningPlayer();
     if (!PC)
     {
         PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     }
 
-    if (PC)
+    if (AInlandTollPlayerController* InlandTollPC = Cast<AInlandTollPlayerController>(PC))
     {
-        PC->bShowMouseCursor = false;
-
-        FInputModeGameOnly InputModeData;
-        PC->SetInputMode(InputModeData);
+        InlandTollPC->RequestInteractionState(EPlayerState::MainMenu);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot update player state before returning to the main menu."));
+        UGameplayStatics::SetGamePaused(GetWorld(), false);
     }
 
     // Nome del livello esatto come indicato nel Content Browser
@@ -96,4 +86,3 @@ void UInGameMenu::BackToMainMenu()
     // Cambia il livello
     UGameplayStatics::OpenLevel(this, MapName);
 }
-

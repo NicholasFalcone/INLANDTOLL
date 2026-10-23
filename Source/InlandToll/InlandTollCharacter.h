@@ -63,8 +63,8 @@ protected:
 public:
 	AInlandTollCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="State")
-	EPlayerState CurrentPlayerState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State")
+	EPlayerState CurrentPlayerState = EPlayerState::Unconstrained;
 
 protected:
 
@@ -111,4 +111,3 @@ public:
 	USpringArmComponent* GetTabletSpringArmComponent() const { return AnomalyCardBoardSpringArmComponent; }
 
 };
-

@@ -31,6 +31,12 @@ void AInspectionManager::HandlePlayerDied()
 void AInspectionManager::DestroyAllAnomaly()
 {
 	DestroyCurrentInspection();
+	if (CurrentInspectionPayload)
+	{
+		CurrentInspectionPayload->Destroy();
+		CurrentInspectionPayload = nullptr;
+	}
+
 	/// Find all Actor of class Anomaly
 	TArray<AActor*> FoundAnomalies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInspectableAnomaly::StaticClass(), FoundAnomalies);
@@ -78,62 +84,93 @@ void AInspectionManager::SpawnNextAnomaly()
 		return;
 	}
 
-	bool shouldSpawnNextAnomaly = !DeskInstance->IsDayOver(CurrentInspectionIndex);
-	UE_LOG(LogTemp, Warning, TEXT("Should spawn next anomaly: %s"), shouldSpawnNextAnomaly ? TEXT("true") : TEXT("false"));
-	if (shouldSpawnNextAnomaly)
+	if (!SplinePath || SplinePath->GetNumberOfSplinePoints() < 3)
 	{
-		UAnomalyData* CurrentInspectionData = DeskInstance->GetInspectionDataForCurrentDay(CurrentInspectionIndex);
-		UStaticMesh* CurrentCarMesh = CarMeshes[FMath::RandRange(0, CarMeshes.Num() - 1)]; // Randomly select a car mesh from the array
-		// Spawn the inspection car
-		FActorSpawnParameters SpawnParams;
-		FVector SpawnLocation = SplinePath->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
-		FRotator SpawnRotation = SplinePath->GetRotationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
-
-		if(!CarTemplate)
-		{
-			UE_LOG(LogTemp, Error, TEXT("CarTemplate is not set! Cannot spawn inspection car."));
-			return;
-		}
-
-		CurrentInspectionPayload = GetWorld()->SpawnActor<AInspectionPayload>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
-
-		if (CurrentInspectionPayload)
-		{
-			CurrentInspectionPayload->bIsDangerous = CurrentInspectionData->bIsDangerous;
-			if(CurrentInspectionData->InspectionPropClass != nullptr)
-			{
-				CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionPropClass, CurrentInspectionData->RotationOffset);
-			}
-			else if(CurrentInspectionData->InspectionAnomalyClass != nullptr)
-			{
-				CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionAnomalyClass, CurrentInspectionData->RotationOffset);
-			}
-			CurrentInspectionPayload->InitializeSplineMovement(SplinePath);
-
-			// Trigger dialogue associated with this anomaly comming up for inspection
-			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
-			{
-				DialogueSubsystem->PlayDialogueSequence(CurrentInspectionData->InspectionDialogueLines);
-			}
-		}
-		CurrentInspectionIndex++;
-
-		OnAnomalyDetailsChange.Broadcast(CurrentInspectionData);
+		UE_LOG(LogTemp, Error, TEXT("Cannot spawn inspection car: SplinePath must contain at least three points."));
+		return;
 	}
+
+	if (DeskInstance->IsDayOver(CurrentInspectionIndex))
+	{
+		return;
+	}
+
+	UAnomalyData* CurrentInspectionData = DeskInstance->GetInspectionDataForCurrentDay(CurrentInspectionIndex);
+	if (!CurrentInspectionData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cannot spawn inspection car: current inspection data is missing."));
+		return;
+	}
+
+	if (CarMeshes.IsEmpty())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cannot spawn inspection car: CarMeshes is empty."));
+		return;
+	}
+
+	UStaticMesh* CurrentCarMesh = CarMeshes[FMath::RandRange(0, CarMeshes.Num() - 1)];
+	if (!CurrentCarMesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cannot spawn inspection car: selected car mesh is null."));
+		return;
+	}
+
+	if (!CurrentInspectionData->InspectionPropClass && !CurrentInspectionData->InspectionAnomalyClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cannot spawn inspection car: inspection data has no anomaly class."));
+		return;
+	}
+
+	if (!CarTemplate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CarTemplate is not set. Cannot spawn inspection car."));
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	const FVector SpawnLocation = SplinePath->GetLocationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
+	const FRotator SpawnRotation = SplinePath->GetRotationAtDistanceAlongSpline(0.0f, ESplineCoordinateSpace::World);
+	CurrentInspectionPayload = GetWorld()->SpawnActor<AInspectionPayload>(CarTemplate, SpawnLocation, SpawnRotation, SpawnParams);
+	if (!CurrentInspectionPayload)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn inspection car."));
+		return;
+	}
+
+	CurrentInspectionPayload->bIsDangerous = CurrentInspectionData->bIsDangerous;
+	if (CurrentInspectionData->InspectionPropClass)
+	{
+		CurrentInspectionPayload->InitializeInspectableAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionPropClass, CurrentInspectionData->RotationOffset);
+	}
+	else
+	{
+		CurrentInspectionPayload->InitializeStaticAnomaly(CurrentCarMesh, CurrentInspectionData->AttachedSocketName, CurrentInspectionData->InspectionAnomalyClass, CurrentInspectionData->RotationOffset);
+	}
+	CurrentInspectionPayload->InitializeSplineMovement(SplinePath);
+
+	if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+	{
+		DialogueSubsystem->PlayDialogueSequence(CurrentInspectionData->InspectionDialogueLines);
+	}
+
+	CurrentInspectionIndex++;
+	OnAnomalyDetailsChange.Broadcast(CurrentInspectionData);
 }
 
 void AInspectionManager::RejectCurrentInspectedAnomaly()
 {
 	if (CurrentInspectionPayload)
 	{
-		if (AIncenerator* Incenerator = Cast<AIncenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), AIncenerator::StaticClass())))
+		if (AIncenerator* Incenerator = Cast<AIncenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), AIncenerator::StaticClass()));
+			Incenerator && Incenerator->CanStartSequence())
 		{
 			Incenerator->StartInceneratorSequence();
 		}
 		else
 		{
-			// Fallback if no Incenerator in level
-			DestroyCurrentInspection();
+			UE_LOG(LogTemp, Warning, TEXT("Incinerator sequence unavailable; rejecting the anomaly without the animation."));
+			CurrentInspectionPayload->bIsRejected = true;
+			PassCurrentInspectionDataToAnomaly();
 		}
 	}
 	else
@@ -143,6 +180,11 @@ void AInspectionManager::RejectCurrentInspectedAnomaly()
 }
 
 void AInspectionManager::DestroyCurrentInspection(){
+	if (!CurrentInspectionPayload)
+	{
+		return;
+	}
+
 	if (AIncenerator* Incenerator = Cast<AIncenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), AIncenerator::StaticClass())))
 	{
 		AActor* FoundAnomaly = nullptr;
@@ -168,7 +210,7 @@ void AInspectionManager::PassCurrentInspectionDataToAnomaly()
 	if (CurrentInspectionPayload)
 	{
 		CurrentInspectionPayload->ResumeMovementToEnd();		
-		CurrentInspectionPayload->OnCarReachedEnd.AddDynamic(this, &AInspectionManager::HandleCarReachedEnd);
+			CurrentInspectionPayload->OnCarReachedEnd.AddUniqueDynamic(this, &AInspectionManager::HandleCarReachedEnd);
 	}
 	else
 	{

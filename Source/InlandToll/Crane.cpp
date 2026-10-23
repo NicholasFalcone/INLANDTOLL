@@ -199,7 +199,7 @@ void ACrane::HandleHooking()
 			// Mark car as rejected and send it on its way!
 			Mgr->CurrentInspectionPayload->bIsRejected = true;
 			Mgr->CurrentInspectionPayload->ResumeMovementToEnd();
-			Mgr->CurrentInspectionPayload->OnCarReachedEnd.AddDynamic(Mgr, &AInspectionManager::HandleCarReachedEnd);
+			Mgr->CurrentInspectionPayload->OnCarReachedEnd.AddUniqueDynamic(Mgr, &AInspectionManager::HandleCarReachedEnd);
 		}
 	}
 
@@ -341,4 +341,3 @@ void ACrane::HandleDropping(float DeltaTime)
 
 	CurrentState = ECraneState::MovingForward;
 }
-

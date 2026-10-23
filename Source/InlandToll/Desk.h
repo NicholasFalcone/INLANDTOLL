@@ -68,7 +68,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Desk Functions")
 	int32 GetInspectionToDailyReach() const{
-        return InspectionDataArray[CurrentDayReach].InspectionData.Num();
+        return InspectionDataArray.IsValidIndex(CurrentDayReach)
+            ? InspectionDataArray[CurrentDayReach].InspectionData.Num()
+            : 0;
     }
 
     UFUNCTION(BlueprintCallable, Category = "Desk Functions")

@@ -17,6 +17,8 @@
 #include "Tools/Tablet.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Framework/Application/SlateApplication.h"
+#include "InlandTollPlayerController.h"
 
 AHorrorCharacter::AHorrorCharacter()
 {
@@ -170,12 +172,18 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AHorrorCharacter::TabletMousePressed()
 {
-	TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
+	if (bIsTabletOpen && TabletWidgetInteraction && TabletWidgetInteraction->bEnableHitTesting)
+	{
+		TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
+	}
 }
 
 void AHorrorCharacter::TabletMouseReleased()
 {
-	TabletWidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
+	if (bIsTabletOpen && TabletWidgetInteraction && TabletWidgetInteraction->bEnableHitTesting)
+	{
+		TabletWidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
+	}
 }
 
 #pragma region InputActions
@@ -184,7 +192,7 @@ void AHorrorCharacter::DoStartUsingTool()
 {
 	UE_LOG(LogTemp, Warning, TEXT("DoStartUsingTool called"));
 
-	if (InventoryComponent && InventoryComponent->EquippedTool)
+	if (CurrentPlayerState == EPlayerState::Unconstrained && InventoryComponent && InventoryComponent->EquippedTool)
 	{
 		InventoryComponent->EquippedTool->OnUsed();
 	}
@@ -201,7 +209,7 @@ void AHorrorCharacter::DoEndUsingTool()
 
 void AHorrorCharacter::DoStartCrouch()
 {
-	if(!bIsInspecting)
+	if(CurrentPlayerState == EPlayerState::Unconstrained)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DoStartCrouch called"));
 		//.. add crouch logic here
@@ -218,11 +226,19 @@ void AHorrorCharacter::DoEndCrouch()
 
 void AHorrorCharacter::DoStartInteract()
 {
-	if (bIsInspecting) return; // Non interagire con altro mentre ispezioni
+	if (CurrentPlayerState != EPlayerState::Unconstrained || !InteractionComponent) return;
 
 	if(InteractionComponent->HasInteractableInRange())
 	{
 		InteractionComponent->CurrentInteractable->OnInteract();
+	}
+}
+
+void AHorrorCharacter::DoJumpStart()
+{
+	if (CurrentPlayerState == EPlayerState::Unconstrained)
+	{
+		Super::DoJumpStart();
 	}
 }
 
@@ -233,7 +249,7 @@ void AHorrorCharacter::DoEndInteract()
 
 void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
 {
-	if (bIsInspecting && CurrentInspectedProp)
+	if (CurrentPlayerState != EPlayerState::Paused && bIsInspecting && CurrentInspectedProp)
 	{
 		float AxisValue = Value.Get<float>();
 
@@ -254,6 +270,11 @@ void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
 
 void AHorrorCharacter::DoAim(float Yaw, float Pitch)
 {
+	if (CurrentPlayerState == EPlayerState::Paused)
+	{
+		return;
+	}
+
 	if (bIsInspecting && CurrentInspectedProp)
 	{
 		// Accumuliamo Yaw e Pitch in modo che la rotazione sia coerente con la visuale della camera (screen space)
@@ -288,11 +309,34 @@ void AHorrorCharacter::DoMove(float Right, float Forward)
 
 void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABaseInteractable* Interactable)
 {
-	bIsInspecting = true;
-	if (!PropToInspect){
-		CurrentInteractable = Interactable;
+	if (!PropToInspect)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot enter inspection mode without a prop."));
 		return;
-	} 
+	}
+
+	AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetController());
+	if (!PlayerController || !PlayerController->RequestInteractionState(EPlayerState::Inspecting))
+	{
+		return;
+	}
+
+	if (!PropToInspect->GetRootComponent())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot inspect prop without a root component."));
+		PlayerController->RequestInteractionState(EPlayerState::Unconstrained);
+		return;
+	}
+
+	if (CurrentInspectedProp)
+	{
+		DropProp();
+	}
+
+	if (Interactable)
+	{
+		CurrentInteractable = Interactable;
+	}
 
 	CurrentInspectedProp = PropToInspect;
 
@@ -323,18 +367,13 @@ void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABase
 		RootComp->SetRelativeRotation(FRotator::ZeroRotator);
 	}
 
-	// Mostra il mouse se necessario o blocca il movimento
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
-	{
-		PC->SetIgnoreMoveInput(true);
-	}
 }
 
 void AHorrorCharacter::GettingCut()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Player is getting cut!"));
 	OnPlayerGettingCut.Broadcast();
-	DropProp();
+	ExitInspectionMode();
 	/// Need to set a timer here to enable input after a delay to simulate recovery from getting cut.
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AHorrorCharacter::Recover, 1.0f, false); // 1.0f is the delay in seconds before re-enabling input, false means it won't loop
 }
@@ -344,8 +383,15 @@ void AHorrorCharacter::Die()
 	UE_LOG(LogTemp, Warning, TEXT("Player has died."));
 	if(IsAlive)
 	{
-		ExitInspectionMode();
 		IsAlive = false;
+		if (AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetController()))
+		{
+			PlayerController->RequestInteractionState(EPlayerState::Dead);
+		}
+		else
+		{
+			ExitInspectionMode();
+		}
 		// Disable movement
 		DisableMovement();
 		// Drop Tool
@@ -358,20 +404,19 @@ void AHorrorCharacter::Die()
 void AHorrorCharacter::Recover()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Player is recovering from getting cut."));
-	bIsInspecting = false;
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
-	{
-		PC->SetIgnoreMoveInput(false);
-	}
 }
 
 void AHorrorCharacter::ExitInspectionMode()
 {
-	bIsInspecting = false;
-	DropProp();
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	if (AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetController()))
 	{
-		PC->SetIgnoreMoveInput(false);
+		PlayerController->EndInteractionState(EPlayerState::Inspecting);
+	}
+	else
+	{
+		bIsInspecting = false;
+		CurrentPlayerState = EPlayerState::Unconstrained;
+		DropProp();
 	}
 }
 
@@ -383,6 +428,7 @@ void AHorrorCharacter::DropProp()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("FALLBACK: Ending interaction with interactable."));
 			CurrentInteractable->OnEndInteract(); // Call the end interaction logic for the interactable
+			CurrentInteractable = nullptr;
 		}
 		return;
 	}
@@ -410,6 +456,7 @@ void AHorrorCharacter::DropProp()
 	CurrentInspectedProp->OnEndInteract(); // Call the end interaction logic for the prop
 
 	CurrentInspectedProp = nullptr;
+	CurrentInteractable = nullptr;
 
 }
 
@@ -465,10 +512,20 @@ void AHorrorCharacter::EquipToolFromGround(AATool* NewTool)
 
 void AHorrorCharacter::DoDropTool()
 {
+	if (CurrentPlayerState == EPlayerState::Paused)
+	{
+		return;
+	}
+
 	/// Catch the case where the player is inspecting an object and wants to drop the tool
 	if (bIsInspecting)
 	{
 		ExitInspectionMode();
+		return;
+	}
+
+	if (CurrentPlayerState != EPlayerState::Unconstrained)
+	{
 		return;
 	}
 
@@ -494,97 +551,101 @@ void AHorrorCharacter::SetTabletOpen(bool bOpen)
 {
     if (!MyTablet)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MyTablet is null. Spawning on demand or aborting."));
+        UE_LOG(LogTemp, Warning, TEXT("Cannot change tablet state because MyTablet is null."));
         return;
     }
 
-    bIsTabletOpen = bOpen;
+	AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetController());
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change tablet state because the player controller does not manage player states."));
+		return;
+	}
 
-    // Il widget è rilevabile dal trace del mouse (Visibility) solo a tablet aperto
-    if (MyTablet->TabletWidgetComponent)
-    {
-        if (bIsTabletOpen)
-        {
-            MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-            MyTablet->TabletWidgetComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-            MyTablet->TabletWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
-        }
-        else
-        {
-            MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        }
-    }
+	if (bOpen == bIsTabletOpen)
+	{
+		return;
+	}
 
-    APlayerController* PC = Cast<APlayerController>(GetController());
+	if (bOpen)
+	{
+		PlayerController->RequestInteractionState(EPlayerState::Tablet);
+	}
+	else
+	{
+		PlayerController->EndInteractionState(EPlayerState::Tablet);
+	}
+}
 
-    if (bIsTabletOpen)
-    {
-        MyTablet->SetActorHiddenInGame(false);
+void AHorrorCharacter::ApplyInteractionState(EPlayerState NewState)
+{
+	AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetController());
+	const bool bShouldBeInspecting = NewState == EPlayerState::Inspecting
+		|| (PlayerController && PlayerController->HasInteractionState(EPlayerState::Inspecting));
+	const bool bShouldHaveTabletOpen = NewState == EPlayerState::Tablet
+		|| (PlayerController && PlayerController->HasInteractionState(EPlayerState::Tablet));
 
-        // ... [Codice di Attachment invariato] ...
+	if (bIsInspecting && !bShouldBeInspecting && CurrentInspectedProp)
+	{
+		DropProp();
+	}
 
-        MyTablet->SetActorRelativeLocation(TabletSocketOffset);
-        MyTablet->SetActorRelativeRotation(TabletSocketRotation);
+	CurrentPlayerState = NewState;
+	bIsInspecting = bShouldBeInspecting;
+	bIsTabletOpen = bShouldHaveTabletOpen;
 
-        if (PC)
-        {
-            PC->SetIgnoreMoveInput(true);
-            PC->SetIgnoreLookInput(true);
+	if (MyTablet)
+	{
+		MyTablet->SetActorHiddenInGame(!bIsTabletOpen);
+		if (bIsTabletOpen)
+		{
+			MyTablet->SetActorRelativeLocation(TabletSocketOffset);
+			MyTablet->SetActorRelativeRotation(TabletSocketRotation);
+			if (MyTablet->TabletWidget)
+			{
+				MyTablet->TabletWidget->EnableSheet();
+			}
 
-            // 1. Applica InputMode Game & UI SENZA SetWidgetToFocus
-            // Questo lascia libero il World-Space Raycasting del mouse
-            FInputModeGameAndUI InputMode;
-            InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-            InputMode.SetHideCursorDuringCapture(false);
-            PC->SetInputMode(InputMode);
-            PC->bShowMouseCursor = true;
+		}
 
-            if (TabletWidgetInteraction)
-            {
-                TabletWidgetInteraction->bEnableHitTesting = true;
-            }
+		if (MyTablet->TabletWidgetComponent)
+		{
+			if (bIsTabletOpen)
+			{
+				MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				MyTablet->TabletWidgetComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+				MyTablet->TabletWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+			}
+			else
+			{
+				MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
+		}
+	}
 
-            // 2. Abilita la scheda sul tablet
-            if (MyTablet->TabletWidget)
-            {
-                UE_LOG(LogTemp, Log, TEXT("Enabling sheet on TabletWidget."));
-                MyTablet->TabletWidget->EnableSheet();
-            }
+	SetTabletInteractionEnabled(bIsTabletOpen);
+}
 
-            // 3. Assegna il Keyboard Focus direttamente all'istanza Widget 3D
-            if (MyTablet->TabletWidgetComponent)
-            {
-                UUserWidget* UserWidget = MyTablet->TabletWidgetComponent->GetUserWidgetObject();
-                if (UserWidget)
-                {
-                    // Assegna il focus allo Slate Widget 3D senza catturare il mouse nel viewport 2D
-                    TSharedPtr<SWidget> SlateWidget = UserWidget->GetCachedWidget();
-                    if (SlateWidget.IsValid())
-                    {
-                        FSlateApplication::Get().SetKeyboardFocus(SlateWidget, EFocusCause::SetDirectly);
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        MyTablet->SetActorHiddenInGame(true);
+void AHorrorCharacter::SetTabletInteractionEnabled(bool bEnabled)
+{
+	if (TabletWidgetInteraction)
+	{
+		TabletWidgetInteraction->bEnableHitTesting = bEnabled;
+	}
+}
 
-        if (PC)
-        {
-            PC->SetIgnoreMoveInput(false);
-            PC->SetIgnoreLookInput(false);
-
-            FInputModeGameOnly InputMode;
-            PC->SetInputMode(InputMode);
-            PC->bShowMouseCursor = false;
-        }
-
-        if (TabletWidgetInteraction)
-        {
-            TabletWidgetInteraction->bEnableHitTesting = false;
-        }
-    }
+void AHorrorCharacter::FocusTabletWidget()
+{
+	if (MyTablet && MyTablet->TabletWidgetComponent)
+	{
+		if (UUserWidget* TabletUserWidget = MyTablet->TabletWidgetComponent->GetUserWidgetObject())
+		{
+			TSharedPtr<SWidget> SlateWidget = TabletUserWidget->GetCachedWidget();
+			if (SlateWidget.IsValid())
+			{
+				FSlateApplication::Get().SetKeyboardFocus(SlateWidget, EFocusCause::SetDirectly);
+			}
+		}
+	}
 }
 #pragma endregion

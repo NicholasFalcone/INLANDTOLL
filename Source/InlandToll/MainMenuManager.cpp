@@ -4,6 +4,7 @@
 #include "MainMenuManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+#include "InlandTollPlayerController.h"
 
 // Sets default values
 AMainMenuManager::AMainMenuManager()
@@ -32,13 +33,23 @@ void AMainMenuManager::ShowMainMenu()
     {
         CurrentMenuInstance->AddToViewport(10); // Z-Order alto per stare sopra il resto
 
-        // Imposta l'input mode per la UI
-        FInputModeUIOnly InputMode;
-        InputMode.SetWidgetToFocus(CurrentMenuInstance->TakeWidget());
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        
-        PC->SetInputMode(InputMode);
-        PC->bShowMouseCursor = true;
+        if (AInlandTollPlayerController* InlandTollPC = Cast<AInlandTollPlayerController>(PC))
+        {
+            if (!InlandTollPC->RequestInteractionState(EPlayerState::MainMenu, CurrentMenuInstance))
+            {
+                UE_LOG(LogTemp, Error, TEXT("Cannot show the main menu in the current player state."));
+                CurrentMenuInstance->RemoveFromParent();
+                CurrentMenuInstance = nullptr;
+            }
+        }
+        else
+        {
+            FInputModeUIOnly InputMode;
+            InputMode.SetWidgetToFocus(CurrentMenuInstance->TakeWidget());
+            InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+            PC->SetInputMode(InputMode);
+            PC->bShowMouseCursor = true;
+        }
     }
 }
 
@@ -50,12 +61,14 @@ void AMainMenuManager::HideMainMenu()
     CurrentMenuInstance = nullptr;
 
     APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (PC)
+    if (AInlandTollPlayerController* InlandTollPC = Cast<AInlandTollPlayerController>(PC))
+    {
+        InlandTollPC->RequestInteractionState(EPlayerState::Unconstrained);
+    }
+    else if (PC)
     {
         FInputModeGameOnly InputMode;
         PC->SetInputMode(InputMode);
         PC->bShowMouseCursor = false;
     }
 }
-
-

@@ -27,9 +27,17 @@ void ADesk::BeginPlay()
 {
     Super::BeginPlay();
     InspectionManager = Cast<AInspectionManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AInspectionManager::StaticClass()));
-    InspectionManager->OnInspectionEnded.AddDynamic(this, &ADesk::OnInspectionEnded);
-    InspectionManager->OnInspectionError.AddDynamic(this, &ADesk::OnInspectionErrorIncreese);
-    InspectionManager->OnAnomalyDetailsChange.AddDynamic(this, &ADesk::UpdateTabletDetails);
+    if (InspectionManager)
+    {
+        InspectionManager->OnInspectionEnded.AddDynamic(this, &ADesk::OnInspectionEnded);
+        InspectionManager->OnInspectionError.AddDynamic(this, &ADesk::OnInspectionErrorIncreese);
+        InspectionManager->OnAnomalyDetailsChange.AddDynamic(this, &ADesk::UpdateTabletDetails);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Desk could not find an InspectionManager."));
+    }
+
     TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
     SetupButtons();
 }
@@ -56,41 +64,92 @@ void ADesk::SetupButtons()
         NewAnomalyButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnNewAnomalyButtonPressed);
     }
 
-    GetPrintDetailsButton()->bIsInteractable = false;
-    GetApproveButton()->bIsInteractable = false;
-    GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+    if (ABaseInteractable* Button = GetPrintDetailsButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetApproveButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetRejectButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+    {
+        Button->bIsInteractable = true;
+    }
 }
 
 void ADesk::OnNewAnomalyButtonPressed()
 {
+    if (!InspectionManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot start an inspection because InspectionManager is unavailable."));
+        return;
+    }
+
+    InspectionManager->SpawnNextAnomaly();
+    if (!InspectionManager->CurrentInspectionPayload)
+    {
+        return;
+    }
+
     InspectionPassed++;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
-    if (InspectionManager)
+
+    if (ABaseInteractable* Button = GetPrintDetailsButton())
     {
-        InspectionManager->SpawnNextAnomaly();
+        Button->ChangeInteractablePromptText(FText::FromString("Print"));
+        Button->bIsInteractable = true;
     }
-    GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
-    GetPrintDetailsButton()->bIsInteractable = true;
-    GetApproveButton()->bIsInteractable = false;
-    GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = false;
+    if (ABaseInteractable* Button = GetApproveButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetRejectButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+    {
+        Button->bIsInteractable = false;
+    }
 }
 
 void ADesk::OnPrintDetailsButtonPressed()
 {
-    if(GetTabletInstance()->HasSheet())
+    ATablet* Tablet = GetTabletInstance();
+    if (!Tablet)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot print inspection details because the tablet is unavailable."));
+        return;
+    }
+
+    if(Tablet->HasSheet())
     {
         UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
-        if(GetTabletInstance()->CanBeDelivered())
+        if(Tablet->CanBeDelivered())
         {
             UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
             DeliverAnomalySheet();
-            /// Update button states after delivering the anomaly sheet.
-            GetPrintDetailsButton()->bIsInteractable = false;
-            GetApproveButton()->bIsInteractable = true;
-            GetRejectButton()->bIsInteractable = true;
-            GetNewAnomalyButtonComponent()->bIsInteractable = false;
+            if (ABaseInteractable* Button = GetPrintDetailsButton())
+            {
+                Button->bIsInteractable = false;
+            }
+            if (ABaseInteractable* Button = GetApproveButton())
+            {
+                Button->bIsInteractable = true;
+            }
+            if (ABaseInteractable* Button = GetRejectButton())
+            {
+                Button->bIsInteractable = true;
+            }
+            if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+            {
+                Button->bIsInteractable = false;
+            }
         }
         else
         {
@@ -108,33 +167,87 @@ void ADesk::OnPrintDetailsButtonPressed()
     }
     else
     {
-        GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
-        GetPrintDetailsButton()->bIsInteractable = true;
-        GetApproveButton()->bIsInteractable = false;
-        GetRejectButton()->bIsInteractable = false;
-        GetNewAnomalyButtonComponent()->bIsInteractable = false;
-        GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Submit"));
+        if (!CurrentAnomalyDetails)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Cannot print inspection details because no anomaly is active."));
+            return;
+        }
+
+        Tablet->UpdateAnomaly(CurrentAnomalyDetails);
+        if (ABaseInteractable* Button = GetPrintDetailsButton())
+        {
+            Button->bIsInteractable = true;
+            Button->ChangeInteractablePromptText(FText::FromString("Submit"));
+        }
+        if (ABaseInteractable* Button = GetApproveButton())
+        {
+            Button->bIsInteractable = false;
+        }
+        if (ABaseInteractable* Button = GetRejectButton())
+        {
+            Button->bIsInteractable = false;
+        }
+        if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+        {
+            Button->bIsInteractable = false;
+        }
     }
 }
 
 void ADesk::OnApproveButtonPressed()
 {
+    if (!InspectionManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot approve inspection because InspectionManager is unavailable."));
+        return;
+    }
+
     InspectionManager->PassCurrentInspectionDataToAnomaly();
-    GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
-    GetPrintDetailsButton()->bIsInteractable = true;
-    GetApproveButton()->bIsInteractable = false;
-    GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = false;
+    if (ABaseInteractable* Button = GetPrintDetailsButton())
+    {
+        Button->ChangeInteractablePromptText(FText::FromString("Print"));
+        Button->bIsInteractable = true;
+    }
+    if (ABaseInteractable* Button = GetApproveButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetRejectButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+    {
+        Button->bIsInteractable = false;
+    }
 }
 
 void ADesk::OnRejectButtonPressed()
 {
+    if (!InspectionManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot reject inspection because InspectionManager is unavailable."));
+        return;
+    }
+
     InspectionManager->RejectCurrentInspectedAnomaly();
-    GetPrintDetailsButton()->ChangeInteractablePromptText(FText::FromString("Print"));
-    GetPrintDetailsButton()->bIsInteractable = true;
-    GetApproveButton()->bIsInteractable = false;
-    GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = false;
+    if (ABaseInteractable* Button = GetPrintDetailsButton())
+    {
+        Button->ChangeInteractablePromptText(FText::FromString("Print"));
+        Button->bIsInteractable = true;
+    }
+    if (ABaseInteractable* Button = GetApproveButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetRejectButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+    {
+        Button->bIsInteractable = false;
+    }
 }
 
 void ADesk::DeliverAnomalySheet()
@@ -172,11 +285,31 @@ int ADesk::LoadNextDay()
     InspectionPassed = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
-    InspectionManager->RestartGame();
-    GetPrintDetailsButton()->bIsInteractable = false;
-    GetApproveButton()->bIsInteractable = false;
-    GetRejectButton()->bIsInteractable = false;
-    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+    if (InspectionManager)
+    {
+        InspectionManager->RestartGame();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot restart inspection day because InspectionManager is unavailable."));
+    }
+
+    if (ABaseInteractable* Button = GetPrintDetailsButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetApproveButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetRejectButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+    {
+        Button->bIsInteractable = true;
+    }
     return CurrentDayReach;
 }
 
@@ -230,10 +363,22 @@ bool ADesk::IsDayOver(int32 inspectionIndex) const
             CurrentDialogueLine.DialogueText = "It's time to go sleep.";
             DialogueSubsystem->PlayDialogue(CurrentDialogueLine);
         }
-        GetPrintDetailsButton()->bIsInteractable = false;
-        GetApproveButton()->bIsInteractable = false;
-        GetRejectButton()->bIsInteractable = false;
-        GetNewAnomalyButtonComponent()->bIsInteractable = false;
+        if (ABaseInteractable* Button = GetPrintDetailsButton())
+        {
+            Button->bIsInteractable = false;
+        }
+        if (ABaseInteractable* Button = GetApproveButton())
+        {
+            Button->bIsInteractable = false;
+        }
+        if (ABaseInteractable* Button = GetRejectButton())
+        {
+            Button->bIsInteractable = false;
+        }
+        if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+        {
+            Button->bIsInteractable = false;
+        }
         OnDailyInspectionLimitReached.Broadcast();
     }
     else{

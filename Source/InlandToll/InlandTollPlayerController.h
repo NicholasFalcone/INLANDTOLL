@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "EPlayerState.h"
 #include "InlandTollPlayerController.generated.h"
 
 class UInputMappingContext;
 class UUserWidget;
+class AHorrorCharacter;
 
 /**
  *  Simple first person Player Controller
@@ -23,6 +25,24 @@ public:
 
 	/** Constructor */
 	AInlandTollPlayerController();
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	bool RequestInteractionState(EPlayerState NewState, UUserWidget* WidgetToFocus = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void ResumeFromPause();
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	bool PopInteractionState(EPlayerState ExpectedState);
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void EndInteractionState(EPlayerState State);
+
+	UFUNCTION(BlueprintPure, Category = "Player State")
+	EPlayerState GetInteractionState() const { return CurrentPlayerState; }
+
+	UFUNCTION(BlueprintPure, Category = "Player State")
+	bool HasInteractionState(EPlayerState State) const;
 
 protected:
 
@@ -48,10 +68,22 @@ protected:
 
 	/** Gameplay initialization */
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* InPawn) override;
 
 	/** Input mapping context setup */
 	virtual void SetupInputComponent() override;
 
 	/** Returns true if the player should use UMG touch controls */
 	bool ShouldUseTouchControls() const;
+
+private:
+	void ApplyPlayerState(EPlayerState NewState, UUserWidget* WidgetToFocus);
+	void ApplyInputBlock(bool bBlockMovement, bool bBlockLook);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player State", meta = (AllowPrivateAccess = "true"))
+	EPlayerState CurrentPlayerState = EPlayerState::Unconstrained;
+
+	TArray<EPlayerState> PreviousInteractionStates;
+	bool bMovementInputBlocked = false;
+	bool bLookInputBlocked = false;
 };

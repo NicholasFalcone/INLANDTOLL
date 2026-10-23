@@ -48,6 +48,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Incenerator")
 	void StartInceneratorSequence();
 
+	bool CanStartSequence() const;
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Incenerator")
 	void OnAnomalyDropped(AActor* Anomaly);
 

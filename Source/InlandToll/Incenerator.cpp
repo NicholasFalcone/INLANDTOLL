@@ -49,6 +49,11 @@ void AIncenerator::StartInceneratorSequence()
 	}
 }
 
+bool AIncenerator::CanStartSequence() const
+{
+	return CraneInstance && CraneInstance->CanStartSequence();
+}
+
 void AIncenerator::NotifyAnomalyDropped(AActor* Anomaly)
 {
 	if(OnAnomalyDroppedDelegate.IsBound())
@@ -76,4 +81,3 @@ void AIncenerator::BurnAnomaly(AActor* Anomaly)
 		Anomaly->Destroy();
 	}
 }
-

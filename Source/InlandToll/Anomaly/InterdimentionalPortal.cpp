@@ -2,6 +2,8 @@
 
 
 #include "Anomaly/InterdimentionalPortal.h"
+#include "GameFramework/PlayerController.h"
+#include "InlandTollPlayerController.h"
 
 AInterdimentionalPortal::AInterdimentionalPortal()
 {
@@ -16,14 +18,20 @@ AInterdimentionalPortal::AInterdimentionalPortal()
 
 void AInterdimentionalPortal::SetPlayerCameraToLocker()
 {
-    GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this);
-    /// Set player input mode to Gameplay and UI
-    FInputModeGameAndUI InputMode;
-    GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
-    GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+    AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetWorld()->GetFirstPlayerController());
+    if (!PlayerController || !PlayerController->RequestInteractionState(EPlayerState::Interacting, LockerCode ? LockerCode->GetUserWidgetObject() : nullptr))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Cannot open the locker interface in the current player state."));
+        return;
+    }
+
+    PlayerController->SetViewTargetWithBlend(this);
     LockerCode->SetVisibility(true);
-    /// Handle the ESC key to exit the locker camera
-    GetWorld()->GetFirstPlayerController()->InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AInterdimentionalPortal::ExitPlayerCameraFromLocker);
+    if (!bExitInputBound && PlayerController->InputComponent)
+    {
+        PlayerController->InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AInterdimentionalPortal::ExitPlayerCameraFromLocker);
+        bExitInputBound = true;
+    }
 }
 
 void AInterdimentionalPortal::CheckUnlockCode(FString EnteredCode)
@@ -41,9 +49,13 @@ void AInterdimentionalPortal::UnlockPortal(){
 
 void AInterdimentionalPortal::ExitPlayerCameraFromLocker()
 {
+    AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetWorld()->GetFirstPlayerController());
+    if (!PlayerController || PlayerController->GetInteractionState() != EPlayerState::Interacting)
+    {
+        return;
+    }
+
     LockerCode->SetVisibility(false);
-    GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(GetWorld()->GetFirstPlayerController()->GetPawn());
-    FInputModeGameOnly InputMode;
-    GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
-    GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+    PlayerController->SetViewTargetWithBlend(PlayerController->GetPawn());
+    PlayerController->RequestInteractionState(EPlayerState::Unconstrained);
 }

@@ -31,7 +31,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Portal")
 	UCameraComponent* PortalCamera;
-	
+
+private:
+	bool bExitInputBound = false;
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Portal")

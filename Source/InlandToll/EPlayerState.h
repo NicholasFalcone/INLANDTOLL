@@ -10,5 +10,9 @@ enum class EPlayerState : uint8
 {
     Interacting         UMETA(DisplayName = "Interacting"),
     Unconstrained       UMETA(DisplayName = "Unconstrained"),
-    Dead                UMETA(DisplayName = "Dead")
+    Dead                UMETA(DisplayName = "Dead"),
+    Tablet              UMETA(DisplayName = "Tablet"),
+    Inspecting           UMETA(DisplayName = "Inspecting"),
+    Paused               UMETA(DisplayName = "Paused"),
+    MainMenu             UMETA(DisplayName = "Main Menu")
 };

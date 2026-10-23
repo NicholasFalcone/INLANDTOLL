@@ -146,8 +146,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tablet")
 	void SetTabletOpen(bool bOpen);
 
+	void ApplyInteractionState(EPlayerState NewState);
+	void SetTabletInteractionEnabled(bool bEnabled);
+	void FocusTabletWidget();
+
 	void DoZoom(const FInputActionValue& Value);
 
+	virtual void DoJumpStart() override;
 	virtual void DoAim(float Yaw, float Pitch) override;
 	virtual void DoMove(float Right, float Forward) override;
 
