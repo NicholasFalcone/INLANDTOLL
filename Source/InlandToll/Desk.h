@@ -18,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDailyInspectionLimitReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErrorCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaxErrorsReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int32, NewDailyInspectionCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNextDayLoaded, int32, NewDayNumber);
 
 UCLASS()
 class INLANDTOLL_API ADesk : public AActor
@@ -114,6 +115,8 @@ public:
     FOnMaxErrorsReached OnMaxErrorsReached;
     UPROPERTY(BlueprintAssignable, Category = "Custom Event")
     FOnDailyInspectionCountChanged OnDailyInspectionCountChanged;
+    UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnNextDayLoaded OnNextDayLoaded;
 
 public:
     // Helper function se vuoi accedere comodamente alla classe ABaseInteractable nel codice

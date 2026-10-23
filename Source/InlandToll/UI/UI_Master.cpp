@@ -22,6 +22,7 @@ void UUI_Master::SetupManager(ADesk* DeskInstance, ABed* BedInstance)
     DeskInstance->OnErrorCountChanged.AddDynamic(this, &UUI_Master::HandleErrorCountChanged);
     DeskInstance->OnMaxErrorsReached.AddDynamic(this, &UUI_Master::HandleMaxErrorsReached);
     DeskInstance->OnDailyInspectionCountChanged.AddDynamic(this, &UUI_Master::HandleDailyInspectionCountChanged);
+    DeskInstance->OnNextDayLoaded.AddUniqueDynamic(this, &UUI_Master::HandleLoadNextDay);
     BedInstance->OnPlayerSleeping.AddDynamic(this, &UUI_Master::HandlePlayerSleeping);
 }
 
@@ -55,8 +56,8 @@ void UUI_Master::HandleDailyInspectionCountChanged(int32 NewDailyInspectionCount
     BP_OnDailyInspectionCountChanged(NewDailyInspectionCount);
 }
 
-void UUI_Master::HandleLoadNextDay()
+void UUI_Master::HandleLoadNextDay(int32 NewDayNumber)
 {
-    // Call the Blueprint event to handle loading the next day
+    BP_OnDayChanged(NewDayNumber);
     BP_OnLoadNextDay();
 }

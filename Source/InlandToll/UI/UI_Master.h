@@ -46,7 +46,11 @@ public:
 	void HandleGameOver();
 
 	UFUNCTION()
-	void HandleLoadNextDay();
+	void HandleLoadNextDay(int32 NewDayNumber);
+
+	/** NewDayNumber is 1-based, ready to display. */
+	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Day Changed"))
+	void BP_OnDayChanged(int32 NewDayNumber);
 
 	UFUNCTION(BlueprintImplementableEvent, Category="Events", meta = (DisplayName = "Load Next Day"))
 	void BP_OnLoadNextDay();

@@ -310,6 +310,7 @@ int ADesk::LoadNextDay()
     {
         Button->bIsInteractable = true;
     }
+    OnNextDayLoaded.Broadcast(CurrentDayReach + 1);
     return CurrentDayReach;
 }
 
