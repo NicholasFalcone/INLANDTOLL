@@ -32,13 +32,6 @@ void AAnomalyDoll::BeginPlay()
     {
         ShakeAudioComponent->SetSound(ShakeSound);
     }
-    if(PlayerCharacter != nullptr)
-    {
-        if(PlayerCharacter->MyTablet != nullptr)
-        {
-            PlayerCharacter->MyTablet->OnTabletSheetUpdated.AddDynamic(this, &AAnomalyDoll::OnTabletTicked);
-        }
-    }
 }
 
 void AAnomalyDoll::Tick(float DeltaTime)
@@ -146,6 +139,7 @@ void AAnomalyDoll::CheckBeenShaken(float DeltaTime)
 
 void AAnomalyDoll::OnTabletTicked()
 {
+    Super::OnTabletTicked();
     UE_LOG(LogTemp, Log, TEXT("Doll has been ticked by the tablet."));
     if (WhisperingAudioComponent)
     {

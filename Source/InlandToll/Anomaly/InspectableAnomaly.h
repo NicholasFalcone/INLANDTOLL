@@ -6,6 +6,7 @@
 #include "InspectionProp.h"
 #include "Tools/UVLight.h"
 #include "AnomalyCheckRow.h"
+#include "ST_DialogueLine.h"
 #include "HorrorCharacter.h"
 #include "InspectableAnomaly.generated.h"
 
@@ -13,6 +14,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalySpottedByUVLight);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalyStoppedBeingSpottedByUVLight);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLightStateChanged, bool, bIsLightOn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInspectableAnomalyTabletUpdated);
 UCLASS()
 class INLANDTOLL_API AInspectableAnomaly : public AInspectionProp
 {
@@ -67,5 +69,17 @@ public:
 
 	UFUNCTION()
 	void HandleLightStateChanged(bool bIsLightOn);
+
+	/// --- Tablet interaction
+	UPROPERTY(BlueprintAssignable, Category = "Tools Interaction")
+	FOnInspectableAnomalyTabletUpdated OnTabletUpdated;
+
+	// Played every time the tablet sheet is updated
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	TArray<FST_DialogueLine> OnTabletUpdatedDialogueLines;
+
+	// Called on every tablet sheet update: broadcasts OnTabletUpdated and plays the dialogue
+	UFUNCTION(BlueprintCallable, Category = "Tools Interaction")
+	virtual void OnTabletTicked();
 
 };

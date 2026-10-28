@@ -4,12 +4,19 @@
 #include "InspectableAnomaly.h"
 #include "HorrorCharacter.h"
 #include "GeneralLightSwitch.h"
+#include "Tools/Tablet.h"
+#include "DialogueManagerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 void AInspectableAnomaly::BeginPlay()
 {
     Super::BeginPlay();
     PlayerCharacter = Cast<AHorrorCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AHorrorCharacter::StaticClass()));
+
+    if (PlayerCharacter && PlayerCharacter->MyTablet)
+    {
+        PlayerCharacter->MyTablet->OnTabletSheetUpdated.AddUniqueDynamic(this, &AInspectableAnomaly::OnTabletTicked);
+    }
     
     UVLight = Cast<AUVLight>(UGameplayStatics::GetActorOfClass(GetWorld(), AUVLight::StaticClass()));
     if(!UVLight){
@@ -111,6 +118,19 @@ void AInspectableAnomaly::HandleLightStateChanged(bool bIsLightOn)
 {
     UE_LOG(LogTemp, Warning, TEXT("HandleLightStateChanged called with bIsLightOn: %s"), bIsLightOn ? TEXT("true") : TEXT("false"));
     OnLightStateChanged.Broadcast(bIsLightOn);
+}
+
+void AInspectableAnomaly::OnTabletTicked()
+{
+    OnTabletUpdated.Broadcast();
+
+    if (OnTabletUpdatedDialogueLines.Num() > 0 && GetGameInstance())
+    {
+        if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+        {
+            DialogueSubsystem->PlayDialogueSequence(OnTabletUpdatedDialogueLines);
+        }
+    }
 }
 
 void AInspectableAnomaly::OnInteract()

@@ -76,8 +76,7 @@ public:
 public:
 	UFUNCTION(BlueprintCallable, Category = "AnomalyDoll")
 	void OnShaken();
-	UFUNCTION(BlueprintCallable, Category = "AnomalyDoll")
-	void OnTabletTicked();
+	virtual void OnTabletTicked() override;
 	
 protected:
 	void CheckBeenShaken(float DeltaTime);
