@@ -16,16 +16,35 @@ class INLANDTOLL_API ALostMemory : public AInspectableAnomaly
 	
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster")
-	float MonsterDistance = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster")
-	float MaxMonsterDistance = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster")
-	float MaxAngleTolerance = 45;
+	// One photo per state: state N shows PostcardTextures[N - 1]
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Postcard")
+	TArray<TObjectPtr<UTexture>> PostcardTextures;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Postcard")
+	FName TextureParameterName = TEXT("BaseColor");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Postcard")
+	int32 MaterialSlotIndex = 0;
+
+	// Speed of the automatic turn once the postcard is locked
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Postcard")
+	float AutoRotateSpeed = 4.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Postcard")
+	int32 CurrentState = 1;
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnInteract() override;
+
+	void ApplyCurrentTexture();
+	bool IsBackFacingPlayer() const;
+
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> PostcardMaterial;
+
+	bool bShowingBack = false;
+	bool bLocked = false;
 
 public:
 	virtual void Tick(float DeltaTime) override;

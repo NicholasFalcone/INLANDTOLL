@@ -2,46 +2,94 @@
 
 
 #include "Anomaly/LostMemory.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Components/StaticMeshComponent.h"
+#include "Camera/CameraComponent.h"
 
 void ALostMemory::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (MeshComp)
+	{
+		PostcardMaterial = MeshComp->CreateDynamicMaterialInstance(MaterialSlotIndex);
+	}
+	CurrentState = 1;
+	ApplyCurrentTexture();
+}
+
+void ALostMemory::OnInteract()
+{
+	Super::OnInteract();
+	bShowingBack = false;
+}
+
+void ALostMemory::ApplyCurrentTexture()
+{
+	if (PostcardMaterial && PostcardTextures.IsValidIndex(CurrentState - 1) && PostcardTextures[CurrentState - 1])
+	{
+		PostcardMaterial->SetTextureParameterValue(TextureParameterName, PostcardTextures[CurrentState - 1]);
+	}
+}
+
+bool ALostMemory::IsBackFacingPlayer() const
+{
+	// While inspecting, the prop starts aligned with the camera, so its forward axis turning
+	// against the camera forward means the player is looking at the back.
+	if (!PlayerCharacter || !PlayerCharacter->GetFirstPersonCameraComponent())
+	{
+		return false;
+	}
+	const float Dot = FVector::DotProduct(GetActorForwardVector(), PlayerCharacter->GetFirstPersonCameraComponent()->GetForwardVector());
+	return bShowingBack ? Dot < 0.5f : Dot < -0.5f;
 }
 
 void ALostMemory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!bLocked || !PlayerCharacter)
+	{
+		return;
+	}
+
+	USceneComponent* RootComp = GetRootComponent();
+	if (!RootComp)
+	{
+		return;
+	}
+
+	const FRotator Target(0.f, 180.f, 0.f);
+	const FRotator NewRotation = FMath::RInterpTo(RootComp->GetRelativeRotation(), Target, DeltaTime, AutoRotateSpeed);
+	RootComp->SetRelativeRotation(NewRotation);
+
+	if ((Target - NewRotation).GetNormalized().IsNearlyZero(3.0f))
+	{
+		SetActorTickEnabled(false);
+		PlayerCharacter->Die();
+	}
 }
 
 void ALostMemory::OnRotate(float delta)
 {
-	// Implement rotation logic here
-    Super::OnRotate(delta);
+	Super::OnRotate(delta);
 
-    UE_LOG(LogTemp, Warning, TEXT("DEBUG: Remainder %f"), delta);
-    if(delta > MaxAngleTolerance)
-    {
-        // Implement logic for when the rotation exceeds the maximum angle tolerance
-        MonsterDistance = FMath::Min(MonsterDistance + .1, MaxMonsterDistance);
-        
-        if (GEngine)
-        {
-            // AddOnScreenDebugMessage(Key, TimeToDisplay, Color, Message)
-            GEngine->AddOnScreenDebugMessage(
-                -1,                             // Key (-1 evita che il messaggio sovrascriva quello precedente)
-                5.0f,                           // Tempo di permanenza a schermo in secondi
-                FColor::Green,                  // Colore del testo
-                FString::Printf(TEXT("DEBUG: MonsterDistance %f at MaxMonsterDistance %f you DIE"), MonsterDistance, MaxMonsterDistance) // Formattazione stringa
-            );
-        }
+	if (bLocked)
+	{
+		return;
+	}
 
-        if(MonsterDistance >= MaxMonsterDistance)
-        {
-            if (PlayerCharacter)
-            {
-	            PrimaryActorTick.bCanEverTick = false;
-                PlayerCharacter->Die();
-            }
-        }
-    }
+	const bool bBackNow = IsBackFacingPlayer();
+	if (bBackNow && !bShowingBack)
+	{
+		CurrentState++;
+		ApplyCurrentTexture();
+
+		if (CurrentState >= PostcardTextures.Num())
+		{
+			bLocked = true;
+			bIsInteractable = false;
+		}
+	}
+	bShowingBack = bBackNow;
 }
