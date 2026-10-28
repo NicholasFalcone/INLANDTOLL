@@ -22,6 +22,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "TableUI")
 	FOnSheetEnabled OnSheetEnabled;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TableUI")
+	int32 SheetScore = 0;
+
 public:
 	void UpdateAnomaly(const UAnomalyData* currentInspectionData);
 
@@ -31,6 +34,9 @@ public:
 	void RemoveSheet();
 
 	void EnableSheet();
+
+	int32 GetSheetScore();
+	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TableUI")
 	bool bSheetCompiled = false;

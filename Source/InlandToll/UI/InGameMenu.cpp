@@ -54,6 +54,7 @@ void UInGameMenu::RestartGame()
     {
         UE_LOG(LogTemp, Warning, TEXT("Restarting game..."));
         DeskInstance->RestartGame();
+        SetVisibility(ESlateVisibility::Collapsed);
     }
 }
 

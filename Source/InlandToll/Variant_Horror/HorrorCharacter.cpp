@@ -470,6 +470,20 @@ void AHorrorCharacter::EnableMovement()
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }
 
+void AHorrorCharacter::Revive()
+{
+	IsAlive = true;
+	if (CurrentInspectedProp)
+	{
+		DropProp();
+	}
+	if (AInlandTollPlayerController* PlayerController = Cast<AInlandTollPlayerController>(GetController()))
+	{
+		PlayerController->ResetInteractionState();
+	}
+	EnableMovement();
+}
+
 void AHorrorCharacter::HidePlayerMesh()
 {
 	if (USkeletalMeshComponent* MeshComp = GetMesh())

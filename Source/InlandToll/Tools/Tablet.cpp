@@ -43,6 +43,11 @@ bool ATablet::HasSheet() const
     return bHasSheet;
 }
 
+int32 ATablet::GetSheetScore() const
+{
+    return TabletWidget ? TabletWidget->GetSheetScore() : 0;
+}
+
 void ATablet::UpdateAnomaly(const UAnomalyData* currentInspectionData)
 {
     // Assuming the Tablet has a method to update its display based on the inspection data

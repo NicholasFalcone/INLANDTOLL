@@ -163,6 +163,13 @@ bool AInlandTollPlayerController::HasInteractionState(EPlayerState State) const
 	return CurrentPlayerState == State || PreviousInteractionStates.Contains(State);
 }
 
+void AInlandTollPlayerController::ResetInteractionState()
+{
+	PreviousInteractionStates.Reset();
+	CurrentPlayerState = EPlayerState::Unconstrained;
+	ApplyPlayerState(CurrentPlayerState, nullptr);
+}
+
 void AInlandTollPlayerController::ApplyPlayerState(EPlayerState NewState, UUserWidget* WidgetToFocus)
 {
 	const bool bPaused = NewState == EPlayerState::Paused;

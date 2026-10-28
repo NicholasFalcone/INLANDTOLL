@@ -19,6 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnErrorCountChanged, int32, NewErro
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMaxErrorsReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int32, NewDailyInspectionCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNextDayLoaded, int32, NewDayNumber);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnomalySheetRemoved, int32, Score);
 
 UCLASS()
 class INLANDTOLL_API ADesk : public AActor
@@ -36,6 +37,10 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+
+    UFUNCTION(BlueprintCallable, Category = "Desk Functions")
+    const UAnomalyData* GetCurrentAnomalyDetails();
+
     UFUNCTION()
     void RestartGame();
     UFUNCTION()
@@ -117,6 +122,8 @@ public:
     FOnDailyInspectionCountChanged OnDailyInspectionCountChanged;
     UPROPERTY(BlueprintAssignable, Category = "Custom Event")
     FOnNextDayLoaded OnNextDayLoaded;
+    UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnAnomalySheetRemoved OnAnomalySheetRemoved;
 
 public:
     // Helper function se vuoi accedere comodamente alla classe ABaseInteractable nel codice

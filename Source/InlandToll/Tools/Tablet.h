@@ -54,4 +54,7 @@ public:
 public:
 	bool CanBeDelivered() const;
 	bool HasSheet() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Tablet")
+	int32 GetSheetScore() const;
 };

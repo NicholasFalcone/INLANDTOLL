@@ -182,6 +182,10 @@ public:
 	UFUNCTION()
 	void EnableMovement();
 
+	// Undoes Die(): restores alive flag, movement and a free interaction state
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void Revive();
+
 	UFUNCTION()
 	void HidePlayerMesh();
 

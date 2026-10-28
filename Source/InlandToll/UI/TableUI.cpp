@@ -21,3 +21,7 @@ void UTableUI::EnableSheet()
 {
     OnSheetEnabled.Broadcast();
 }
+
+int32 UTableUI::GetSheetScore(){
+    return SheetScore;
+}

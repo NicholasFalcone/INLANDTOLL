@@ -8,6 +8,7 @@
 #include "Tools/Tablet.h"
 #include "Kismet/GameplayStatics.h"
 #include "InspectionManager.h"
+#include "Variant_Horror/HorrorCharacter.h"
 
 ADesk::ADesk()
 {
@@ -194,6 +195,11 @@ void ADesk::OnPrintDetailsButtonPressed()
     }
 }
 
+const UAnomalyData* ADesk::GetCurrentAnomalyDetails()
+{
+    return CurrentAnomalyDetails;
+}
+
 void ADesk::OnApproveButtonPressed()
 {
     if (!InspectionManager)
@@ -250,10 +256,14 @@ void ADesk::OnRejectButtonPressed()
     }
 }
 
+
+
 void ADesk::DeliverAnomalySheet()
 {
-    if(GetTabletInstance() )
+    if(GetTabletInstance())
     {
+        /// Trigger event for anomaly sheet removal
+        OnAnomalySheetRemoved.Broadcast(GetTabletInstance()->GetSheetScore());
         UE_LOG(LogTemp, Log, TEXT("Removed anomaly sheet from the tablet."));
         GetTabletInstance()->RemoveSheet();
     }
@@ -336,6 +346,14 @@ void ADesk::RestartGame()
     CurrentErrors = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
+    GetNewAnomalyButtonComponent()->bIsInteractable = true;
+    GetPrintDetailsButton()->bIsInteractable = false;
+    GetApproveButton()->bIsInteractable = false;
+    GetRejectButton()->bIsInteractable = false;
+    if (AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
+    {
+        Player->Revive();
+    }
     if (InspectionManager)
     {
         InspectionManager->RestartGame();

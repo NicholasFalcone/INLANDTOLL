@@ -44,6 +44,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Player State")
 	bool HasInteractionState(EPlayerState State) const;
 
+	// Forces the controller back to Unconstrained, also from Dead/Paused (used when restarting the game)
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void ResetInteractionState();
+
 protected:
 
 	/** Input Mapping Contexts */
