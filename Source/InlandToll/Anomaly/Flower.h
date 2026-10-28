@@ -27,6 +27,14 @@ public:
 	float PetalLossRateTime;
 	TArray<UStaticMeshComponent*> Petals;
 
+	// Found at BeginPlay via the "Head" component tag
+	UPROPERTY(BlueprintReadOnly, Category = "Flower")
+	TObjectPtr<UStaticMeshComponent> Head;
+
+	// Offset applied after the look-at, to match the head mesh's facing axis
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flower")
+	FRotator HeadLookAtOffset = FRotator::ZeroRotator;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -39,5 +47,6 @@ public:
 	int32 GetPetalCount() const { return Petals.Num(); }
 	void LosePetal();
 	bool HasPetals();
+	void UpdateHeadLookAt();
 	void DestroyPetal(UStaticMeshComponent* Petal);
 };

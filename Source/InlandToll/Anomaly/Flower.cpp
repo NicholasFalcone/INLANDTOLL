@@ -3,6 +3,8 @@
 
 #include "Anomaly/Flower.h"
 #include "TimerManager.h"
+#include "Camera/CameraComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AFlower::AFlower()
 {
@@ -22,7 +24,31 @@ void AFlower::BeginPlay()
         {
             Petals.Add(Petal);
         }
+        else if (Petal && !Head && Petal->ComponentHasTag(FName("Head")))
+        {
+            Head = Petal;
+        }
     }
+
+    if (!Head)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Flower head not found: tag a static mesh component with 'Head'."));
+    }
+}
+
+void AFlower::UpdateHeadLookAt()
+{
+    if (!Head || !PlayerCharacter)
+    {
+        return;
+    }
+
+    const FVector Target = PlayerCharacter->GetFirstPersonCameraComponent()
+        ? PlayerCharacter->GetFirstPersonCameraComponent()->GetComponentLocation()
+        : PlayerCharacter->GetActorLocation();
+
+    const FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(Head->GetComponentLocation(), Target);
+    Head->SetWorldRotation(LookAt + HeadLookAtOffset);
 }
 
 void AFlower::OnRotate(float delta)
@@ -32,6 +58,7 @@ void AFlower::OnRotate(float delta)
 void AFlower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    UpdateHeadLookAt();
     if(HasPetals())
     {
         if(CurrentTime >= PetalLossRateTime)
@@ -61,6 +88,7 @@ void AFlower::LosePetal()
         Petal->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		FTimerHandle PetalTimer;
 		FTimerDelegate PetalDropDelegate;
+        Petal->SetSimulatePhysics(true);
 		PetalDropDelegate.BindUObject(this, &AFlower::DestroyPetal, Petal);
 		GetWorld()->GetTimerManager().SetTimer(PetalTimer, PetalDropDelegate, 2.0f, false);
 	
