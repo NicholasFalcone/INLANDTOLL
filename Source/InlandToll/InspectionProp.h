@@ -35,6 +35,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
 	float DefaultInspectionOffset = 50.0f;
 
+	float SavedInspectionOffset = -1.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection")
 	float ZoomSpeed = 5.0f;
 

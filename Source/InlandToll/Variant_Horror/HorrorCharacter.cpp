@@ -260,6 +260,7 @@ void AHorrorCharacter::DoZoom(const FInputActionValue& Value)
 		// Scroll up (positive AxisValue) decreases the offset to zoom in (brings object closer)
 		CurrentInspectionOffset -= AxisValue * Speed;
 		CurrentInspectionOffset = FMath::Clamp(CurrentInspectionOffset, MinOffset, MaxOffset);
+		CurrentInspectedProp->SavedInspectionOffset = CurrentInspectionOffset;
 
 		if (USceneComponent* RootComp = CurrentInspectedProp->GetRootComponent())
 		{
@@ -352,7 +353,15 @@ void AHorrorCharacter::EnterInspectionMode(AInspectionProp* PropToInspect, ABase
 	CurrentInspectedProp->SetIsInspecting(true);
 
 	// Inizializza zoom e rotazione di ispezione
-	CurrentInspectionOffset = CurrentInspectedProp->DefaultInspectionOffset;
+	if (CurrentInspectedProp->SavedInspectionOffset < 0.0f)
+	{
+		CurrentInspectedProp->SavedInspectionOffset = CurrentInspectedProp->DefaultInspectionOffset;
+	}
+	CurrentInspectionOffset = FMath::Clamp(
+		CurrentInspectedProp->SavedInspectionOffset,
+		CurrentInspectedProp->MinInspectionOffset,
+		CurrentInspectedProp->MaxInspectionOffset);
+	CurrentInspectedProp->SavedInspectionOffset = CurrentInspectionOffset;
 	TargetInspectionYaw = 0.0f;
 	TargetInspectionPitch = 0.0f;
 
