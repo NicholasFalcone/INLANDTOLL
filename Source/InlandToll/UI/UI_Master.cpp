@@ -3,6 +3,7 @@
 #include "Bed.h"
 #include "Desk.h"
 #include "Variant_Horror/HorrorCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 void UUI_Master::SetupCharacter(AHorrorCharacter* HorrorCharacter)
 {
@@ -46,6 +47,11 @@ void UUI_Master::HandlePlayerGettingCut()
 
 void UUI_Master::HandlePlayerSleeping()
 {
+    if (AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
+    {
+        Player->HidePlayerMesh();
+    }
+
     // Call the Blueprint event to handle daily inspection limit reached
     BP_OnDailyInspectionLimitReached();
 }
@@ -58,6 +64,11 @@ void UUI_Master::HandleDailyInspectionCountChanged(int32 NewDailyInspectionCount
 
 void UUI_Master::HandleLoadNextDay(int32 NewDayNumber)
 {
+    if (AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
+    {
+        Player->ShowPlayerMesh();
+    }
+
     BP_OnDayChanged(NewDayNumber);
     BP_OnLoadNextDay();
 }
