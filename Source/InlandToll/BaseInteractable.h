@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* MeshComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Highlight")
+	TObjectPtr<UMaterialInterface> OutlineOverlayMaterial;
+
 	UPROPERTY(EditAnywhere, Category = "Prompt Data")
 	FInteractionPromptData InteractionPromptData;
 	
@@ -46,6 +49,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAudioComponent* AudioComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Highlight")
+	bool bUseOutlineMaterial = true;
 
 protected:
 	// Called when the game starts or when spawned

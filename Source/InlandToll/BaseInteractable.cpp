@@ -16,6 +16,12 @@ ABaseInteractable::ABaseInteractable()
 	MeshComp->SetMobility(EComponentMobility::Movable);
 	RootComponent = MeshComp;
 
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> OutlineMat(TEXT("/Game/Materials/M_Outline.M_Outline"));
+	if (OutlineMat.Succeeded())
+	{
+		OutlineOverlayMaterial = OutlineMat.Object;
+	}
+
 	// 3. Creo e configuro il WidgetComponent
 	// Note: CreateDefaultSubobject must be called in the Constructor, not in BeginPlay.
 	// You will need to declare 'class UWidgetComponent* InteractionWidget;' in your header file.
@@ -106,17 +112,27 @@ void ABaseInteractable::OnHighlight()
 {
 	// UE_LOG(LogTemp, Warning, TEXT("OnHighlight called for %s"), *GetName());
 	InteractionWidgetComp->SetVisibility(true);
+	if (bUseOutlineMaterial && MeshComp)
+	{
+		MeshComp->SetOverlayMaterial(OutlineOverlayMaterial);
+	}
 }
 
 void ABaseInteractable::OnUnhighlight()
 {
 	// UE_LOG(LogTemp, Warning, TEXT("OnUnhighlight called for %s"), *GetName());
 	InteractionWidgetComp->SetVisibility(false);
+	if (bUseOutlineMaterial && MeshComp)
+	{
+		MeshComp->SetOverlayMaterial(nullptr);
+	}
 }
 
 void ABaseInteractable::OnInteract()
 {
 	if (!bIsInteractable) return;
+	
+	OnUnhighlight();
 	
 	if (OnInteractDelegate.IsBound())
 	{
