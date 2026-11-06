@@ -52,6 +52,7 @@ protected:
 	ADesk* GeneralDeskInstance;
 
     const UAnomalyData* CurrentAnomalyDetails;
+    int32 CurrentQuestionaryIndex = 0;
 	
 	ATablet* GetTabletInstance();
 	void DeliverAnomalySheet();

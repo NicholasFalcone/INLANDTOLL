@@ -19,6 +19,8 @@
 #include "Components/WidgetComponent.h"
 #include "Framework/Application/SlateApplication.h"
 #include "InlandTollPlayerController.h"
+#include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 
 AHorrorCharacter::AHorrorCharacter()
 {
@@ -43,81 +45,94 @@ void AHorrorCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchWalkSpeed;
 	
-	if (TabletClass)
+	MyTablet = nullptr;
+	for (TActorIterator<ATablet> It(GetWorld()); It; ++It)
+	{
+		if (!MyTablet)
+		{
+			MyTablet = *It;
+			continue;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Destroying duplicate tablet: %s"), *It->GetName());
+		It->Destroy();
+	}
+
+	if (!MyTablet && TabletClass)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		MyTablet = GetWorld()->SpawnActor<ATablet>(TabletClass, SpawnParams);
-		if (MyTablet)
+	}
+
+	if (MyTablet)
+	{
+		MyTablet->SetOwner(this);
+		MyTablet->PlayerCharacter = this;
+
+		if (MyTablet->GetRootComponent())
 		{
-			if (MyTablet->GetRootComponent())
-			{
-				MyTablet->GetRootComponent()->SetMobility(EComponentMobility::Movable);
-			}
+			MyTablet->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+		}
 
-			USceneComponent* ParentComp = nullptr;
-			TArray<USpringArmComponent*> SpringArms;
-			GetComponents<USpringArmComponent>(SpringArms);
-			for (USpringArmComponent* Arm : SpringArms)
+		USceneComponent* ParentComp = nullptr;
+		TArray<USpringArmComponent*> SpringArms;
+		GetComponents<USpringArmComponent>(SpringArms);
+		for (USpringArmComponent* Arm : SpringArms)
+		{
+			if (Arm && !Arm->IsTemplate() && Arm->GetName().Contains(TEXT("Tablet")))
 			{
-				if (Arm && !Arm->IsTemplate() && Arm->GetName().Contains(TEXT("Tablet")))
-				{
-					ParentComp = Arm;
-					break;
-				}
+				ParentComp = Arm;
+				break;
 			}
-			if (!ParentComp)
+		}
+		if (!ParentComp)
+		{
+			USceneComponent* RawComp = GetTabletSpringArmComponent();
+			if (RawComp && !RawComp->IsTemplate())
 			{
-				USceneComponent* RawComp = GetTabletSpringArmComponent();
-				if (RawComp && !RawComp->IsTemplate())
-				{
-					ParentComp = RawComp;
-				}
+				ParentComp = RawComp;
 			}
-			if (!ParentComp)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("GetTabletSpringArmComponent returned a template or null, falling back to FirstPersonCameraComponent"));
-				ParentComp = GetFirstPersonCameraComponent();
-			}
+		}
+		if (!ParentComp)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetTabletSpringArmComponent returned a template or null, falling back to FirstPersonCameraComponent"));
+			ParentComp = GetFirstPersonCameraComponent();
+		}
 
-			if (ParentComp)
+		if (ParentComp)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Attaching tablet to parent component: %s"), *ParentComp->GetName());
+			FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+			if (MyTablet->AttachToComponent(ParentComp, AttachRules))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Attaching tablet to parent component: %s"), *ParentComp->GetName());
-				FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-				bool bAttached = MyTablet->AttachToComponent(ParentComp, AttachRules);
-				if (bAttached)
-				{
-					UE_LOG(LogTemp, Log, TEXT("Tablet successfully attached to %s"), *ParentComp->GetName());
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Tablet attachment returned false!"));
-				}
+				UE_LOG(LogTemp, Log, TEXT("Tablet successfully attached to %s"), *ParentComp->GetName());
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("No valid parent component found for Tablet attachment!"));
+				UE_LOG(LogTemp, Warning, TEXT("Tablet attachment returned false!"));
 			}
-			
-			MyTablet->SetActorRelativeLocation(TabletSocketOffset);
-			MyTablet->SetActorRelativeRotation(TabletSocketRotation);
-
-			// Disabilita collisione per componente per evitare blocchi col character.
-			// SetActorEnableCollision(false) disattiverebbe anche le query del widget, quindi resta true.
-			MyTablet->SetActorEnableCollision(true);
-			TArray<UPrimitiveComponent*> PrimComps;
-			MyTablet->GetComponents<UPrimitiveComponent>(PrimComps);
-			for (UPrimitiveComponent* PrimComp : PrimComps)
-			{
-				PrimComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				PrimComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-			}
-
-			// Inizialmente nascosto
-			MyTablet->SetActorHiddenInGame(true);
-			bIsTabletOpen = false;
 		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("No valid parent component found for Tablet attachment!"));
+		}
+
+		MyTablet->SetActorRelativeLocation(TabletSocketOffset);
+		MyTablet->SetActorRelativeRotation(TabletSocketRotation);
+
+		MyTablet->SetActorEnableCollision(true);
+		TArray<UPrimitiveComponent*> PrimComps;
+		MyTablet->GetComponents<UPrimitiveComponent>(PrimComps);
+		for (UPrimitiveComponent* PrimComp : PrimComps)
+		{
+			PrimComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			PrimComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+		}
+
+		MyTablet->SetActorHiddenInGame(true);
+		bIsTabletOpen = false;
 	}
 }
 
@@ -190,16 +205,15 @@ void AHorrorCharacter::TabletMouseReleased()
 
 void AHorrorCharacter::DoStartUsingTool()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DoStartUsingTool called"));
 
 	if (CurrentPlayerState == EPlayerState::Unconstrained && InventoryComponent && InventoryComponent->EquippedTool)
 	{
 		InventoryComponent->EquippedTool->OnUsed();
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No tool equipped to use."));
-	}
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("No tool equipped to use."));
+	// }
 }
 
 void AHorrorCharacter::DoEndUsingTool()
@@ -211,15 +225,13 @@ void AHorrorCharacter::DoStartCrouch()
 {
 	if(CurrentPlayerState == EPlayerState::Unconstrained)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DoStartCrouch called"));
-		//.. add crouch logic here
+		// UE_LOG(LogTemp, Warning, TEXT("DoStartCrouch called"));
 		Crouch();
 	}
 }
 
 void AHorrorCharacter::DoEndCrouch()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DoEndCrouch called"));
 	//.. add uncrouch logic here
 	UnCrouch();
 }

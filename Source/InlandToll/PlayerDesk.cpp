@@ -46,8 +46,18 @@ void APlayerDesk::BeginPlay()
 
 void APlayerDesk::OnNextDayBegin(int day)
 {
-    PowerButtonComponent->bIsInteractable = true;
-    PrintDetailsButtonComponent->bIsInteractable = false;
+    CurrentQuestionaryIndex = FMath::Max(0, day - 1);
+
+    if (PowerButtonComponent)
+    {
+        PowerButtonComponent->bIsInteractable = true;
+    }
+
+    if (PrintDetailsButtonComponent)
+    {
+        PrintDetailsButtonComponent->bIsInteractable = false;
+    }
+
     OnNextDayBeginEvent.Broadcast();
 }
 
@@ -66,11 +76,34 @@ void APlayerDesk::OnDayshiftEnded()
 
 void APlayerDesk::OnPowerButtonPressed()
 {
-    PowerButtonComponent->bIsInteractable = false;
-    PrintDetailsButtonComponent->bIsInteractable = true;
-	if (DailyQuestionary.InspectionData.IsValidIndex(GetCurrentDayReach()))
+    if (PowerButtonComponent)
     {
-        CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(GetCurrentDayReach()) ? DailyQuestionary.InspectionData[GetCurrentDayReach()] : nullptr;
+        PowerButtonComponent->bIsInteractable = false;
+    }
+
+    CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(CurrentQuestionaryIndex)
+        ? DailyQuestionary.InspectionData[CurrentQuestionaryIndex]
+        : nullptr;
+
+    if (!CurrentAnomalyDetails)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot load questionary data for day index %d. DailyQuestionary contains %d entries."),
+            CurrentQuestionaryIndex,
+            DailyQuestionary.InspectionData.Num());
+        if (PrintDetailsButtonComponent)
+        {
+            PrintDetailsButtonComponent->bIsInteractable = false;
+        }
+        return;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("Loaded questionary data for day %d: %s"),
+        CurrentQuestionaryIndex + 1,
+        *CurrentAnomalyDetails->InspectionName.ToString());
+
+    if (PrintDetailsButtonComponent)
+    {
+        PrintDetailsButtonComponent->bIsInteractable = true;
     }
 }
 
