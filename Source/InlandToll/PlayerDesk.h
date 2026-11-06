@@ -13,6 +13,7 @@ class UWidgetComponent;
 class ADesk;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSurvayCompleted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNextDayBeginEvent);
 
 UCLASS()
 class INLANDTOLL_API APlayerDesk : public AActor
@@ -40,6 +41,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSurvayCompleted OnSurvayCompleted;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnNextDayBeginEvent OnNextDayBeginEvent;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Table")
@@ -66,6 +70,8 @@ public:
 	void OnPrintDetailsButtonPressed();
 	UFUNCTION(BlueprintCallable, Category = "Interactable")
 	void OnDayshiftEnded();
+	UFUNCTION(BlueprintCallable, Category = "Interactable")
+	void OnNextDayBegin(int32 day);
 
 	int32 GetCurrentDayReach() const;
 

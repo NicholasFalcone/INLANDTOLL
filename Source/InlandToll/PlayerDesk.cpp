@@ -29,26 +29,45 @@ void APlayerDesk::BeginPlay()
 	
 	GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
 
-	GeneralDeskInstance->OnDailyInspectionLimitReached.AddDynamic(this, &APlayerDesk::OnDayshiftEnded);
+	GeneralDeskInstance->OnNextDayLoaded.AddDynamic(this, &APlayerDesk::OnNextDayBegin);
 
     if (PowerButtonComponent)
     {
         PowerButtonComponent->OnInteractDelegate.AddDynamic(this, &APlayerDesk::OnPowerButtonPressed);
     }
-	
+
+    PowerButtonComponent->bIsInteractable = true;
     if (PrintDetailsButtonComponent)
     {
         PrintDetailsButtonComponent->OnInteractDelegate.AddDynamic(this, &APlayerDesk::OnPrintDetailsButtonPressed);
     }
+    PrintDetailsButtonComponent->bIsInteractable = false;
+}
+
+void APlayerDesk::OnNextDayBegin(int day)
+{
+    PowerButtonComponent->bIsInteractable = true;
+    PrintDetailsButtonComponent->bIsInteractable = false;
+    OnNextDayBeginEvent.Broadcast();
 }
 
 void APlayerDesk::OnDayshiftEnded()
 {
-    // Handle the end of the day shift here.
+    if (PowerButtonComponent)
+    {
+        PowerButtonComponent->bIsInteractable = false;
+    }
+
+    if (PrintDetailsButtonComponent)
+    {
+        PrintDetailsButtonComponent->bIsInteractable = false;
+    }
 }
 
 void APlayerDesk::OnPowerButtonPressed()
 {
+    PowerButtonComponent->bIsInteractable = false;
+    PrintDetailsButtonComponent->bIsInteractable = true;
 	if (DailyQuestionary.InspectionData.IsValidIndex(GetCurrentDayReach()))
     {
         CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(GetCurrentDayReach()) ? DailyQuestionary.InspectionData[GetCurrentDayReach()] : nullptr;
