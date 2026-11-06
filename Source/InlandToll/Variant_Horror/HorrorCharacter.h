@@ -80,6 +80,16 @@ protected:
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+
+	/** Speed of the camera lerp between standing and crouched height */
+	UPROPERTY(EditAnywhere, Category="Walk")
+	float CrouchCameraInterpSpeed = 10.0f;
+
+	float BaseCameraRelativeZ = 0.0f;
+
 protected:
 
 	/** Starts sprinting behavior */

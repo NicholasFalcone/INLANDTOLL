@@ -44,6 +44,8 @@ void AHorrorCharacter::BeginPlay()
 	// Initialize the walk speed
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchWalkSpeed;
+
+	BaseCameraRelativeZ = GetFirstPersonCameraComponent()->GetRelativeLocation().Z;
 	
 	MyTablet = nullptr;
 	for (TActorIterator<ATablet> It(GetWorld()); It; ++It)
@@ -219,6 +221,46 @@ void AHorrorCharacter::DoStartUsingTool()
 void AHorrorCharacter::DoEndUsingTool()
 {
 	//..
+}
+
+void AHorrorCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (UCameraComponent* Cam = GetFirstPersonCameraComponent())
+	{
+		FVector Loc = Cam->GetRelativeLocation();
+		if (!FMath::IsNearlyEqual(Loc.Z, BaseCameraRelativeZ, 0.01f))
+		{
+			Loc.Z = FMath::FInterpTo(Loc.Z, BaseCameraRelativeZ, DeltaSeconds, CrouchCameraInterpSpeed);
+			Cam->SetRelativeLocation(Loc);
+		}
+	}
+}
+
+// The capsule shrinks/grows instantly: compensate the camera so it keeps its world height, then Tick lerps it back
+void AHorrorCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+
+	if (UCameraComponent* Cam = GetFirstPersonCameraComponent())
+	{
+		FVector Loc = Cam->GetRelativeLocation();
+		Loc.Z += HalfHeightAdjust;
+		Cam->SetRelativeLocation(Loc);
+	}
+}
+
+void AHorrorCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+
+	if (UCameraComponent* Cam = GetFirstPersonCameraComponent())
+	{
+		FVector Loc = Cam->GetRelativeLocation();
+		Loc.Z -= HalfHeightAdjust;
+		Cam->SetRelativeLocation(Loc);
+	}
 }
 
 void AHorrorCharacter::DoStartCrouch()
