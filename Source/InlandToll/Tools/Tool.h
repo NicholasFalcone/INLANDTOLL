@@ -12,6 +12,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolUsed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolEquipped);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolDropped);
 
+class ADesk;
+
 UCLASS()
 class INLANDTOLL_API AATool : public ABaseInteractable
 {
@@ -27,6 +29,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	FVector SocketOffset;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tool")	
+	FVector StartingLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tool")
 	FRotator SocketRotation;
@@ -49,6 +54,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Tool")
 	FOnToolDropped OnToolDropped;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tool")
+	class ADesk* GeneralDeskInstance;
 public:	
 
 	UPROPERTY(BlueprintReadOnly, Category = "Tool")
@@ -62,6 +70,8 @@ public:
 	virtual void OnUnequipped();
 
 	virtual void OnUsed();
+
+	virtual void OnNextDayBegin(int DayIndex);
 
 	virtual void OnDropped(class ACharacter* InDroppedByCharacter);
 

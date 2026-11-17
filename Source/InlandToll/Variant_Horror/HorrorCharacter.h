@@ -210,6 +210,9 @@ public:
 
 	UFUNCTION()
 	void GettingCut();
+	
+	UFUNCTION()
+	void GoSleep();
 
 	UFUNCTION()
 	AATool* GetEquippedTool();

@@ -49,7 +49,7 @@ void UUI_Master::HandlePlayerSleeping()
 {
     if (AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
     {
-        Player->HidePlayerMesh();
+        Player->GoSleep();
     }
 
     // Call the Blueprint event to handle daily inspection limit reached

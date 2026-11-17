@@ -6,6 +6,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Desk.h"
 #include "Engine/World.h"
 
 // Sets default values
@@ -30,11 +32,28 @@ AATool::AATool()
 void AATool::BeginPlay()
 {
 	Super::BeginPlay();
+
+	StartingLocation = GetActorLocation();
 	
 	if (InteractionPromptData.InteractionPrompt.IsEmpty())
 	{
 		InteractionPromptData.InteractionPrompt = FText::FromString(TEXT("Raccogli Strumento"));
 	}
+
+	GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
+
+	if(GeneralDeskInstance)
+	{
+		GeneralDeskInstance->OnNextDayLoaded.AddDynamic(this, &AATool::OnNextDayBegin);
+	}
+
+}
+
+void AATool::OnNextDayBegin(int DayIndex)
+{
+	// Implement logic for when the next day begins
+	// For example, reset the tool's location to its starting location
+	SetActorLocation(StartingLocation);
 }
 
 // Called every frame

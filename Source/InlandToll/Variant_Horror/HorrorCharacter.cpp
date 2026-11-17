@@ -138,6 +138,14 @@ void AHorrorCharacter::BeginPlay()
 	}
 }
 
+void AHorrorCharacter::GoSleep()
+{
+	// Implement the logic for the character to go to sleep
+	UE_LOG(LogTemp, Warning, TEXT("Character is going to sleep"));
+	HidePlayerMesh();
+	DropProp();
+}
+
 void AHorrorCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
