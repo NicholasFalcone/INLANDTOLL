@@ -371,7 +371,15 @@ UAnomalyData* ADesk::GetInspectionDataForCurrentDay(int32 inspectionIndex)
 
 bool ADesk::IsDayOver(int32 inspectionIndex) const
 {
-    bool isEnded = CurrentDayReach >= InspectionDataArray.Num() || (InspectionDataArray.IsValidIndex(CurrentDayReach) && inspectionIndex >= InspectionDataArray[CurrentDayReach].InspectionData.Num());
+    bool gameEnded = CurrentDayReach >= InspectionDataArray.Num();
+    if (gameEnded)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Game ended: CurrentDayReach = %d"), CurrentDayReach);
+        OnGameEnded.Broadcast(CurrentErrors);
+        return true;
+    }
+
+    bool isEnded = (InspectionDataArray.IsValidIndex(CurrentDayReach) && inspectionIndex >= InspectionDataArray[CurrentDayReach].InspectionData.Num());
 
     if(isEnded)
     {
