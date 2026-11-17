@@ -82,4 +82,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tools Interaction")
 	virtual void OnTabletTicked();
 
+	virtual void OnHighlight();
+
 };
