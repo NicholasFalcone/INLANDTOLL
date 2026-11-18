@@ -13,6 +13,7 @@
 #include "InputAction.h"
 #include "HorrorCharacter.h"
 #include "Tools/Tool.h"
+#include "Tools/ToolPlacementPoint.h"
 #include "InspectionProp.h"
 #include "Tools/Tablet.h"
 #include "Components/WidgetInteractionComponent.h"
@@ -35,6 +36,8 @@ AHorrorCharacter::AHorrorCharacter()
 	TabletWidgetInteraction->TraceChannel = ECC_Visibility;
 	TabletWidgetInteraction->bEnableHitTesting = false;
 	TabletWidgetInteraction->PointerIndex = 0;
+
+	ToolPlacementManager = CreateDefaultSubobject<UToolPlacementManager>(TEXT("ToolPlacementManager"));
 }
 
 void AHorrorCharacter::BeginPlay()
@@ -238,37 +241,33 @@ void AHorrorCharacter::Tick(float DeltaSeconds)
 	if (UCameraComponent* Cam = GetFirstPersonCameraComponent())
 	{
 		FVector Loc = Cam->GetRelativeLocation();
-		if (!FMath::IsNearlyEqual(Loc.Z, BaseCameraRelativeZ, 0.01f))
+		
+		// Determine target based on crouch state
+		float InterpTarget = bIsCrouchingNow ? CrouchedCameraRelativeZ : BaseCameraRelativeZ;
+		
+		if (!FMath::IsNearlyEqual(Loc.Z, InterpTarget, 0.01f))
 		{
-			Loc.Z = FMath::FInterpTo(Loc.Z, BaseCameraRelativeZ, DeltaSeconds, CrouchCameraInterpSpeed);
+			// Use different speeds for going up vs going down
+			float InterpSpeed = (Loc.Z > InterpTarget) ? CrouchCameraInterpSpeedDown : CrouchCameraInterpSpeed;
+			Loc.Z = FMath::FInterpTo(Loc.Z, InterpTarget, DeltaSeconds, InterpSpeed);
 			Cam->SetRelativeLocation(Loc);
 		}
 	}
 }
 
-// The capsule shrinks/grows instantly: compensate the camera so it keeps its world height, then Tick lerps it back
 void AHorrorCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-
-	if (UCameraComponent* Cam = GetFirstPersonCameraComponent())
-	{
-		FVector Loc = Cam->GetRelativeLocation();
-		Loc.Z += HalfHeightAdjust;
-		Cam->SetRelativeLocation(Loc);
-	}
+	
+	// Store the crouched camera height for smooth interpolation
+	CrouchedCameraRelativeZ = BaseCameraRelativeZ - HalfHeightAdjust;
+	bIsCrouchingNow = true;
 }
 
 void AHorrorCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-
-	if (UCameraComponent* Cam = GetFirstPersonCameraComponent())
-	{
-		FVector Loc = Cam->GetRelativeLocation();
-		Loc.Z -= HalfHeightAdjust;
-		Cam->SetRelativeLocation(Loc);
-	}
+	bIsCrouchingNow = false;
 }
 
 void AHorrorCharacter::DoStartCrouch()
@@ -620,8 +619,21 @@ void AHorrorCharacter::DoDropTool()
 	if (ToolToDrop)
 	{
 		InventoryComponent->EquipTool(nullptr);
+
+		// Check if there's a placement point in front of the player
+		if (ToolPlacementManager && ToolPlacementManager->HighlightedPlacementPoint)
+		{
+			// Try to place the tool at the highlighted placement point
+			bool bPlaced = ToolPlacementManager->HighlightedPlacementPoint->TryPlaceTool(ToolToDrop);
+
+			if (bPlaced)
+			{
+				return;
+			}
+		}
+
+		// Otherwise, drop the tool normally
 		ToolToDrop->OnDropped(this);
-		UE_LOG(LogTemp, Warning, TEXT("Dropped Tool: %s"), *ToolToDrop->GetName());
 	}
 }
 #pragma endregion

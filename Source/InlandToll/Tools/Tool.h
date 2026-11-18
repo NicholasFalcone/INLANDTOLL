@@ -71,6 +71,7 @@ public:
 
 	virtual void OnUsed();
 
+	UFUNCTION()
 	virtual void OnNextDayBegin(int DayIndex);
 
 	virtual void OnDropped(class ACharacter* InDroppedByCharacter);

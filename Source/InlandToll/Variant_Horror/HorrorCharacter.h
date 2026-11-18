@@ -6,6 +6,7 @@
 #include "InlandTollCharacter.h"
 #include "BPC_Inventory.h"
 #include "InteractionComponent.h"
+#include "Tools/ToolPlacementManager.h"
 #include "HorrorCharacter.generated.h"
 
 
@@ -27,6 +28,9 @@ class INLANDTOLL_API AHorrorCharacter : public AInlandTollCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
 	
+private:
+	float TargetZ = 0.0f;
+
 protected:
 	/** Fire weapon input action */
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -88,7 +92,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Walk")
 	float CrouchCameraInterpSpeed = 10.0f;
 
+	/** Speed of the camera lerp when descending into crouch (can be different for balance) */
+	UPROPERTY(EditAnywhere, Category="Walk")
+	float CrouchCameraInterpSpeedDown = 10.0f;
+
 	float BaseCameraRelativeZ = 0.0f;
+	
+	/** Camera height offset when fully crouched */
+	float CrouchedCameraRelativeZ = 0.0f;
+	
+	/** Track if we're currently crouching to determine interpolation target */
+	bool bIsCrouchingNow = false;
 
 protected:
 
@@ -137,6 +151,9 @@ public:
 	// Inoltra i click del mouse ai widget 3D (checkbox del tablet)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
 	class UWidgetInteractionComponent* TabletWidgetInteraction;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UToolPlacementManager* ToolPlacementManager;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
 	bool bIsTabletOpen = false;
