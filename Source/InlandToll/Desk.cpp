@@ -373,18 +373,21 @@ UAnomalyData* ADesk::GetInspectionDataForCurrentDay(int32 inspectionIndex)
 
 bool ADesk::IsDayOver(int32 inspectionIndex) const
 {
-    bool gameEnded = CurrentDayReach >= InspectionDataArray.Num();
-    if (gameEnded)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Game ended: CurrentDayReach = %d"), CurrentDayReach);
-        OnGameEnded.Broadcast(CurrentErrors);
-        return true;
-    }
 
+    UE_LOG(LogTemp, Log, TEXT("Checking if day is over: CurrentDayReach = %d, InspectionDataArray.Num() = %d"), CurrentDayReach + 1, InspectionDataArray.Num());
+ 
     bool isEnded = (InspectionDataArray.IsValidIndex(CurrentDayReach) && inspectionIndex >= InspectionDataArray[CurrentDayReach].InspectionData.Num());
 
     if(isEnded)
     {
+        bool gameEnded = CurrentDayReach + 1 >= InspectionDataArray.Num();
+        if (gameEnded)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Game ended: CurrentDayReach = %d"), CurrentDayReach);
+            OnGameEnded.Broadcast(CurrentErrors);
+            return true;
+        }
+
         if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
         {
             FST_DialogueLine CurrentDialogueLine = FST_DialogueLine();
