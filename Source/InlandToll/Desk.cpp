@@ -121,7 +121,6 @@ void ADesk::OnNewAnomalyButtonPressed()
 
 void ADesk::OnPrintDetailsButtonPressed()
 {
-    OnPrintButtonPressed.Broadcast();
 
     ATablet* Tablet = GetTabletInstance();
     if (!Tablet)
@@ -175,6 +174,7 @@ void ADesk::OnPrintDetailsButtonPressed()
             UE_LOG(LogTemp, Warning, TEXT("Cannot print inspection details because no anomaly is active."));
             return;
         }
+        OnPrintButtonPressed.Broadcast();
 
         Tablet->UpdateAnomaly(CurrentAnomalyDetails);
         if (ABaseInteractable* Button = GetPrintDetailsButton())

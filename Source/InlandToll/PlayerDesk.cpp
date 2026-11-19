@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PlayerDesk.h"
 #include "Kismet/GameplayStatics.h"
 #include "DialogueManagerSubsystem.h"
@@ -10,10 +9,10 @@
 // Sets default values
 APlayerDesk::APlayerDesk()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+    RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
     // --- MONITORS (Widget Components) ---
     LeftMonitor = CreateDefaultSubobject<UWidgetComponent>(TEXT("LeftMonitor"));
@@ -23,13 +22,13 @@ APlayerDesk::APlayerDesk()
 // Called when the game starts or when spawned
 void APlayerDesk::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
     TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
-	
-	GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
 
-	GeneralDeskInstance->OnNextDayLoaded.AddDynamic(this, &APlayerDesk::OnNextDayBegin);
+    GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
+
+    GeneralDeskInstance->OnNextDayLoaded.AddDynamic(this, &APlayerDesk::OnNextDayBegin);
 
     if (PowerButtonComponent)
     {
@@ -82,14 +81,14 @@ void APlayerDesk::OnPowerButtonPressed()
     }
 
     CurrentAnomalyDetails = DailyQuestionary.InspectionData.IsValidIndex(CurrentQuestionaryIndex)
-        ? DailyQuestionary.InspectionData[CurrentQuestionaryIndex]
-        : nullptr;
+                                ? DailyQuestionary.InspectionData[CurrentQuestionaryIndex]
+                                : nullptr;
 
     if (!CurrentAnomalyDetails)
     {
         UE_LOG(LogTemp, Error, TEXT("Cannot load questionary data for day index %d. DailyQuestionary contains %d entries."),
-            CurrentQuestionaryIndex,
-            DailyQuestionary.InspectionData.Num());
+               CurrentQuestionaryIndex,
+               DailyQuestionary.InspectionData.Num());
         if (PrintDetailsButtonComponent)
         {
             PrintDetailsButtonComponent->bIsInteractable = false;
@@ -98,8 +97,8 @@ void APlayerDesk::OnPowerButtonPressed()
     }
 
     UE_LOG(LogTemp, Log, TEXT("Loaded questionary data for day %d: %s"),
-        CurrentQuestionaryIndex + 1,
-        *CurrentAnomalyDetails->InspectionName.ToString());
+           CurrentQuestionaryIndex + 1,
+           *CurrentAnomalyDetails->InspectionName.ToString());
 
     if (PrintDetailsButtonComponent)
     {
@@ -112,13 +111,14 @@ int32 APlayerDesk::GetCurrentDayReach() const
     return GeneralDeskInstance ? GeneralDeskInstance->CurrentDayReach : 0;
 }
 
-ATablet* APlayerDesk::GetTabletInstance()
+ATablet *APlayerDesk::GetTabletInstance()
 {
-    if(TabletInstance)
+    if (TabletInstance)
         return TabletInstance;
-    else{
+    else
+    {
         TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
-        if(TabletInstance)
+        if (TabletInstance)
             return TabletInstance;
     }
     return nullptr;
@@ -126,7 +126,7 @@ ATablet* APlayerDesk::GetTabletInstance()
 
 void APlayerDesk::DeliverAnomalySheet()
 {
-    if(GetTabletInstance() )
+    if (GetTabletInstance())
     {
         UE_LOG(LogTemp, Log, TEXT("Removed anomaly sheet from the tablet."));
         GetTabletInstance()->RemoveSheet();
@@ -136,11 +136,10 @@ void APlayerDesk::DeliverAnomalySheet()
 
 void APlayerDesk::OnPrintDetailsButtonPressed()
 {
-    OnPrintButton2Pressed.Broadcast();
-  if(GetTabletInstance()->HasSheet())
+    if (GetTabletInstance()->HasSheet())
     {
         UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
-        if(GetTabletInstance()->CanBeDelivered())
+        if (GetTabletInstance()->CanBeDelivered())
         {
             UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
             DeliverAnomalySheet();
@@ -151,14 +150,14 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
         {
             UE_LOG(LogTemp, Warning, TEXT("Cannot deliver anomaly sheet. Tablet cannot be delivered."));
 
-            			// Trigger dialogue associated with this anomaly comming up for inspection
-			if (UDialogueManagerSubsystem* DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
-			{
+            // Trigger dialogue associated with this anomaly comming up for inspection
+            if (UDialogueManagerSubsystem *DialogueSubsystem = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>())
+            {
                 FST_DialogueLine CurrentDialogueLine = FST_DialogueLine();
                 CurrentDialogueLine.SpeakerName = "Player";
                 CurrentDialogueLine.DialogueText = "Cannot deliver anomaly sheet. You must complete the inspection first.";
-				DialogueSubsystem->PlayDialogue(CurrentDialogueLine);
-			}
+                DialogueSubsystem->PlayDialogue(CurrentDialogueLine);
+            }
         }
     }
     else
@@ -168,6 +167,7 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
             UE_LOG(LogTemp, Warning, TEXT("CurrentAnomalyDetails is null: no anomaly data to print."));
             return;
         }
+        OnPrintButton2Pressed.Broadcast();
         GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
         PrintDetailsButtonComponent->ChangeInteractablePromptText(FText::FromString("Submit"));
     }
@@ -176,6 +176,5 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
 // Called every frame
 void APlayerDesk::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
