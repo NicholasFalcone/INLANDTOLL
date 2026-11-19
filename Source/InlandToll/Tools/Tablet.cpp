@@ -15,6 +15,8 @@ ATablet::ATablet()
     TabletWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TabletWidgetComponent"));
     TabletWidgetComponent->SetWidgetClass(TabletWidgetClass);
     TabletWidgetComponent->SetupAttachment(RootComponent);
+    DefaultPageWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("DefaultPageWidgetComponent"));
+    DefaultPageWidgetComponent->SetupAttachment(RootComponent);
 }
 
 void ATablet::BeginPlay()
@@ -62,6 +64,9 @@ void ATablet::UpdateAnomaly(const UAnomalyData* currentInspectionData)
     {
         UE_LOG(LogTemp, Log, TEXT("Calling UpdateAnomaly on TabletWidget. %s"), *currentInspectionData->InspectionName.ToString());
         TabletWidget->UpdateAnomaly(currentInspectionData);
+        DefaultPageWidgetComponent->SetVisibility(false);
+        TabletWidgetComponent->SetVisibility(true);
+        OnTabletUpdateAnomaly.Broadcast(true);
     }
     else
     {
@@ -80,6 +85,9 @@ void ATablet::RemoveSheet()
     if (TabletWidget)
     {
         TabletWidget->RemoveSheet();
+        DefaultPageWidgetComponent->SetVisibility(true);
+        TabletWidgetComponent->SetVisibility(false);
+        OnTabletUpdateAnomaly.Broadcast(false);
     }
     bHasSheet = false;
 }

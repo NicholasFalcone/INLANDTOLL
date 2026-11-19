@@ -17,6 +17,7 @@
  * 
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTabletSheetUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTabletUpdateAnomaly, bool, bHasSheet);
 UCLASS()
 class INLANDTOLL_API ATablet : public ABaseInteractable
 {
@@ -34,15 +35,22 @@ public:
 
 	TObjectPtr<UTableUI> TabletWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
+	UWidgetComponent* DefaultPageWidgetComponent;
+
 	AHorrorCharacter* PlayerCharacter;
 
 	UPROPERTY(BlueprintAssignable, Category = "Tablet")
 	FOnTabletSheetUpdated OnTabletSheetUpdated;
 
+	UPROPERTY(BlueprintAssignable, Category = "Tablet")
+	FOnTabletUpdateAnomaly OnTabletUpdateAnomaly;
+
 	void UpdateAnomaly(const UAnomalyData* currentInspectionData);
 
 	void RemoveSheet();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tablet")
 	bool bHasSheet = false;
 
 	virtual void OnInteract() override;
