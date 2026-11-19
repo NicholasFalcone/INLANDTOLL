@@ -36,14 +36,30 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UDialogueBox> DialogueBoxWidget;
 
+	/** Introduction UI widget class */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Horror|UI")
+	TSubclassOf<UUserWidget> GameIntroductionWidgetClass;
+	
+	/** Pointer to the introduction widget */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Horror|UI")
+	TObjectPtr<UUserWidget> GameIntroductionWidgetInstance;
+
 public:
 
 	/** Constructor */
 	AHorrorPlayerController();
 
-protected:
-	/** Possessed pawn initialization */
-	virtual void OnPossess(APawn* InPawn) override;
+	/** Call this when the introduction is complete to exit the MainMenu state */
+	UFUNCTION(BlueprintCallable, Category = "Horror|UI")
+	void OnIntroductionComplete();
 
+protected:
+	/** Gameplay initialization */
+	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
+
+private:
+	/** Track if introduction has been shown */
+	bool bGameIntroductionShown = false;
 };

@@ -26,7 +26,6 @@ void AHorrorGameMode::ResetGameplay(APlayerController* TargetController)
 
 AActor* AHorrorGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
-
 	if(bDebugging)
 	{
 		for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
@@ -38,6 +37,6 @@ AActor* AHorrorGameMode::ChoosePlayerStart_Implementation(AController* Player)
 			}
 		}
 	}
-	// stub
+
 	return Super::ChoosePlayerStart_Implementation(Player);
 }

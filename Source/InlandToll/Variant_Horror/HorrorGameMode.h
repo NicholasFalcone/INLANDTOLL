@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Blueprint/UserWidget.h"
 #include "HorrorGameMode.generated.h"
 
 /**
@@ -30,4 +31,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Horror|GameMode")
 	void ResetGameplay(APlayerController* TargetController);
+
 };
