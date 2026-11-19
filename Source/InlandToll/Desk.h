@@ -21,6 +21,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDailyInspectionCountChanged, int3
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNextDayLoaded, int32, NewDayNumber);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnomalySheetRemoved, int32, Score);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPrintButtonPressed);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameEnded, int32, Errors);
 
 UCLASS()
@@ -126,6 +128,8 @@ public:
     FOnNextDayLoaded OnNextDayLoaded;
     UPROPERTY(BlueprintAssignable, Category = "Custom Event")
     FOnAnomalySheetRemoved OnAnomalySheetRemoved;
+    UPROPERTY(BlueprintAssignable, Category = "Custom Event")
+    FOnPrintButtonPressed OnPrintButtonPressed;
     UPROPERTY(BlueprintAssignable, Category = "Custom Event")
     FOnGameEnded OnGameEnded;
 

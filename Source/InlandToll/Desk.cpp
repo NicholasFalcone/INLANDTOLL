@@ -121,6 +121,8 @@ void ADesk::OnNewAnomalyButtonPressed()
 
 void ADesk::OnPrintDetailsButtonPressed()
 {
+    OnPrintButtonPressed.Broadcast();
+
     ATablet* Tablet = GetTabletInstance();
     if (!Tablet)
     {

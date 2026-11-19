@@ -136,6 +136,7 @@ void APlayerDesk::DeliverAnomalySheet()
 
 void APlayerDesk::OnPrintDetailsButtonPressed()
 {
+    OnPrintButton2Pressed.Broadcast();
   if(GetTabletInstance()->HasSheet())
     {
         UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));

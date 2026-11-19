@@ -14,7 +14,7 @@ class ADesk;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSurvayCompleted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNextDayBeginEvent);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPrintButton2Pressed);
 UCLASS()
 class INLANDTOLL_API APlayerDesk : public AActor
 {
@@ -44,6 +44,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnNextDayBeginEvent OnNextDayBeginEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnPrintButton2Pressed OnPrintButton2Pressed;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Table")
