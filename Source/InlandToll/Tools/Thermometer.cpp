@@ -27,6 +27,12 @@ AThermometer::AThermometer()
 	CurrentTemperature = 20.0f;
 	InterpSpeed = 3.0f;
 	TraceDistance = 800.0f;
+	LaserStartPosition = CreateDefaultSubobject<USceneComponent>(TEXT("LaserStartPosition"));
+	LaserStartPosition->SetupAttachment(RootComponent);
+	LaserStartPosition->SetRelativeLocation(FVector(10.0f, 0.0f, 15.0f));
+	LaserBeam = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LaserNiagara"));
+	LaserBeam->SetupAttachment(RootComponent);
+	LaserBeam->SetRelativeLocation(FVector(10.0f, 0.0f, 15.0f));
 }
 
 void AThermometer::BeginPlay()
@@ -92,12 +98,20 @@ void AThermometer::UpdateTargetTemperature()
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, ViewLocation, TraceEnd, ECC_Visibility, TraceParams))
 		{
 			AActor* HitActor = HitResult.GetActor();
+
+			FVector HitLocation = HitResult.ImpactPoint;
 			if (HitActor)
 			{
 				if(AInspectableAnomaly* Anomaly = Cast<AInspectableAnomaly>(HitActor))
 				{
 					NewTarget = Anomaly->Temperature;
 				}
+			}
+
+			if (LaserBeam && LaserStartPosition)
+			{
+				LaserBeam->SetVectorParameter(FName("BeamStart"), LaserStartPosition->GetComponentLocation());
+				LaserBeam->SetVectorParameter(FName("BeamEnd"), HitLocation);
 			}
 		}
 		else

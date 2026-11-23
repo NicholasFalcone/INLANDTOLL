@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraComponent.h"
 #include "Tool.h"
 #include "Thermometer.generated.h"
 
@@ -19,6 +20,12 @@ class INLANDTOLL_API AThermometer : public AATool
 public:
 	// Sets default values for this actor's properties
 	AThermometer();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Thermometer", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* LaserStartPosition;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Thermometer", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UNiagaraComponent> LaserBeam;
 
 protected:
 	// Called when the game starts or when spawned
