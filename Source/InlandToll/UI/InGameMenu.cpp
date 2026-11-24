@@ -19,6 +19,13 @@ void UInGameMenu::OpenPauseMenu()
     }
 
     AInlandTollPlayerController* InlandTollPC = Cast<AInlandTollPlayerController>(PC);
+    
+    if (InlandTollPC && InlandTollPC->GetInteractionState() == EPlayerState::Tablet)
+    {
+        InlandTollPC->EndInteractionState(EPlayerState::Tablet);
+        return;
+    }
+
     if (!InlandTollPC || !InlandTollPC->RequestInteractionState(EPlayerState::Paused, this))
     {
         UE_LOG(LogTemp, Error, TEXT("Cannot open pause menu because the player state controller is unavailable."));
