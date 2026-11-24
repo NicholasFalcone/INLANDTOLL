@@ -4,7 +4,7 @@
 #include "InspectableAnomaly.h"
 #include "HorrorCharacter.h"
 #include "GeneralLightSwitch.h"
-#include "Tools/Tablet.h"
+#include "Tools/TabletComponent.h"
 #include "DialogueManagerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 

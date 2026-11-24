@@ -12,7 +12,7 @@
 
 class UInteractionComponent;
 class UInputAction;
-class ATablet;
+class UTabletComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerGettingCutDelegate);
@@ -142,15 +142,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tablet")
 	UInputAction* ToggleTabletAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tablet")
-	TSubclassOf<ATablet> TabletClass;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
-	ATablet* MyTablet;
-
-	// Inoltra i click del mouse ai widget 3D (checkbox del tablet)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tablet")
-	class UWidgetInteractionComponent* TabletWidgetInteraction;
+	UTabletComponent* MyTablet;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UToolPlacementManager* ToolPlacementManager;
@@ -167,16 +160,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tablet")
 	void ToggleTablet();
 
-	void TabletMousePressed();
-	void TabletMouseReleased();
-
 	UFUNCTION(BlueprintCallable, Category = "Tablet")
 	void SetTabletOpen(bool bOpen);
 
 	void ApplyInteractionState(EPlayerState NewState);
-	void SetTabletInteractionEnabled(bool bEnabled);
-	void FocusTabletWidget();
-
 	void DoZoom(const FInputActionValue& Value);
 
 	virtual void DoJumpStart() override;

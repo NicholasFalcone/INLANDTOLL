@@ -6,7 +6,7 @@
 #include "InspectionDayDataAsset.h"
 #include "Desk.generated.h"
 
-class ATablet;
+class UTabletComponent;
 class UAnomalyData;
 class UWidgetComponent;
 class UChildActorComponent;
@@ -35,7 +35,6 @@ public:
 
 private:
     const UAnomalyData* CurrentAnomalyDetails;
-    ATablet* TabletInstance;
     
 protected:
     virtual void BeginPlay() override;
@@ -140,7 +139,7 @@ public:
     ABaseInteractable* GetPrintDetailsButton() const;
     ABaseInteractable* GetNewAnomalyButtonComponent() const;
 
-    ATablet* GetTabletInstance();
+    UTabletComponent* GetTabletInstance();
 
 
     AInspectionManager* InspectionManager;

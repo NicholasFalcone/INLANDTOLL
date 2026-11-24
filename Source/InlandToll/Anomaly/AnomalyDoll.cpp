@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AnomalyDoll.h"
-#include "Tools/Tablet.h"
 #include "Kismet/GameplayStatics.h"
 
 AAnomalyDoll::AAnomalyDoll()

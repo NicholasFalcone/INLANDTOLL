@@ -14,6 +14,8 @@
 class ADesk;
 class AHorrorCharacter;
 class ABed;
+class UTableUI;
+class UWidget;
 
 UCLASS()
 class INLANDTOLL_API UUI_Master : public UUserWidget
@@ -23,6 +25,15 @@ class INLANDTOLL_API UUI_Master : public UUserWidget
 public:
 	void SetupCharacter(AHorrorCharacter* HorrorCharacter);
 	void SetupManager(ADesk* DeskInstance, ABed* BedInstance);
+
+	UPROPERTY(BlueprintReadOnly, Category="UI")
+	TObjectPtr<UTableUI> TabletSheetWidgetComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="UI")
+	TObjectPtr<UUserWidget> DefaultTabletWidgetComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="UI")
+	TObjectPtr<UWidget> TabletContainer;
 
 	UFUNCTION()
 	void HandleErrorCountChanged(int32 NewErrorCount);

@@ -2,6 +2,8 @@
 #include "UI_Master.h"
 #include "Bed.h"
 #include "Desk.h"
+#include "Tools/TabletComponent.h"
+#include "UI/TableUI.h"
 #include "Variant_Horror/HorrorCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -9,6 +11,17 @@ void UUI_Master::SetupCharacter(AHorrorCharacter* HorrorCharacter)
 {
     HorrorCharacter->OnPlayerDied.AddDynamic(this, &UUI_Master::HandleGameOver);
     HorrorCharacter->OnPlayerGettingCut.AddDynamic(this, &UUI_Master::HandlePlayerGettingCut);
+    if (HorrorCharacter->MyTablet)
+    {
+        TabletSheetWidgetComponent = Cast<UTableUI>(GetWidgetFromName(TEXT("WBP_TabletUI")));
+        DefaultTabletWidgetComponent = Cast<UUserWidget>(GetWidgetFromName(TEXT("WBP_TabletDefaultPaage")));
+        TabletContainer = GetWidgetFromName(TEXT("Tablet"));
+        if (!TabletSheetWidgetComponent || !DefaultTabletWidgetComponent || !TabletContainer)
+        {
+            UE_LOG(LogTemp, Error, TEXT("UI_Master requires Tablet, WBP_TabletUI and WBP_TabletDefaultPaage in its widget tree."));
+        }
+        HorrorCharacter->MyTablet->InitializeWidgets(TabletSheetWidgetComponent, DefaultTabletWidgetComponent, TabletContainer);
+    }
 }
 
 void UUI_Master::HandleGameOver()

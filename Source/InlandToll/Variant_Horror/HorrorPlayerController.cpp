@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Desk.h"
 #include "Bed.h"
+#include "Tools/TabletComponent.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
@@ -51,8 +52,18 @@ void AHorrorPlayerController::OnPossess(APawn* InPawn)
 			// create the UI
 			if (!MainUI)
 			{
-				MainUI = CreateWidget<UUI_Master>(this, MainUIClass);
-				MainUI->AddToViewport(0);
+				if (MainUIClass)
+				{
+					MainUI = CreateWidget<UUI_Master>(this, MainUIClass);
+				}
+				if (MainUI)
+				{
+					MainUI->AddToViewport(0);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("Cannot create main UI: MainUIClass is missing or widget creation failed."));
+				}
 			}
 
 			// create dialogue UI
@@ -84,6 +95,13 @@ void AHorrorPlayerController::OnPossess(APawn* InPawn)
 
 void AHorrorPlayerController::OnUnPossess()
 {
+	if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(GetPawn()))
+	{
+		if (HorrorCharacter->MyTablet)
+		{
+			HorrorCharacter->MyTablet->InitializeWidgets(nullptr, nullptr, nullptr);
+		}
+	}
 	Super::OnUnPossess();
 
 	if (MainUI)

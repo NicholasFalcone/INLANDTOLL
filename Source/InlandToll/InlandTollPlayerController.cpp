@@ -184,7 +184,6 @@ void AInlandTollPlayerController::ApplyPlayerState(EPlayerState NewState, UUserW
 		if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(GetPawn()))
 		{
 			HorrorCharacter->ApplyInteractionState(NewState);
-			HorrorCharacter->SetTabletInteractionEnabled(false);
 		}
 
 		FInputModeGameAndUI InputMode;
@@ -221,13 +220,6 @@ void AInlandTollPlayerController::ApplyPlayerState(EPlayerState NewState, UUserW
 			InputMode.SetWidgetToFocus(WidgetToFocus->TakeWidget());
 		}
 		SetInputMode(InputMode);
-		if (bIsTablet)
-		{
-			if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(GetPawn()))
-			{
-				HorrorCharacter->FocusTabletWidget();
-			}
-		}
 	}
 	else if (bIsMenu)
 	{

@@ -4,7 +4,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "DialogueManagerSubsystem.h"
 #include "Desk.h"
-#include "Tools/Tablet.h"
+#include "Tools/TabletComponent.h"
+#include "Variant_Horror/HorrorCharacter.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 APlayerDesk::APlayerDesk()
@@ -23,8 +25,6 @@ APlayerDesk::APlayerDesk()
 void APlayerDesk::BeginPlay()
 {
     Super::BeginPlay();
-
-    TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
 
     GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
 
@@ -111,17 +111,11 @@ int32 APlayerDesk::GetCurrentDayReach() const
     return GeneralDeskInstance ? GeneralDeskInstance->CurrentDayReach : 0;
 }
 
-ATablet *APlayerDesk::GetTabletInstance()
+UTabletComponent* APlayerDesk::GetTabletInstance()
 {
-    if (TabletInstance)
-        return TabletInstance;
-    else
-    {
-        TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
-        if (TabletInstance)
-            return TabletInstance;
-    }
-    return nullptr;
+    AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+    TabletInstance = Player ? Player->MyTablet : nullptr;
+    return TabletInstance;
 }
 
 void APlayerDesk::DeliverAnomalySheet()
@@ -136,10 +130,16 @@ void APlayerDesk::DeliverAnomalySheet()
 
 void APlayerDesk::OnPrintDetailsButtonPressed()
 {
-    if (GetTabletInstance()->HasSheet())
+    UTabletComponent* Tablet = GetTabletInstance();
+    if (!Tablet)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot print questionnaire: tablet is unavailable."));
+        return;
+    }
+    if (Tablet->HasSheet())
     {
         UE_LOG(LogTemp, Log, TEXT("Tablet has a sheet."));
-        if (GetTabletInstance()->CanBeDelivered())
+        if (Tablet->CanBeDelivered())
         {
             UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
             DeliverAnomalySheet();
@@ -167,8 +167,11 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
             UE_LOG(LogTemp, Warning, TEXT("CurrentAnomalyDetails is null: no anomaly data to print."));
             return;
         }
+        if (!Tablet->UpdateAnomaly(CurrentAnomalyDetails))
+        {
+            return;
+        }
         OnPrintButton2Pressed.Broadcast();
-        GetTabletInstance()->UpdateAnomaly(CurrentAnomalyDetails);
         PrintDetailsButtonComponent->ChangeInteractablePromptText(FText::FromString("Submit"));
     }
 }

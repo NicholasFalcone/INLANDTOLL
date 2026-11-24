@@ -15,10 +15,7 @@
 #include "Tools/Tool.h"
 #include "Tools/ToolPlacementPoint.h"
 #include "InspectionProp.h"
-#include "Tools/Tablet.h"
-#include "Components/WidgetInteractionComponent.h"
-#include "Components/WidgetComponent.h"
-#include "Framework/Application/SlateApplication.h"
+#include "Tools/TabletComponent.h"
 #include "InlandTollPlayerController.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
@@ -28,16 +25,8 @@ AHorrorCharacter::AHorrorCharacter()
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->Init(this);
 	InventoryComponent = CreateDefaultSubobject<UBPC_Inventory>(TEXT("InventoryComponent"));
-
-	TabletWidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("TabletWidgetInteraction"));
-	TabletWidgetInteraction->SetupAttachment(GetRootComponent());
-	TabletWidgetInteraction->InteractionSource = EWidgetInteractionSource::Mouse;
-	TabletWidgetInteraction->InteractionDistance = 500.f;
-	TabletWidgetInteraction->TraceChannel = ECC_Visibility;
-	TabletWidgetInteraction->bEnableHitTesting = false;
-	TabletWidgetInteraction->PointerIndex = 0;
-
 	ToolPlacementManager = CreateDefaultSubobject<UToolPlacementManager>(TEXT("ToolPlacementManager"));
+	MyTablet = CreateDefaultSubobject<UTabletComponent>(TEXT("TabletComponent"));
 }
 
 void AHorrorCharacter::BeginPlay()
@@ -49,96 +38,8 @@ void AHorrorCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchWalkSpeed;
 
 	BaseCameraRelativeZ = GetFirstPersonCameraComponent()->GetRelativeLocation().Z;
-	
-	MyTablet = nullptr;
-	for (TActorIterator<ATablet> It(GetWorld()); It; ++It)
-	{
-		if (!MyTablet)
-		{
-			MyTablet = *It;
-			continue;
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("Destroying duplicate tablet: %s"), *It->GetName());
-		It->Destroy();
-	}
-
-	if (!MyTablet && TabletClass)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		MyTablet = GetWorld()->SpawnActor<ATablet>(TabletClass, SpawnParams);
-	}
-
 	if (MyTablet)
-	{
-		MyTablet->SetOwner(this);
-		MyTablet->PlayerCharacter = this;
-
-		if (MyTablet->GetRootComponent())
-		{
-			MyTablet->GetRootComponent()->SetMobility(EComponentMobility::Movable);
-		}
-
-		USceneComponent* ParentComp = nullptr;
-		TArray<USpringArmComponent*> SpringArms;
-		GetComponents<USpringArmComponent>(SpringArms);
-		for (USpringArmComponent* Arm : SpringArms)
-		{
-			if (Arm && !Arm->IsTemplate() && Arm->GetName().Contains(TEXT("Tablet")))
-			{
-				ParentComp = Arm;
-				break;
-			}
-		}
-		if (!ParentComp)
-		{
-			USceneComponent* RawComp = GetTabletSpringArmComponent();
-			if (RawComp && !RawComp->IsTemplate())
-			{
-				ParentComp = RawComp;
-			}
-		}
-		if (!ParentComp)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("GetTabletSpringArmComponent returned a template or null, falling back to FirstPersonCameraComponent"));
-			ParentComp = GetFirstPersonCameraComponent();
-		}
-
-		if (ParentComp)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Attaching tablet to parent component: %s"), *ParentComp->GetName());
-			FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-			if (MyTablet->AttachToComponent(ParentComp, AttachRules))
-			{
-				UE_LOG(LogTemp, Log, TEXT("Tablet successfully attached to %s"), *ParentComp->GetName());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Tablet attachment returned false!"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("No valid parent component found for Tablet attachment!"));
-		}
-
-		MyTablet->SetActorRelativeLocation(TabletSocketOffset);
-		MyTablet->SetActorRelativeRotation(TabletSocketRotation);
-
-		MyTablet->SetActorEnableCollision(true);
-		TArray<UPrimitiveComponent*> PrimComps;
-		MyTablet->GetComponents<UPrimitiveComponent>(PrimComps);
-		for (UPrimitiveComponent* PrimComp : PrimComps)
-		{
-			PrimComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			PrimComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-		}
-
-		MyTablet->SetActorHiddenInGame(true);
 		bIsTabletOpen = false;
-	}
 }
 
 void AHorrorCharacter::GoSleep()
@@ -192,25 +93,6 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			}
 		}
 
-		// Inoltra il click sinistro al widget 3D del tablet
-		PlayerInputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &AHorrorCharacter::TabletMousePressed);
-		PlayerInputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &AHorrorCharacter::TabletMouseReleased);
-	}
-}
-
-void AHorrorCharacter::TabletMousePressed()
-{
-	if (bIsTabletOpen && TabletWidgetInteraction && TabletWidgetInteraction->bEnableHitTesting)
-	{
-		TabletWidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
-	}
-}
-
-void AHorrorCharacter::TabletMouseReleased()
-{
-	if (bIsTabletOpen && TabletWidgetInteraction && TabletWidgetInteraction->bEnableHitTesting)
-	{
-		TabletWidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
 	}
 }
 
@@ -666,6 +548,11 @@ void AHorrorCharacter::SetTabletOpen(bool bOpen)
 
 	if (bOpen)
 	{
+		if (!MyTablet->AreWidgetsReady())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Cannot open tablet because its UI widgets are unavailable."));
+			return;
+		}
 		PlayerController->RequestInteractionState(EPlayerState::Tablet);
 	}
 	else
@@ -693,56 +580,7 @@ void AHorrorCharacter::ApplyInteractionState(EPlayerState NewState)
 
 	if (MyTablet)
 	{
-		MyTablet->SetActorHiddenInGame(!bIsTabletOpen);
-		if (bIsTabletOpen)
-		{
-			MyTablet->SetActorRelativeLocation(TabletSocketOffset);
-			MyTablet->SetActorRelativeRotation(TabletSocketRotation);
-			if (MyTablet->TabletWidget)
-			{
-				MyTablet->TabletWidget->EnableSheet();
-			}
-
-		}
-
-		if (MyTablet->TabletWidgetComponent)
-		{
-			if (bIsTabletOpen)
-			{
-				MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-				MyTablet->TabletWidgetComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-				MyTablet->TabletWidgetComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
-			}
-			else
-			{
-				MyTablet->TabletWidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			}
-		}
-	}
-
-	SetTabletInteractionEnabled(bIsTabletOpen);
-}
-
-void AHorrorCharacter::SetTabletInteractionEnabled(bool bEnabled)
-{
-	if (TabletWidgetInteraction)
-	{
-		TabletWidgetInteraction->bEnableHitTesting = bEnabled;
-	}
-}
-
-void AHorrorCharacter::FocusTabletWidget()
-{
-	if (MyTablet && MyTablet->TabletWidgetComponent)
-	{
-		if (UUserWidget* TabletUserWidget = MyTablet->TabletWidgetComponent->GetUserWidgetObject())
-		{
-			TSharedPtr<SWidget> SlateWidget = TabletUserWidget->GetCachedWidget();
-			if (SlateWidget.IsValid())
-			{
-				FSlateApplication::Get().SetKeyboardFocus(SlateWidget, EFocusCause::SetDirectly);
-			}
-		}
+		MyTablet->SetOpen(bIsTabletOpen);
 	}
 }
 #pragma endregion

@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "PlayerDesk.generated.h"
 
-class ATablet;
+class UTabletComponent;
 class ABaseInteractable;
 class UWidgetComponent;
 class ADesk;
@@ -50,14 +50,14 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Table")
-	ATablet* TabletInstance;
+	UTabletComponent* TabletInstance;
 
 	ADesk* GeneralDeskInstance;
 
     const UAnomalyData* CurrentAnomalyDetails;
     int32 CurrentQuestionaryIndex = 0;
 	
-	ATablet* GetTabletInstance();
+	UTabletComponent* GetTabletInstance();
 	void DeliverAnomalySheet();
 
 protected:

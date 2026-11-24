@@ -5,7 +5,7 @@
 #include "ST_DialogueLine.h"
 #include "BaseInteractable.h"
 #include "InspectionDayDataAsset.h"
-#include "Tools/Tablet.h"
+#include "Tools/TabletComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "InspectionManager.h"
 #include "Variant_Horror/HorrorCharacter.h"
@@ -39,7 +39,6 @@ void ADesk::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("Desk could not find an InspectionManager."));
     }
 
-    TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
     SetupButtons();
 }
 
@@ -90,6 +89,11 @@ void ADesk::OnNewAnomalyButtonPressed()
         UE_LOG(LogTemp, Error, TEXT("Cannot start an inspection because InspectionManager is unavailable."));
         return;
     }
+    if (!GetTabletInstance())
+    {
+        UE_LOG(LogTemp, Error, TEXT("Tablet instance is unavailable."));
+        return;
+    }
 
     InspectionManager->SpawnNextAnomaly();
     if (!InspectionManager->CurrentInspectionPayload)
@@ -122,7 +126,7 @@ void ADesk::OnNewAnomalyButtonPressed()
 void ADesk::OnPrintDetailsButtonPressed()
 {
 
-    ATablet* Tablet = GetTabletInstance();
+    UTabletComponent* Tablet = GetTabletInstance();
     if (!Tablet)
     {
         UE_LOG(LogTemp, Error, TEXT("Cannot print inspection details because the tablet is unavailable."));
@@ -174,9 +178,11 @@ void ADesk::OnPrintDetailsButtonPressed()
             UE_LOG(LogTemp, Warning, TEXT("Cannot print inspection details because no anomaly is active."));
             return;
         }
+        if (!Tablet->UpdateAnomaly(CurrentAnomalyDetails))
+        {
+            return;
+        }
         OnPrintButtonPressed.Broadcast();
-
-        Tablet->UpdateAnomaly(CurrentAnomalyDetails);
         if (ABaseInteractable* Button = GetPrintDetailsButton())
         {
             Button->bIsInteractable = true;
@@ -442,16 +448,10 @@ ABaseInteractable* ADesk::GetPrintDetailsButton() const
     return PrintDetailsButtonComponent;
 }
 
-ATablet* ADesk::GetTabletInstance()
+UTabletComponent* ADesk::GetTabletInstance()
 {
-    if(TabletInstance)
-        return TabletInstance;
-    else{
-        TabletInstance = Cast<ATablet>(UGameplayStatics::GetActorOfClass(GetWorld(), ATablet::StaticClass()));
-        if(TabletInstance)
-            return TabletInstance;
-    }
-    return nullptr;
+    AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+    return Player ? Player->MyTablet : nullptr;
 }
 
 int32 ADesk::CurrentDayReachGetter() const
