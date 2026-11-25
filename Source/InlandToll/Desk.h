@@ -94,19 +94,29 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Car Manager")
 	TArray<FInspectionDayDataAsset> InspectionDataArray;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> NewAnomalyButtonComponent;
 
-    // Child Actor Components per i pulsanti
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> PrintDetailsButtonComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> ApproveButtonComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> RejectButtonComponent;
-    
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> PowerUpButtonInteractable;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> PrintDetailsButtonInteractable;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> ApproveButtonInteractable;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> RejectButtonInteractable;
 
     // Monitor UI
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")

@@ -16,6 +16,18 @@ ADesk::ADesk()
 
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
+    PowerUpButtonInteractable = CreateDefaultSubobject<UChildActorComponent>(TEXT("PowerUpButtonInteractable"));
+    PowerUpButtonInteractable->SetupAttachment(RootComponent);
+
+    PrintDetailsButtonInteractable = CreateDefaultSubobject<UChildActorComponent>(TEXT("PrintDetailsButtonInteractable"));
+    PrintDetailsButtonInteractable->SetupAttachment(RootComponent);
+
+    ApproveButtonInteractable = CreateDefaultSubobject<UChildActorComponent>(TEXT("ApproveButtonInteractable"));
+    ApproveButtonInteractable->SetupAttachment(RootComponent);
+
+    RejectButtonInteractable = CreateDefaultSubobject<UChildActorComponent>(TEXT("RejectButtonInteractable"));
+    RejectButtonInteractable->SetupAttachment(RootComponent);
+
     // --- MONITORS (Widget Components) ---
     LeftMonitor = CreateDefaultSubobject<UWidgetComponent>(TEXT("LeftMonitor"));
     LeftMonitor->SetupAttachment(RootComponent);
@@ -39,6 +51,11 @@ void ADesk::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("Desk could not find an InspectionManager."));
     }
 
+    NewAnomalyButtonComponent = GetNewAnomalyButtonComponent();
+    PrintDetailsButtonComponent = GetPrintDetailsButton();
+    ApproveButtonComponent = GetApproveButton();
+    RejectButtonComponent = GetRejectButton();
+
     SetupButtons();
 }
 
@@ -48,20 +65,32 @@ void ADesk::SetupButtons()
     {
         ApproveButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnApproveButtonPressed);
     }
+    else{
+        UE_LOG(LogTemp, Error, TEXT("Approve button component is not set up correctly."));
+    }
 
     if (ABaseInteractable* RejectButton = GetRejectButton())
     {
         RejectButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnRejectButtonPressed);
+    }
+    else{
+        UE_LOG(LogTemp, Error, TEXT("Reject button component is not set up correctly."));
     }
 
     if (ABaseInteractable* PrintDetailsButton = GetPrintDetailsButton())
     {
         PrintDetailsButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnPrintDetailsButtonPressed);
     }
+    else{
+        UE_LOG(LogTemp, Error, TEXT("Print Details button component is not set up correctly."));
+    }
     
     if (ABaseInteractable* NewAnomalyButton = GetNewAnomalyButtonComponent())
     {
         NewAnomalyButton->OnInteractDelegate.AddDynamic(this, &ADesk::OnNewAnomalyButtonPressed);
+    }
+    else{
+        UE_LOG(LogTemp, Error, TEXT("New Anomaly button component is not set up correctly."));
     }
 
     if (ABaseInteractable* Button = GetPrintDetailsButton())
@@ -80,6 +109,7 @@ void ADesk::SetupButtons()
     {
         Button->bIsInteractable = true;
     }
+
 }
 
 void ADesk::OnNewAnomalyButtonPressed()
@@ -354,10 +384,22 @@ void ADesk::RestartGame()
     CurrentErrors = 0;
     OnDailyInspectionCountChanged.Broadcast(InspectionPassed);
     OnErrorCountChanged.Broadcast(CurrentErrors);
-    GetNewAnomalyButtonComponent()->bIsInteractable = true;
-    GetPrintDetailsButton()->bIsInteractable = false;
-    GetApproveButton()->bIsInteractable = false;
-    GetRejectButton()->bIsInteractable = false;
+    if (ABaseInteractable* Button = GetNewAnomalyButtonComponent())
+    {
+        Button->bIsInteractable = true;
+    }
+    if (ABaseInteractable* Button = GetPrintDetailsButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetApproveButton())
+    {
+        Button->bIsInteractable = false;
+    }
+    if (ABaseInteractable* Button = GetRejectButton())
+    {
+        Button->bIsInteractable = false;
+    }
     if (AHorrorCharacter* Player = Cast<AHorrorCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
     {
         Player->Revive();
@@ -430,22 +472,46 @@ bool ADesk::IsDayOver(int32 inspectionIndex) const
 // Funzioni helper per ottenere l'istanza ABaseInteractable effettiva
 ABaseInteractable* ADesk::GetNewAnomalyButtonComponent() const
 {
-    return NewAnomalyButtonComponent;
+    ABaseInteractable* Button = PowerUpButtonInteractable ? Cast<ABaseInteractable>(PowerUpButtonInteractable->GetChildActor()) : nullptr;
+    if (!Button)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s must have a Child Actor Class derived from ABaseInteractable."),
+            *GetNameSafe(PowerUpButtonInteractable));
+    }
+    return Button;
 }
 
 ABaseInteractable* ADesk::GetApproveButton() const
 {
-    return ApproveButtonComponent;
+    ABaseInteractable* Button = ApproveButtonInteractable ? Cast<ABaseInteractable>(ApproveButtonInteractable->GetChildActor()) : nullptr;
+    if (!Button)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s must have a Child Actor Class derived from ABaseInteractable."),
+            *GetNameSafe(ApproveButtonInteractable));
+    }
+    return Button;
 }
 
 ABaseInteractable* ADesk::GetRejectButton() const
 {
-    return RejectButtonComponent;
+    ABaseInteractable* Button = RejectButtonInteractable ? Cast<ABaseInteractable>(RejectButtonInteractable->GetChildActor()) : nullptr;
+    if (!Button)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s must have a Child Actor Class derived from ABaseInteractable."),
+            *GetNameSafe(RejectButtonInteractable));
+    }
+    return Button;
 }
 
 ABaseInteractable* ADesk::GetPrintDetailsButton() const
 {
-    return PrintDetailsButtonComponent;
+    ABaseInteractable* Button = PrintDetailsButtonInteractable ? Cast<ABaseInteractable>(PrintDetailsButtonInteractable->GetChildActor()) : nullptr;
+    if (!Button)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s must have a Child Actor Class derived from ABaseInteractable."),
+            *GetNameSafe(PrintDetailsButtonInteractable));
+    }
+    return Button;
 }
 
 UTabletComponent* ADesk::GetTabletInstance()

@@ -10,6 +10,7 @@
 class UTabletComponent;
 class ABaseInteractable;
 class UWidgetComponent;
+class UChildActorComponent;
 class ADesk;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSurvayCompleted);
@@ -25,12 +26,17 @@ public:
 	APlayerDesk();
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> PowerButtonComponent;
 
-    // Child Actor Components per i pulsanti
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interactable")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
     TObjectPtr<ABaseInteractable> PrintDetailsButtonComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> PowerButtonInteractable;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactable")
+    TObjectPtr<UChildActorComponent> PrintDetailsButtonInteractable;
 
 	    // Monitor UI
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")

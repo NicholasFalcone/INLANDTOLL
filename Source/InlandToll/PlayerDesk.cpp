@@ -1,12 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerDesk.h"
+#include "BaseInteractable.h"
 #include "Kismet/GameplayStatics.h"
 #include "DialogueManagerSubsystem.h"
 #include "Desk.h"
 #include "Tools/TabletComponent.h"
 #include "Variant_Horror/HorrorCharacter.h"
+#include "Components/ChildActorComponent.h"
 #include "Components/WidgetComponent.h"
+
+namespace
+{
+    ABaseInteractable* ResolvePlayerDeskButton(const UChildActorComponent* Component)
+    {
+        ABaseInteractable* Button = Component ? Cast<ABaseInteractable>(Component->GetChildActor()) : nullptr;
+        if (!Button)
+        {
+            UE_LOG(LogTemp, Error, TEXT("%s must have a Child Actor Class derived from ABaseInteractable."),
+                *GetNameSafe(Component));
+        }
+        return Button;
+    }
+}
 
 // Sets default values
 APlayerDesk::APlayerDesk()
@@ -15,6 +31,12 @@ APlayerDesk::APlayerDesk()
     PrimaryActorTick.bCanEverTick = true;
 
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+
+    PowerButtonInteractable = CreateDefaultSubobject<UChildActorComponent>(TEXT("PowerButtonInteractable"));
+    PowerButtonInteractable->SetupAttachment(RootComponent);
+
+    PrintDetailsButtonInteractable = CreateDefaultSubobject<UChildActorComponent>(TEXT("PrintDetailsButtonInteractable"));
+    PrintDetailsButtonInteractable->SetupAttachment(RootComponent);
 
     // --- MONITORS (Widget Components) ---
     LeftMonitor = CreateDefaultSubobject<UWidgetComponent>(TEXT("LeftMonitor"));
@@ -28,19 +50,35 @@ void APlayerDesk::BeginPlay()
 
     GeneralDeskInstance = Cast<ADesk>(UGameplayStatics::GetActorOfClass(GetWorld(), ADesk::StaticClass()));
 
-    GeneralDeskInstance->OnNextDayLoaded.AddDynamic(this, &APlayerDesk::OnNextDayBegin);
+    if (GeneralDeskInstance)
+    {
+        GeneralDeskInstance->OnNextDayLoaded.AddDynamic(this, &APlayerDesk::OnNextDayBegin);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("PlayerDesk could not find a Desk."));
+    }
+
+    PowerButtonComponent = ResolvePlayerDeskButton(PowerButtonInteractable);
+    PrintDetailsButtonComponent = ResolvePlayerDeskButton(PrintDetailsButtonInteractable);
 
     if (PowerButtonComponent)
     {
         PowerButtonComponent->OnInteractDelegate.AddDynamic(this, &APlayerDesk::OnPowerButtonPressed);
+        PowerButtonComponent->bIsInteractable = true;
+    }
+    else{
+        UE_LOG(LogTemp, Error, TEXT("Power button component is not set up correctly."));
     }
 
-    PowerButtonComponent->bIsInteractable = true;
     if (PrintDetailsButtonComponent)
     {
         PrintDetailsButtonComponent->OnInteractDelegate.AddDynamic(this, &APlayerDesk::OnPrintDetailsButtonPressed);
+        PrintDetailsButtonComponent->bIsInteractable = false;
     }
-    PrintDetailsButtonComponent->bIsInteractable = false;
+    else{
+        UE_LOG(LogTemp, Error, TEXT("Print Details button component is not set up correctly."));
+    }
 }
 
 void APlayerDesk::OnNextDayBegin(int day)
@@ -75,6 +113,7 @@ void APlayerDesk::OnDayshiftEnded()
 
 void APlayerDesk::OnPowerButtonPressed()
 {
+    UE_LOG(LogTemp, Log, TEXT("Power button pressed."));
     if (PowerButtonComponent)
     {
         PowerButtonComponent->bIsInteractable = false;
@@ -130,6 +169,8 @@ void APlayerDesk::DeliverAnomalySheet()
 
 void APlayerDesk::OnPrintDetailsButtonPressed()
 {
+    UE_LOG(LogTemp, Log, TEXT("Print Details button pressed."));
+    
     UTabletComponent* Tablet = GetTabletInstance();
     if (!Tablet)
     {
@@ -144,7 +185,10 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
             UE_LOG(LogTemp, Log, TEXT("Delivering anomaly sheet."));
             DeliverAnomalySheet();
             /// Update button states after delivering the anomaly sheet.
-            PrintDetailsButtonComponent->bIsInteractable = false;
+            if (PrintDetailsButtonComponent)
+            {
+                PrintDetailsButtonComponent->bIsInteractable = false;
+            }
         }
         else
         {
@@ -172,7 +216,10 @@ void APlayerDesk::OnPrintDetailsButtonPressed()
             return;
         }
         OnPrintButton2Pressed.Broadcast();
-        PrintDetailsButtonComponent->ChangeInteractablePromptText(FText::FromString("Submit"));
+        if (PrintDetailsButtonComponent)
+        {
+            PrintDetailsButtonComponent->ChangeInteractablePromptText(FText::FromString("Submit"));
+        }
     }
 }
 

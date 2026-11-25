@@ -7,8 +7,6 @@
 #include "BaseInteractable.h"
 #include "InteractionComponent.generated.h"
 
-class AHorrorCharacter;
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class INLANDTOLL_API UInteractionComponent : public UActorComponent
 {
@@ -18,11 +16,12 @@ public:
 	// Sets default values for this component's properties
 	UInteractionComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	// Radius around the camera; zero disables interaction.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "0.0", UIMin = "0.0", Units = "cm"))
 	float InteractionDistance = 200.0f;
 
-	AHorrorCharacter* OwnerCharacter;
-	ABaseInteractable* CurrentInteractable;
+	UPROPERTY(Transient)
+	TObjectPtr<ABaseInteractable> CurrentInteractable;
 
 private:
 	ABaseInteractable* CheckForInteractables();
@@ -35,10 +34,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void Init(AHorrorCharacter* InOwnerCharacter);
-
 	bool HasInteractableInRange() const
 	{
-		return CurrentInteractable != nullptr;
+		return IsValid(CurrentInteractable) && CurrentInteractable->bIsInteractable;
 	}
 };
